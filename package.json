@@ -1,0 +1,15 @@
+{
+  "name": "weather-wardrobe",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Weather Wardrobe: wardrobe PWA (WeatherKit, colour/style analysis, lookbook, optional Google sync)",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "node dev-server.js",
+    "check": "node --check api/_lib.js && node --check api/auth.js && node --check api/data.js && node --check api/items.js && node --check api/config.js && node --check api/weather.js && node --check sw.js && node --check i18n.js && node --check api/social.js && node --check social.js && node --check api/dm.js && node --check api/_push.js && node --check chat.js",
+    "test": "node tests/api.test.js && node tests/social.test.js && node tests/dm.test.js",
+    "test:browser": "python3 tests/browser/e2e1.py && python3 tests/browser/e2e2.py && python3 tests/browser/e2e3.py && python3 tests/browser/e2e4.py && python3 tests/browser/e2e5.py && python3 tests/browser/e2e_auth.py && python3 tests/browser/e2e_social.py && python3 tests/browser/e2e_chat.py"
+  }
+}
