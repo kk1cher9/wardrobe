@@ -60,6 +60,10 @@ async def main():
     await A.mouse.move(bb[0],bb[1]);await A.mouse.down();await A.mouse.move(bb[0]-60,bb[1]+120,steps=6);await A.mouse.up()
     mv=await A.evaluate("(n=>[parseFloat(n.style.left),parseFloat(n.style.top)])(document.querySelector('.ed-tx'))")
     ok('text follows the pointer (moved left/down)',mv[0]<45 and mv[1]>60)
+    ok('8 fonts offered, system stacks, Aa preview in own font',await A.evaluate("document.querySelectorAll('.ed-fo [data-fo]').length===8&&new Set([...document.querySelectorAll('.ed-fo [data-fo]')].map(b=>b.style.fontFamily)).size===8"))
+    await A.click('.ed-fo [data-fo="serif"]');ff=await A.evaluate("getComputedStyle(document.querySelector('.ed-tx')).fontFamily")
+    ok('font applied to the selected text (serif)','Georgia' in ff)
+    await A.click('.ed-fo [data-fo="script"]')
     await A.click('#ed-sel [data-a="p"]');await A.click('#ed-sel [data-a="r"]')
     ok('size/rotate buttons work on the selected element',await A.evaluate("(n=>/rotate\\(10deg\\)/.test(n.style.transform)&&parseFloat(n.style.fontSize)>0)(document.querySelector('.ed-tx'))"))
     # wardrobe items -> sticker + worn
@@ -78,7 +82,7 @@ async def main():
     ok('back in the composer: edited photo kept, editor button marked',await A.evaluate("!!document.querySelector('#sc-pi img')&&/✓/.test(document.getElementById('sc-ed').textContent)"))
     # re-open the editor: layers are restored
     await A.click('#sc-ed');await A.wait_for_selector('.ed #ed-cv',timeout=6000);await A.wait_for_timeout(300)
-    ok('re-open: filter, text, item and GIF restored',await A.evaluate("document.querySelector('.ed-fl button.on').dataset.f==='vivid'&&document.querySelectorAll('.ed-el').length===3"))
+    ok('re-open: filter, text, item and GIF restored (font too)',await A.evaluate("document.querySelector('.ed-fl button.on').dataset.f==='vivid'&&document.querySelectorAll('.ed-el').length===3&&/Snell|Brush|Segoe/.test(getComputedStyle(document.querySelector('.ed-tx')).fontFamily)"))
     await A.click('#ed-x');await A.wait_for_selector('.ed',state='detached')
     ok('cancel keeps the previous result',await A.evaluate("/✓/.test(document.getElementById('sc-ed').textContent)"))
     await A.fill('#sc-t','Эдит-образ');await A.click('#sc-pv');await A.wait_for_selector('.sc-pvw .sp',timeout=4000)

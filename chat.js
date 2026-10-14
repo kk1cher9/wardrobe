@@ -542,6 +542,7 @@ async function pollChat() {
   } catch (e) { /* offline: try again on the next tick */ }
   if (C === me) me.polling = false;
 }
+const dtReact = () => { const e = (typeof S !== 'undefined' && S.set && S.set.dtr) || '👍'; return REACTS.includes(e) ? e : '👍'; };
 let lastTap = null;
 function wireComposer() {
   if (!C) return; const el = C.el, ta = el.querySelector('#ch-ta'), f = el.querySelector('#ch-f'); if (!ta) return;
@@ -746,7 +747,7 @@ function wireGestures(box) {
     const r = e.target.closest('.ch-row2'); if (!r) return; if (e.target.closest('.ch-img') || e.target.closest('.ch-meta button')) return;
     if (C.selMode) { togglePick(r.dataset.id); return; }
     const nowT = Date.now(), dbl = lastTap && lastTap.id === r.dataset.id && nowT - lastTap.t < 330; lastTap = { id: r.dataset.id, t: nowT };
-    if (dbl) { lastTap = null; const mm = findMsg(r.dataset.id); C.sel = null; if (mm && !mm.st && !mm.del) { const cur = (mm.rx || []).find((x) => x.me); react(mm.id, cur ? cur.e : '❤️'); } else renderMsgs(false); return; } // double tap = quick ❤️ (a second double tap removes it)
+    if (dbl) { lastTap = null; const mm = findMsg(r.dataset.id); C.sel = null; if (mm && !mm.st && !mm.del) { const cur = (mm.rx || []).find((x) => x.me); react(mm.id, cur ? cur.e : dtReact()); } else renderMsgs(false); return; } // double tap = quick reaction, 👍 unless changed in Settings (a second double tap removes it)
     sel(r.dataset.id);
   });
   box.addEventListener('contextmenu', (e) => { const r = rowOf(e); e.preventDefault(); if (r && e.target.closest('.ch-b')) openCtx(r.dataset.id); });

@@ -63,6 +63,17 @@
 .ed-err{position:absolute;left:12px;right:12px;bottom:200px;background:#ff4d6d;color:#fff;padding:9px 12px;border-radius:12px;font-weight:700;font-size:13px;text-align:center;z-index:5}
 `;
   function injectCss() { if (document.getElementById('ed-css')) return; const s = document.createElement('style'); s.id = 'ed-css'; s.textContent = CSS; document.head.appendChild(s); }
+  const FONTS = { // system stacks only (no downloads); each falls back sensibly on iOS / Android / Windows
+    sans: { w: 800, f: "-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif" },
+    serif: { w: 700, f: "Georgia, 'Times New Roman', serif" },
+    mono: { w: 700, f: "'Courier New', Courier, monospace" },
+    script: { w: 700, f: "'Snell Roundhand', 'Brush Script MT', 'Segoe Script', cursive" },
+    impact: { w: 400, f: "Impact, 'Arial Narrow Bold', Haettenschweller, sans-serif" },
+    round: { w: 800, f: "'Arial Rounded MT Bold', 'Trebuchet MS', 'Varela Round', sans-serif" },
+    marker: { w: 700, f: "'Marker Felt', 'Chalkboard SE', 'Comic Sans MS', cursive" },
+    didot: { w: 700, f: "Didot, 'Bodoni 72', 'Bodoni MT', Georgia, serif" }
+  };
+  const fnt = (e) => FONTS[e.font] || FONTS.sans;
   const COLORS = ['#ffffff', '#000000', '#ff4d6d', '#ffd23f', '#3ddc84', '#4cc9f0', '#b388ff'];
   let uidN = 0;
 
@@ -122,7 +133,7 @@
       function style(e, node) {
         node.style.left = e.x + '%'; node.style.top = e.y + '%';
         node.style.transform = `translate(-50%,-50%) rotate(${e.r}deg)`;
-        if (e.k === 'text') { node.style.fontSize = (e.fs / 100 * SW) + 'px'; node.style.color = e.color; node.style.background = e.bg ? (e.color === '#000000' ? 'rgba(255,255,255,.85)' : 'rgba(0,0,0,.55)') : 'transparent'; node.style.width = ''; }
+        if (e.k === 'text') { node.style.fontSize = (e.fs / 100 * SW) + 'px'; node.style.fontFamily = fnt(e).f; node.style.fontWeight = fnt(e).w; node.style.color = e.color; node.style.background = e.bg ? (e.color === '#000000' ? 'rgba(255,255,255,.85)' : 'rgba(0,0,0,.55)') : 'transparent'; node.style.width = ''; }
         else node.style.width = e.w + '%';
         node.classList.toggle('sel', E.sel === e.id);
       }
@@ -198,11 +209,13 @@
         } else if (E.tab === 'text') {
           const s = selEl(), te = s && s.k === 'text' ? s : null;
           pn.innerHTML = `<div class="ed-tr"><button type="button" class="ed-b" id="ed-at">${esc(tx('addText'))}</button><input type="text" id="ed-ti" maxlength="80" placeholder="${esc(te ? tx('typeHere') : tx('noSel'))}" value="${te ? esc(te.text) : ''}" ${te ? '' : 'disabled'}></div>
+            <div class="ed-tr ed-fo" style="margin-top:10px">${Object.keys(FONTS).map((k) => `<button type="button" class="ed-b${te && (te.font || 'sans') === k ? ' on' : ''}" data-fo="${k}" ${te ? '' : 'disabled'} style="font-family:${FONTS[k].f.replace(/"/g, "'")};font-weight:${FONTS[k].w}">Aa</button>`).join('')}</div>
             <div class="ed-tr" style="margin-top:10px">${COLORS.map((c) => `<button type="button" class="ed-sw${te && te.color === c ? ' on' : ''}" data-c="${c}" style="background:${c}" aria-label="${c}"></button>`).join('')}<button type="button" class="ed-b${te && te.bg ? ' on' : ''}" id="ed-bg" ${te ? '' : 'disabled'}>${esc(tx('bg'))}</button></div>`;
           const live = () => { const t = selEl(); if (!t || t.k !== 'text') return null; return t; };
-          q('#ed-at').onclick = () => { addEl({ k: 'text', text: tx('defText'), x: 50, y: 50, w: 0, fs: 8, r: 0, color: '#ffffff', bg: false }); panel(); const i = q('#ed-ti'); if (i) { i.focus(); i.select(); } };
+          q('#ed-at').onclick = () => { addEl({ k: 'text', text: tx('defText'), x: 50, y: 50, w: 0, fs: 8, r: 0, color: '#ffffff', bg: false, font: 'sans' }); panel(); const i = q('#ed-ti'); if (i) { i.focus(); i.select(); } };
           const ti = q('#ed-ti'); ti.oninput = () => { const t = live(); if (!t) return; t.text = ti.value || ' '; const n = ly.querySelector(`[data-id="${t.id}"]`); if (n) n.textContent = t.text; };
           pn.querySelectorAll('[data-c]').forEach((b) => { b.onclick = () => { const t = live(); if (!t) return; t.color = b.dataset.c; place(); panel(); }; });
+          pn.querySelectorAll('[data-fo]').forEach((b) => { b.onclick = () => { const t = live(); if (!t) return; t.font = b.dataset.fo; layers(); panel(); }; });
           const bg = q('#ed-bg'); bg.onclick = () => { const t = live(); if (!t) return; t.bg = !t.bg; layers(); panel(); };
         } else if (E.tab === 'items') {
           if (!items.length) { pn.innerHTML = `<p class="ed-note">${esc(tx('noItems'))}</p>`; return; }
@@ -260,7 +273,7 @@
           x.save(); x.translate(e.x / 100 * CW, e.y / 100 * CH); x.rotate(e.r * Math.PI / 180);
           if (e.k === 'item') { const im = await itemImg(e.itemId); if (im) { const w = e.w / 100 * CW, h = w * im.height / im.width; x.drawImage(im, -w / 2, -h / 2, w, h); } }
           else {
-            const px = e.fs / 100 * CW, lines = String(e.text).split('\n'); x.font = `800 ${px}px -apple-system, system-ui, sans-serif`; x.textAlign = 'center'; x.textBaseline = 'middle';
+            const px = e.fs / 100 * CW, lines = String(e.text).split('\n'); x.font = `${fnt(e).w} ${px}px ${fnt(e).f}`; x.textAlign = 'center'; x.textBaseline = 'middle';
             const lh = px * 1.2, tw = Math.max(...lines.map((l) => x.measureText(l).width)), th = lh * lines.length;
             if (e.bg) { x.fillStyle = e.color === '#000000' ? 'rgba(255,255,255,.85)' : 'rgba(0,0,0,.55)'; const pad = px * .4, r = px * .25, bw = tw + pad * 2, bh = th + px * .2; x.beginPath(); x.moveTo(-bw / 2 + r, -bh / 2); x.arcTo(bw / 2, -bh / 2, bw / 2, bh / 2, r); x.arcTo(bw / 2, bh / 2, -bw / 2, bh / 2, r); x.arcTo(-bw / 2, bh / 2, -bw / 2, -bh / 2, r); x.arcTo(-bw / 2, -bh / 2, bw / 2, -bh / 2, r); x.closePath(); x.fill(); }
             else { x.shadowColor = 'rgba(0,0,0,.35)'; x.shadowBlur = px * .15; x.shadowOffsetY = px * .04; }

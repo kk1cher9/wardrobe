@@ -79,7 +79,15 @@ async def main():
     await A.evaluate("CHAT.close&&0");
     mid2=await A.evaluate("document.querySelector('.ch-row2 .ch-m.th').closest('.ch-row2').dataset.id")
     await A.dblclick(f'.ch-row2[data-id="{mid2}"] .ch-b');await A.wait_for_selector(f'.ch-row2[data-id="{mid2}"] .ch-rx button.me',timeout=4000)
-    ok('double tap on a bubble adds ❤️',await A.evaluate(f"document.querySelector('.ch-row2[data-id=\"{mid2}\"] .ch-rx button.me').textContent.includes('❤️')"))
+    ok('double tap on a bubble adds the default reaction 👍',await A.evaluate(f"document.querySelector('.ch-row2[data-id=\"{mid2}\"] .ch-rx button.me').textContent.includes('👍')"))
+    await A.dblclick(f'.ch-row2[data-id="{mid2}"] .ch-b');await A.wait_for_function(f"!document.querySelector('.ch-row2[data-id=\"{mid2}\"] .ch-rx button.me')",timeout=4000)
+    ok('a second double tap removes it',True)
+    await A.evaluate("go('settings')");await A.wait_for_timeout(600)
+    ok('settings: "Double-tap reaction" select, default 👍, 8 options',await A.evaluate("(()=>{const s=[...document.querySelectorAll('select')].find(x=>x.options.length===8&&x.options[0].value==='👍');return !!s&&s.value==='👍'})()"))
+    await A.evaluate("S.set.dtr='🔥';save();go('chat')");await A.wait_for_selector('.ch-row:not(.ch-sv)',timeout=8000);await A.evaluate("document.querySelector('.ch-row:not(.ch-sv)').click()");await A.wait_for_selector(f'.ch-row2[data-id="{mid2}"] .ch-b',timeout=8000);await A.wait_for_timeout(500)
+    await A.dblclick(f'.ch-row2[data-id="{mid2}"] .ch-b');await A.wait_for_selector(f'.ch-row2[data-id="{mid2}"] .ch-rx button.me',timeout=4000)
+    ok('configured reaction is used by double tap (🔥)',await A.evaluate(f"document.querySelector('.ch-row2[data-id=\"{mid2}\"] .ch-rx button.me').textContent.includes('🔥')"))
+    await A.evaluate("S.set.dtr='👍';save()")
     ok('tab sound: sample is served and decodes',await A.evaluate("fetch('tab.mp3').then(r=>r.arrayBuffer()).then(b=>new (window.AudioContext||window.webkitAudioContext)().decodeAudioData(b)).then(a=>a.duration>0.03&&a.duration<1)"))
     ok('tab sound: play() is safe, honours the setting',await A.evaluate("(()=>{try{TabSnd.play();S.set.snd=false;TabSnd.play();S.set.snd=true;return typeof TabSnd.play==='function'}catch(e){return false}})()"))
     # small screen 320

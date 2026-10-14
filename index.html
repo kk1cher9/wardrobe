@@ -710,6 +710,7 @@ function settings(){
   <div>Theme<select onchange="S.set.theme=this.value;save();applyTheme();render()"><option value="light" ${s.theme=='light'?'selected':''}>Light</option><option value="dark" ${s.theme=='dark'?'selected':''}>Dark</option><option value="glass" ${s.theme=='glass'?'selected':''}>Glass</option></select></div>
   <div>Home layout<button class="btn g" style="padding:9px 14px" onclick="S.pos={};Store.set('pos',{});go('home')">Reset</button></div>
   ${window.CHAT&&CHAT.isAdmin&&CHAT.isAdmin()?`<div>Banned accounts<button class="btn g" style="padding:9px 14px" onclick="purgeBanned()">Delete…</button></div>`:''}
+  <div>Double-tap reaction<select onchange="S.set.dtr=this.value;save()">${['👍','❤️','😂','😮','😢','🔥','👎','🙏'].map(e=>`<option value="${e}" ${(s.dtr||'👍')===e?'selected':''}>${e}</option>`).join('')}</select></div>
   <div>Tab switch sound<input type="checkbox" style="width:24px;height:24px" ${s.snd!==false?'checked':''} onchange="S.set.snd=this.checked;save();if(this.checked)TabSnd.play()"></div>
   <div>Notifications<input type="checkbox" style="width:24px;height:24px" ${s.notify?'checked':''} onchange="toggleNotify(this)"></div></div>
   <h2 class="h3">AI wardrobe analysis</h2><div class="set ana">
