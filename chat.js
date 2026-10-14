@@ -381,7 +381,10 @@ async function react(id, e) {
   let rx = (m.rx || []).map((r) => ({ ...r }));
   if (cur) { cur.n; rx = rx.map((r) => (r.me ? { ...r, n: r.n - 1, me: false } : r)).filter((r) => r.n > 0); }
   if (!off) { const x = rx.find((r) => r.e === e); if (x) { x.n++; x.me = true; } else rx.push({ e, n: 1, me: true }); }
-  rx.sort((a, b) => b.n - a.n); m.rx = rx.length ? rx : undefined; m._rxl = Date.now(); renderMsgs(false);
+  rx.sort((a, b) => b.n - a.n); m.rx = rx.length ? rx : undefined; m._rxl = Date.now();
+  if (off && cur) { const chip = C.el.querySelector(`.ch-row2[data-id="${CSS.escape(id)}"] .ch-rx button.me`); if (chip) { chip.classList.add('gone'); await new Promise((r_) => setTimeout(r_, 170)); if (C !== me) return; } } // old chip shrinks away first
+  renderMsgs(false);
+  if (!off) { const chip = C.el.querySelector(`.ch-row2[data-id="${CSS.escape(id)}"] .ch-rx button[data-e="${CSS.escape(e)}"]`); if (chip) chip.classList.add('pop'); }
   try { const j = await pq('react', { id: me.id, mid: id, e: off ? '' : e }); if (C === me) { m.rx = j.rx && j.rx.length ? j.rx : undefined; renderMsgs(false); } if (navigator.vibrate) { try { navigator.vibrate(8); } catch (x) { /* ignore */ } } }
   catch (x) { m.rx = old; delete m._rxl; if (C === me) renderMsgs(false); toast(errText(x)); }
 }
@@ -543,6 +546,11 @@ async function pollChat() {
   if (C === me) me.polling = false;
 }
 const dtReact = () => { const e = (typeof S !== 'undefined' && S.set && S.set.dtr) || '👍'; return REACTS.includes(e) ? e : '👍'; };
+function floatEmoji(row, e) { // the reaction pops up over the bubble and drifts away
+  const b = row.querySelector('.ch-b') || row; if (!C) return; const r = b.getBoundingClientRect(), o = C.el.getBoundingClientRect();
+  const f = document.createElement('i'); f.className = 'ch-fe'; f.textContent = e; f.style.left = (r.left - o.left + r.width / 2) + 'px'; f.style.top = (r.top - o.top + r.height / 2) + 'px';
+  C.el.appendChild(f); setTimeout(() => f.remove(), 950);
+}
 let lastTap = null;
 function wireComposer() {
   if (!C) return; const el = C.el, ta = el.querySelector('#ch-ta'), f = el.querySelector('#ch-f'); if (!ta) return;
@@ -747,7 +755,7 @@ function wireGestures(box) {
     const r = e.target.closest('.ch-row2'); if (!r) return; if (e.target.closest('.ch-img') || e.target.closest('.ch-meta button')) return;
     if (C.selMode) { togglePick(r.dataset.id); return; }
     const nowT = Date.now(), dbl = lastTap && lastTap.id === r.dataset.id && nowT - lastTap.t < 330; lastTap = { id: r.dataset.id, t: nowT };
-    if (dbl) { lastTap = null; const mm = findMsg(r.dataset.id); C.sel = null; if (mm && !mm.st && !mm.del) { const cur = (mm.rx || []).find((x) => x.me); react(mm.id, cur ? cur.e : dtReact()); } else renderMsgs(false); return; } // double tap = quick reaction, 👍 unless changed in Settings (a second double tap removes it)
+    if (dbl) { lastTap = null; const mm = findMsg(r.dataset.id); C.sel = null; if (mm && !mm.st && !mm.del) { const cur = (mm.rx || []).find((x) => x.me), em = cur ? cur.e : dtReact(); if (!cur) floatEmoji(r, em); react(mm.id, em); } else renderMsgs(false); return; } // double tap = quick reaction, 👍 unless changed in Settings (a second double tap removes it)
     // a single tap does nothing: actions (reply / copy / forward / select / delete) live in the hold menu
   });
   box.addEventListener('contextmenu', (e) => { const r = rowOf(e); e.preventDefault(); if (r && e.target.closest('.ch-b')) openCtx(r.dataset.id); });
@@ -982,6 +990,11 @@ button,a,[onclick],.ch-row,.ch-chips button{touch-action:manipulation}
 .ch-b a{overflow-wrap:anywhere;word-break:break-all}
 .ch-rx{display:flex;flex-wrap:wrap;gap:4px;margin:-7px 8px 0;position:relative;z-index:1}.ch-m.me .ch-rx{justify-content:flex-end}
 .ch-rx button{display:inline-flex;align-items:center;gap:3px;min-height:0;height:24px;padding:0 8px;border-radius:12px;border:1px solid rgba(255,255,255,.28);background:rgba(34,38,86,.92);color:#fff;font:inherit;font-size:13px;font-weight:800;line-height:1;cursor:pointer;animation:chChip .22s cubic-bezier(.34,1.4,.5,1)}
+.ch-rx button{transition:transform .17s ease,opacity .17s ease}.ch-rx button.gone{transform:scale(.2);opacity:0}.ch-rx button.pop{animation:chPop .42s cubic-bezier(.34,1.56,.64,1)}
+@keyframes chPop{0%{scale:.2;opacity:0}60%{scale:1.22;opacity:1}100%{scale:1}}
+.ch-fe{position:absolute;z-index:6;font-style:normal;font-size:56px;line-height:1;pointer-events:none;transform:translate(-50%,-50%);animation:chFe .9s cubic-bezier(.22,1,.36,1) forwards;filter:drop-shadow(0 6px 16px rgba(0,0,0,.4))}
+@keyframes chFe{0%{scale:.3;opacity:0}22%{scale:1.25;opacity:1}40%{scale:.95}55%{scale:1.05;opacity:1}100%{scale:1;opacity:0;translate:0 -46px}}
+@media(prefers-reduced-motion:reduce){.ch-rx button.pop,.ch-fe{animation:none!important}.ch-fe{display:none}}
 .ch-rx button.me{background:#4d7bff;border-color:rgba(255,255,255,.55)}.ch-rx button span{font-size:14px}.ch-rx button b{font-size:12px}
 .ch-rxb{position:absolute;z-index:3;display:flex;gap:2px;padding:5px 6px;border-radius:30px;background:rgba(28,30,64,.72);border:1px solid rgba(255,255,255,.26);-webkit-backdrop-filter:blur(30px) saturate(1.8);backdrop-filter:blur(30px) saturate(1.8);box-shadow:0 12px 34px rgba(0,0,0,.4);animation:chMenu .22s cubic-bezier(.34,1.45,.5,1)}
 .ch-rxb button{min-height:0;width:38px;height:38px;border:0;border-radius:50%;background:none;font-size:24px;line-height:1;padding:0;cursor:pointer;transition:transform .15s}.ch-rxb button:active{transform:scale(1.35)}.ch-rxb button.on{background:rgba(255,255,255,.22)}

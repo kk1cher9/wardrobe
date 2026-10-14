@@ -42,7 +42,14 @@
     throw new Error('thumb');
   }
   const CSS = `
-.ed{position:fixed;inset:0;z-index:400;background:#000;color:#fff;display:flex;flex-direction:column;font:inherit;touch-action:manipulation;user-select:none;-webkit-user-select:none;animation:mf .2s ease}
+.ed{position:fixed;inset:0;z-index:400;background:#000;color:#fff;display:flex;flex-direction:column;font:inherit;touch-action:manipulation;user-select:none;-webkit-user-select:none;animation:edIn .34s cubic-bezier(.22,1,.36,1);transition:opacity .22s ease,transform .22s ease}
+.ed.out{opacity:0;transform:translateY(18px)}
+@keyframes edIn{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes edFade{from{opacity:.35}to{opacity:1}}
+@keyframes edPop{0%{scale:.3;opacity:0}60%{scale:1.1;opacity:1}100%{scale:1}}
+.ed-stage canvas.sw{animation:edFade .25s ease}.ed-pn.tc>*{animation:edFade .22s ease}.ed-el.new{animation:edPop .38s cubic-bezier(.34,1.56,.64,1)}.ed-el{transition:outline-color .15s}
+.ed-sel button{transition:transform .12s,background .15s}.ed-sel button:active{transform:scale(.88)}.ed-tabs button,.ed-b,.ed-sw{transition:background .2s,color .2s,transform .15s}.ed-b:active{transform:scale(.94)}.ed-fl button canvas{transition:outline-color .2s,transform .2s}.ed-fl button.on canvas{transform:scale(1.06)}
+@media(prefers-reduced-motion:reduce){.ed,.ed-stage canvas.sw,.ed-pn.tc>*,.ed-el.new{animation:none!important}}
 .ed-top{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px}.ed-top b{font-size:15px}
 .ed-top button{border:0;background:none;color:#fff;font:inherit;font-weight:700;font-size:15px;padding:8px 6px;cursor:pointer}.ed-top .ed-ok{background:#fff;color:#000;border-radius:20px;padding:8px 18px;font-weight:800}
 .ed-area{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
@@ -100,7 +107,7 @@
       document.body.appendChild(root); const prevOv = document.body.style.overflow; document.body.style.overflow = 'hidden';
       const q = (s) => root.querySelector(s), stage = q('#ed-st'), cv = q('#ed-cv'), ly = q('#ed-ly'), ctx = cv.getContext('2d', { willReadFrequently: true });
       let closed = false;
-      const finish = (v) => { if (closed) return; closed = true; window.removeEventListener('resize', size); root.remove(); document.body.style.overflow = prevOv; resolve(v); };
+      const finish = (v) => { if (closed) return; closed = true; window.removeEventListener('resize', size); document.body.style.overflow = prevOv; root.classList.add('out'); setTimeout(() => root.remove(), 230); resolve(v); };
       const flash = (m) => { const d = document.createElement('div'); d.className = 'ed-err'; d.textContent = m; root.appendChild(d); setTimeout(() => d.remove(), 2400); };
 
       // ---- the picture with the filter
@@ -191,7 +198,7 @@
       stage.addEventListener('pointerup', up); stage.addEventListener('pointercancel', up);
 
       const gifCount = () => E.els.filter((e) => e.k === 'gif').length;
-      const addEl = (e) => { if (E.els.length >= 24) return; e.id = ++uidN; E.els.push(e); E.sel = e.id; layers(); };
+      const addEl = (e) => { if (E.els.length >= 24) return; e.id = ++uidN; E.els.push(e); E.sel = e.id; layers(); const nn = ly.querySelector(`[data-id="${e.id}"]`); if (nn) nn.classList.add('new'); };
 
       // ---- panels
       function panel() {
@@ -204,7 +211,7 @@
             const x = c.getContext('2d'); sc.clearRect(0, 0, 64, 64); sc.drawImage(orig, (64 - PW * kk) / 2, (64 - PH * kk) / 2, PW * kk, PH * kk);
             const id = sc.getImageData(0, 0, 64, 64); if (c.dataset.c !== 'none') applyFilter(id.data, FILTERS[c.dataset.c], 1); x.putImageData(id, 0, 0);
           });
-          pn.querySelectorAll('[data-f]').forEach((b) => { b.onclick = () => { E.filter = b.dataset.f; paintBase(); panel(); }; });
+          pn.querySelectorAll('[data-f]').forEach((b) => { b.onclick = () => { E.filter = b.dataset.f; paintBase(); cv.classList.remove('sw'); void cv.offsetWidth; cv.classList.add('sw'); panel(); }; });
           const r = pn.querySelector('#ed-amt'); if (r) r.oninput = () => { E.amt = +r.value; paintBase(); };
         } else if (E.tab === 'text') {
           const s = selEl(), te = s && s.k === 'text' ? s : null;
@@ -261,7 +268,7 @@
         q('#ed-gq').oninput = (ev) => { clearTimeout(gifTimer); gifTimer = setTimeout(() => search(ev.target.value.trim()), 450); };
         search('');
       }
-      root.querySelectorAll('.ed-tabs button').forEach((b) => { b.onclick = () => { E.tab = b.dataset.t; panel(); }; });
+      root.querySelectorAll('.ed-tabs button').forEach((b) => { b.onclick = () => { E.tab = b.dataset.t; const pn = q('#ed-pn'); pn.classList.remove('tc'); void pn.offsetWidth; pn.classList.add('tc'); panel(); }; });
 
       // ---- bake
       async function bake() {

@@ -79,6 +79,7 @@ async def main():
     await A.evaluate("CHAT.close&&0");
     mid2=await A.evaluate("document.querySelector('.ch-row2 .ch-m.th').closest('.ch-row2').dataset.id")
     await A.dblclick(f'.ch-row2[data-id="{mid2}"] .ch-b');await A.wait_for_selector(f'.ch-row2[data-id="{mid2}"] .ch-rx button.me',timeout=4000)
+    ok('double tap animates: floating emoji and/or popping chip',await A.evaluate("!!document.querySelector('.ch-fe')||!!document.querySelector('.ch-rx button.pop')"))
     ok('double tap on a bubble adds the default reaction 👍',await A.evaluate(f"document.querySelector('.ch-row2[data-id=\"{mid2}\"] .ch-rx button.me').textContent.includes('👍')"))
     await A.dblclick(f'.ch-row2[data-id="{mid2}"] .ch-b');await A.wait_for_function(f"!document.querySelector('.ch-row2[data-id=\"{mid2}\"] .ch-rx button.me')",timeout=4000)
     ok('a second double tap removes it',True)

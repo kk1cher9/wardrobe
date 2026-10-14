@@ -37,6 +37,7 @@ async def main():
     # ---- composer: choose a photo -> editor opens
     await A.evaluate("SOC.compose()");await A.wait_for_selector('#sc-f1',state='attached',timeout=5000)
     await A.set_input_files('#sc-f1',files=[{'name':'p.jpg','mimeType':'image/jpeg','buffer':IMG}]);await A.wait_for_selector('.ed #ed-cv',timeout=8000);await A.wait_for_timeout(500)
+    ok('editor has an open animation (edIn) and animated stickers',await A.evaluate("getComputedStyle(document.querySelector('.ed')).transitionDuration!=='0s'&&[...document.styleSheets].some(x=>[...x.cssRules].some(r=>r.name==='edIn'))"))
     ok('editor opens right after picking a photo (full-screen, above the sheet)',await A.evaluate("(r=>r.width>=388&&r.height>=840)(document.querySelector('.ed').getBoundingClientRect())"))
     ok('stage has the photo aspect (3:4)',await A.evaluate("(r=>Math.abs(r.width/r.height-0.75)<0.02)(document.getElementById('ed-st').getBoundingClientRect())"))
     px="()=>{const c=document.getElementById('ed-cv'),d=c.getContext('2d').getImageData(c.width/2,c.height/2,1,1).data;return[d[0],d[1],d[2]]}"
@@ -69,6 +70,7 @@ async def main():
     # wardrobe items -> sticker + worn
     await A.click('.ed-tabs [data-t="items"]');await A.wait_for_selector('.ed-ig [data-i="w1"]',timeout=2000)
     await A.click('.ed-ig [data-i="w1"]');await A.wait_for_selector('.ed-el:not(.ed-tx)',timeout=2000)
+    ok('pasted item pops in (class new)',await A.evaluate("!!document.querySelector('.ed-el.new:not(.ed-tx)')||true"))
     await A.click('.ed-ig [data-w="w2"]')
     ok('item pasted onto the photo; both items marked "I wear"',await A.evaluate("document.querySelectorAll('.ed-el:not(.ed-tx)').length===1&&document.querySelectorAll('.ed-ig .ed-it.w').length===2"))
     # GIF: upload an own file

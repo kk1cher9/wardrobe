@@ -472,6 +472,7 @@ async function repost(id) {
   const p = st.byId.get(id); if (!p || p.mine) return;
   const on = !p.reposted, prev = { reposts: p.reposts, reposted: p.reposted };
   p.reposted = on; p.reposts = Math.max(0, (p.reposts || 0) + (on ? 1 : -1)); patchPost(p);
+  document.querySelectorAll(`[data-pid="${id}"] .sc-b.rp`).forEach((b) => { b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump'); });
   try {
     const j = await pq(on ? 'repost' : 'unrepost', { id }); p.reposts = j.reposts; p.reposted = j.reposted; patchPost(p);
     const me = st.me && st.me.profile; if (on) { if (me && st.prof[me.nick]) delete st.prof[me.nick]; } else drop(id, true);
@@ -1105,8 +1106,8 @@ const css = `
 .sc-who{border:0;background:none;color:inherit;font:inherit;display:flex;align-items:center;gap:10px;text-align:left;cursor:pointer;min-width:0;padding:0}.sc-who span{display:flex;flex-direction:column;min-width:0}.sc-who b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sc-who small{font-size:11px;color:var(--mut);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sc-fl{border:1.5px solid #fff;background:none;color:#fff;border-radius:18px;padding:6px 13px;font:inherit;font-weight:800;font-size:12px;cursor:pointer;flex:none}.sc-fl.on{border-color:#555;color:#aaa}
 .sp-img{position:relative;aspect-ratio:4/5;background:#151515;cursor:pointer;overflow:hidden;-webkit-tap-highlight-color:transparent}.sp-img img{width:100%;height:100%;object-fit:cover;display:block}.sp-img.bad::after{content:'';position:absolute;inset:0;background:#151515}
-.sc-pop{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;opacity:0;pointer-events:none}.sc-pop svg{fill:#fff;stroke:none;filter:drop-shadow(0 4px 18px rgba(0,0,0,.45))}.sp-img.pop .sc-pop{animation:scpop .8s ease}
-@keyframes scpop{0%{opacity:0;transform:scale(.4)}25%{opacity:1;transform:scale(1.1)}60%{opacity:1;transform:scale(.95)}100%{opacity:0;transform:scale(1)}}
+.sc-pop{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;opacity:0;pointer-events:none}.sc-pop svg{fill:#fff;stroke:none;filter:drop-shadow(0 4px 18px rgba(0,0,0,.45))}.sp-img.pop .sc-pop{animation:scpop .95s cubic-bezier(.22,1,.36,1)}
+@keyframes scpop{0%{opacity:0;transform:scale(.3)}18%{opacity:1;transform:scale(1.2)}34%{transform:scale(.93)}50%{transform:scale(1.05)}70%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.04) translateY(-16px)}}
 .sp-act{display:flex;align-items:center;gap:2px;padding:8px 8px 2px}.sc-b{border:0;background:none;color:#fff;display:flex;align-items:center;gap:5px;padding:7px 9px;border-radius:20px;font:inherit;font-weight:800;font-size:13px;cursor:pointer;min-width:40px;justify-content:center}.sc-b.sv{margin-left:auto}
 .sc-b.on svg{fill:currentColor}.sc-b.on:not(.sv){color:#ff4d6d}.sc-b.sv.on{color:#ffd34d}.sc-b:active svg{transform:scale(.85)}.sc-b svg{transition:transform .15s}
 .sp-t{margin:6px 16px 0;font-size:16px}.sp-c{margin:4px 16px 0;font-size:14px;line-height:1.4;font-weight:600;white-space:pre-wrap;overflow-wrap:anywhere;color:#e8e8e8}
