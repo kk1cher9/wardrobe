@@ -748,7 +748,7 @@ function wireGestures(box) {
     if (C.selMode) { togglePick(r.dataset.id); return; }
     const nowT = Date.now(), dbl = lastTap && lastTap.id === r.dataset.id && nowT - lastTap.t < 330; lastTap = { id: r.dataset.id, t: nowT };
     if (dbl) { lastTap = null; const mm = findMsg(r.dataset.id); C.sel = null; if (mm && !mm.st && !mm.del) { const cur = (mm.rx || []).find((x) => x.me); react(mm.id, cur ? cur.e : dtReact()); } else renderMsgs(false); return; } // double tap = quick reaction, 👍 unless changed in Settings (a second double tap removes it)
-    sel(r.dataset.id);
+    // a single tap does nothing: actions (reply / copy / forward / select / delete) live in the hold menu
   });
   box.addEventListener('contextmenu', (e) => { const r = rowOf(e); e.preventDefault(); if (r && e.target.closest('.ch-b')) openCtx(r.dataset.id); });
   box.addEventListener('dblclick', (e) => { const r = rowOf(e); if (r && !C.selMode) { const mm = findMsg(r.dataset.id); if (mm && !mm.del && !mm.st && matchMedia('(pointer:fine)').matches) setReply(mm); } });
