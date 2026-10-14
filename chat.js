@@ -623,15 +623,24 @@ function openCtx(id) {
   C.el.appendChild(cx);
   const r = row.getBoundingClientRect(), o = C.el.getBoundingClientRect();
   const cl = row.cloneNode(true); cl.classList.remove('new', 'hl'); cl.classList.add('ch-cl'); cl.querySelectorAll('.ch-meta').forEach((x) => x.remove());
-  cl.style.cssText = `position:absolute;left:${r.left - o.left}px;top:${r.top - o.top}px;width:${r.width}px;margin:0;max-width:none;z-index:2`; cx.insertBefore(cl, cx.querySelector('.ch-cxm')); row.style.visibility = 'hidden';
+  let bTop = r.top - o.top, bH = r.height, cap = '';
+  if (bH > o.height * .4) { bH = Math.round(o.height * .3); bTop = Math.max(110, Math.min(bTop, Math.round(o.height * .38))); cap = `max-height:${bH}px;overflow:hidden;`; } // very long message: show only its beginning so the bar and menu always fit
+  cl.style.cssText = `position:absolute;left:${r.left - o.left}px;top:${bTop}px;width:${r.width}px;margin:0;max-width:none;z-index:2;${cap}`; cx.insertBefore(cl, cx.querySelector('.ch-cxm')); row.style.visibility = 'hidden';
   const menu = cx.querySelector('.ch-cxm'), mh = menu.offsetHeight, mw = menu.offsetWidth;
-  let top = r.bottom - o.top + 8; if (top + mh > o.height - 12) top = Math.max(70, r.top - o.top - mh - 8);
+  let bar = null, bh = 0;
+  if (ok) { // quick reactions bar
+    const mine = (m.rx || []).find((x) => x.me); bar = document.createElement('div'); bar.className = 'ch-rxb';
+    bar.innerHTML = REACTS.map((e) => `<button type="button" data-e="${E(e)}" class="${mine && mine.e === e ? 'on' : ''}">${e}</button>`).join(''); cx.appendChild(bar); bh = bar.offsetHeight || 50;
+  }
+  // vertical layout: [reaction bar] / bubble / [menu]; nothing may overlap, whatever the bubble's position on screen
+  let top = bTop + bH + 8, bt = bTop - bh - 6;
+  if (bar && bt >= 64) { if (top + mh > o.height - 12) top = Math.max(64, bt - mh - 8); } // bar above the bubble; the menu goes below, or above the bar when there is no room
+  else if (bar) { bt = bTop + bH + 6; top = bt + bh + 8; if (top + mh > o.height - 12) top = Math.max(64, o.height - 12 - mh); } // bubble at the very top: bar and menu both below it
+  else if (top + mh > o.height - 12) top = Math.max(64, bTop - mh - 8);
   let left = m.mine ? r.right - o.left - mw : r.left - o.left; left = Math.max(10, Math.min(left, o.width - mw - 10));
-  menu.style.top = top + 'px'; menu.style.left = left + 'px'; menu.style.transformOrigin = (m.mine ? 'right ' : 'left ') + (top > r.top - o.top ? 'top' : 'bottom');
-  if (ok) { // quick reactions above the bubble (below the menu when the bubble sits at the very top)
-    const mine = (m.rx || []).find((x) => x.me), bar = document.createElement('div'); bar.className = 'ch-rxb';
-    bar.innerHTML = REACTS.map((e) => `<button type="button" data-e="${E(e)}" class="${mine && mine.e === e ? 'on' : ''}">${e}</button>`).join(''); cx.appendChild(bar);
-    const bw = bar.offsetWidth; let bt = r.top - o.top - 56; if (bt < 64) bt = top + mh + 8;
+  menu.style.top = top + 'px'; menu.style.left = left + 'px'; menu.style.transformOrigin = (m.mine ? 'right ' : 'left ') + (top > bTop ? 'top' : 'bottom');
+  if (bar) {
+    const bw = bar.offsetWidth;
     bar.style.top = bt + 'px'; bar.style.left = Math.max(10, Math.min(m.mine ? r.right - o.left - bw : r.left - o.left, o.width - bw - 10)) + 'px'; bar.style.transformOrigin = (m.mine ? 'right ' : 'left ') + 'bottom';
     bar.onclick = (ev) => { const b = ev.target.closest('button'); if (!b) return; closeCtx(); react(id, b.dataset.e); };
   }

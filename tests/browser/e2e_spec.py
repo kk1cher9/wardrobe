@@ -85,6 +85,13 @@ async def main():
     ok('a second double tap removes it',True)
     await A.evaluate("go('settings')");await A.wait_for_timeout(600)
     ok('settings: "Double-tap reaction" select, default 👍, 8 options',await A.evaluate("(()=>{const s=[...document.querySelectorAll('select')].find(x=>x.options.length===8&&x.options[0].value==='👍');return !!s&&s.value==='👍'})()"))
+    OVL="""()=>{const b=document.querySelector('.ch-rxb').getBoundingClientRect(),m=document.querySelector('.ch-cxm').getBoundingClientRect(),c=document.querySelector('.ch-cl').getBoundingClientRect();const hit=(x,y)=>!(x.right<=y.left+4||y.right<=x.left+4||x.bottom<=y.top+6||y.bottom<=x.top+6);return{bm:hit(b,m),bc:hit(b,c),mc:hit(m,c),inside:m.bottom<=innerHeight&&m.top>=0&&b.top>=0}}"""
+    for which in ('last','first'):
+        rid=await A.evaluate("(w=>{const r=[...document.querySelectorAll('.ch-row2')].filter(x=>x.querySelector('.ch-b:not(.del)'));return r[w==='last'?r.length-1:0].dataset.id})('"+which+"')")
+        await A.evaluate(f"CHAT.openCtx('{rid}')");await A.wait_for_selector('.ch-rxb',timeout=3000);await A.wait_for_timeout(500)
+        ov=await A.evaluate(OVL)
+        ok(f'hold menu on the {which} message: reaction bar, bubble and menu do not overlap, all on screen',not ov['bm'] and not ov['bc'] and not ov['mc'] and ov['inside'])
+        await A.evaluate("document.querySelector('.ch-cx').remove();CHAT.sel&&0");await A.wait_for_timeout(200)
     await A.evaluate("S.set.dtr='🔥';save();go('chat')");await A.wait_for_selector('.ch-row:not(.ch-sv)',timeout=8000);await A.evaluate("document.querySelector('.ch-row:not(.ch-sv)').click()");await A.wait_for_selector(f'.ch-row2[data-id="{mid2}"] .ch-b',timeout=8000);await A.wait_for_timeout(500)
     await A.dblclick(f'.ch-row2[data-id="{mid2}"] .ch-b');await A.wait_for_selector(f'.ch-row2[data-id="{mid2}"] .ch-rx button.me',timeout=4000)
     ok('configured reaction is used by double tap (🔥)',await A.evaluate(f"document.querySelector('.ch-row2[data-id=\"{mid2}\"] .ch-rx button.me').textContent.includes('🔥')"))
