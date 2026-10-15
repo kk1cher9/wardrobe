@@ -63,7 +63,7 @@ try:
     n=pg.evaluate("caches.keys().then(async k=>{let n=0;for(const x of k){n+=(await (await caches.open(x)).keys()).filter(r=>/\\/demo\\/.*\\.webp$/.test(r.url)).length}return n})")
     files=len([f for f in os.listdir(os.path.join(ROOT,'demo')) if f.endswith('.webp')])
     ok(f'service worker precached all {files} demo pictures',n==files,f'{n}/{files}')
-    c.set_offline(True);pg.reload();pg.wait_for_timeout(2500);pg.evaluate("document.querySelectorAll('.gp').forEach(g=>g.classList.add('open'))");pg.wait_for_timeout(1500)
+    c.set_offline(True);pg.reload();pg.wait_for_timeout(2500);pg.evaluate("document.querySelectorAll('.gp').forEach(g=>g.classList.add('open'));document.querySelectorAll('.pt img').forEach(i=>{i.loading='eager'})");pg.wait_for_timeout(2500)
     done=pg.evaluate("[...document.querySelectorAll('.pt img')].filter(i=>i.complete&&i.naturalWidth>0).length")
     tot=pg.evaluate("document.querySelectorAll('.pt img').length")
     ok('offline: picker tiles show their pictures',tot>=40 and done==tot,f'{done}/{tot}')
