@@ -54,17 +54,25 @@ async def main():
     await A.click('.ed-fl button[data-f="vivid"]')
     # text
     await A.click('.ed-tabs [data-t="text"]');await A.click('#ed-at');await A.wait_for_selector('.ed-tx',timeout=2000)
-    await A.fill('#ed-ti','Мой образ');await A.click('.ed-sw[data-c="#ffd23f"]')
+    await A.fill('#ed-ti','Мой образ');await A.click('#ed-cb');await A.click('.ed-sw[data-c="#ffd23f"]')
     ok('text is on the stage, typed text applied, colour applied',await A.evaluate("(n=>n.textContent==='Мой образ'&&getComputedStyle(n).color==='rgb(255, 210, 63)')(document.querySelector('.ed-tx'))"))
     # drag the text with a pointer
     bb=await A.evaluate("(r=>[r.x+r.width/2,r.y+r.height/2])(document.querySelector('.ed-tx').getBoundingClientRect())")
     await A.mouse.move(bb[0],bb[1]);await A.mouse.down();await A.mouse.move(bb[0]-60,bb[1]+120,steps=6);await A.mouse.up()
     mv=await A.evaluate("(n=>[parseFloat(n.style.left),parseFloat(n.style.top)])(document.querySelector('.ed-tx'))")
     ok('text follows the pointer (moved left/down)',mv[0]<45 and mv[1]>60)
-    ok('8 fonts offered, system stacks, Aa preview in own font',await A.evaluate("document.querySelectorAll('.ed-fo [data-fo]').length===8&&new Set([...document.querySelectorAll('.ed-fo [data-fo]')].map(b=>b.style.fontFamily)).size===8"))
-    await A.click('.ed-fo [data-fo="serif"]');ff=await A.evaluate("getComputedStyle(document.querySelector('.ed-tx')).fontFamily")
-    ok('font applied to the selected text (serif)','Georgia' in ff)
-    await A.click('.ed-fo [data-fo="script"]')
+    seen=[]
+    for i in range(9):
+        seen.append(await A.evaluate("getComputedStyle(document.querySelector('.ed-tx')).fontFamily"));await A.click('#ed-fn')
+    ok('font button cycles through 8 distinct system fonts and wraps',len(set(seen[:8]))==8 and seen[8]==seen[0])
+    ok('colour button opens the palette (+custom picker)',await A.evaluate("!!document.querySelector('.ed-pal .ed-cu input[type=color]')&&document.querySelectorAll('.ed-pal .ed-sw[data-c]').length===7"))
+    fxs=[]
+    for i in range(7):
+        fxs.append(await A.evaluate("(n=>n.style.textShadow+'|'+n.style.background+'|'+n.style.color)(document.querySelector('.ed-tx'))"));await A.click('#ed-fx')
+    ok('effect button cycles 7 distinct looks (shadow, neon, glow, outline, retro, bg, plain)',len(set(fxs))==7)
+    await A.click('#ed-fx')
+    ok('neon: white core with coloured glow',await A.evaluate("(n=>n.style.color==='rgb(255, 255, 255)'&&/rgb\\(255, 210, 63\\)/.test(n.style.textShadow))(document.querySelector('.ed-tx'))"))
+    await A.click('#ed-fn');await A.click('#ed-fn')
     await A.click('#ed-sel [data-a="p"]');await A.click('#ed-sel [data-a="r"]')
     ok('size/rotate buttons work on the selected element',await A.evaluate("(n=>/rotate\\(10deg\\)/.test(n.style.transform)&&parseFloat(n.style.fontSize)>0)(document.querySelector('.ed-tx'))"))
     # wardrobe items -> sticker + worn

@@ -6,9 +6,9 @@
   'use strict';
   const LANG = () => (window.I18N && I18N.lang) || 'ru';
   const TX = {
-    ru: { title: 'Редактор', cancel: 'Отмена', done: 'Готово', filters: 'Фильтры', text: 'Текст', items: 'Вещи', gif: 'GIF', amount: 'Сила фильтра', addText: '+ Текст', defText: 'Текст', typeHere: 'Введите текст', bg: 'Фон', del: 'Удалить', noSel: 'Выберите текст на фото', itemsHint: 'Нажмите на вещь — она появится на фото. Галочка — «на мне» (покажем под фото).', wear: 'На мне', showFit: 'Показать под фото, во что я одет(а)', noItems: 'В гардеробе пока нет вещей', gifSearch: 'Поиск GIF', gifUpload: 'Загрузить свой GIF', gifOff: 'Поиск GIF не подключён — можно загрузить свой файл.', gifBig: 'GIF слишком большой (до 260 КБ)', gifBad: 'Это не GIF', gifMax: 'Не больше 3 своих GIF и 8 наклеек', none: 'Нет', loading: 'Загрузка…', nothing: 'Ничего не найдено', err: 'Не удалось подготовить фото', f: { none: 'Оригинал', vivid: 'Яркий', warm: 'Тёплый', cool: 'Холодный', bw: 'Ч/б', noir: 'Нуар', sepia: 'Сепия', fade: 'Выцветший', vintage: 'Винтаж', drama: 'Драма' } },
-    uk: { title: 'Редактор', cancel: 'Скасувати', done: 'Готово', filters: 'Фільтри', text: 'Текст', items: 'Речі', gif: 'GIF', amount: 'Сила фільтра', addText: '+ Текст', defText: 'Текст', typeHere: 'Введіть текст', bg: 'Тло', del: 'Видалити', noSel: 'Оберіть текст на фото', itemsHint: 'Натисніть на річ — вона з’явиться на фото. Пташка — «на мені» (покажемо під фото).', wear: 'На мені', showFit: 'Показати під фото, у що я вдягнений(а)', noItems: 'У гардеробі поки немає речей', gifSearch: 'Пошук GIF', gifUpload: 'Завантажити свій GIF', gifOff: 'Пошук GIF не підключено — можна завантажити свій файл.', gifBig: 'GIF завеликий (до 260 КБ)', gifBad: 'Це не GIF', gifMax: 'Не більше 3 своїх GIF і 8 наліпок', none: 'Ні', loading: 'Завантаження…', nothing: 'Нічого не знайдено', err: 'Не вдалося підготувати фото', f: { none: 'Оригінал', vivid: 'Яскравий', warm: 'Теплий', cool: 'Холодний', bw: 'Ч/б', noir: 'Нуар', sepia: 'Сепія', fade: 'Вицвілий', vintage: 'Вінтаж', drama: 'Драма' } },
-    en: { title: 'Editor', cancel: 'Cancel', done: 'Done', filters: 'Filters', text: 'Text', items: 'Items', gif: 'GIF', amount: 'Filter strength', addText: '+ Text', defText: 'Text', typeHere: 'Type text', bg: 'Background', del: 'Delete', noSel: 'Select a text on the photo', itemsHint: 'Tap an item to paste it on the photo. The tick means “I wear this” (shown under the photo).', wear: 'I wear it', showFit: 'Show what I wear under the photo', noItems: 'No items in your wardrobe yet', gifSearch: 'Search GIFs', gifUpload: 'Upload your own GIF', gifOff: 'GIF search is not connected — you can upload your own file.', gifBig: 'GIF is too large (up to 260 KB)', gifBad: 'This is not a GIF', gifMax: 'Up to 3 own GIFs and 8 stickers', none: 'None', loading: 'Loading…', nothing: 'Nothing found', err: 'Could not prepare the photo', f: { none: 'Original', vivid: 'Vivid', warm: 'Warm', cool: 'Cool', bw: 'B&W', noir: 'Noir', sepia: 'Sepia', fade: 'Faded', vintage: 'Vintage', drama: 'Drama' } }
+    ru: { title: 'Редактор', cancel: 'Отмена', done: 'Готово', filters: 'Фильтры', text: 'Текст', items: 'Вещи', gif: 'GIF', amount: 'Сила фильтра', addText: '+ Текст', defText: 'Текст', typeHere: 'Введите текст', bg: 'Фон', fx: { none: 'Чистый', shadow: 'Тень', bg: 'Фон', neon: 'Неон', glow: 'Свечение', outline: 'Контур', retro: 'Ретро' }, del: 'Удалить', noSel: 'Выберите текст на фото', itemsHint: 'Нажмите на вещь — она появится на фото. Галочка — «на мне» (покажем под фото).', wear: 'На мне', showFit: 'Показать под фото, во что я одет(а)', noItems: 'В гардеробе пока нет вещей', gifSearch: 'Поиск GIF', gifUpload: 'Загрузить свой GIF', gifOff: 'Поиск GIF не подключён — можно загрузить свой файл.', gifBig: 'GIF слишком большой (до 260 КБ)', gifBad: 'Это не GIF', gifMax: 'Не больше 3 своих GIF и 8 наклеек', none: 'Нет', loading: 'Загрузка…', nothing: 'Ничего не найдено', err: 'Не удалось подготовить фото', f: { none: 'Оригинал', vivid: 'Яркий', warm: 'Тёплый', cool: 'Холодный', bw: 'Ч/б', noir: 'Нуар', sepia: 'Сепия', fade: 'Выцветший', vintage: 'Винтаж', drama: 'Драма' } },
+    uk: { title: 'Редактор', cancel: 'Скасувати', done: 'Готово', filters: 'Фільтри', text: 'Текст', items: 'Речі', gif: 'GIF', amount: 'Сила фільтра', addText: '+ Текст', defText: 'Текст', typeHere: 'Введіть текст', bg: 'Тло', fx: { none: 'Чистий', shadow: 'Тінь', bg: 'Тло', neon: 'Неон', glow: 'Сяйво', outline: 'Контур', retro: 'Ретро' }, del: 'Видалити', noSel: 'Оберіть текст на фото', itemsHint: 'Натисніть на річ — вона з’явиться на фото. Пташка — «на мені» (покажемо під фото).', wear: 'На мені', showFit: 'Показати під фото, у що я вдягнений(а)', noItems: 'У гардеробі поки немає речей', gifSearch: 'Пошук GIF', gifUpload: 'Завантажити свій GIF', gifOff: 'Пошук GIF не підключено — можна завантажити свій файл.', gifBig: 'GIF завеликий (до 260 КБ)', gifBad: 'Це не GIF', gifMax: 'Не більше 3 своїх GIF і 8 наліпок', none: 'Ні', loading: 'Завантаження…', nothing: 'Нічого не знайдено', err: 'Не вдалося підготувати фото', f: { none: 'Оригінал', vivid: 'Яскравий', warm: 'Теплий', cool: 'Холодний', bw: 'Ч/б', noir: 'Нуар', sepia: 'Сепія', fade: 'Вицвілий', vintage: 'Вінтаж', drama: 'Драма' } },
+    en: { title: 'Editor', cancel: 'Cancel', done: 'Done', filters: 'Filters', text: 'Text', items: 'Items', gif: 'GIF', amount: 'Filter strength', addText: '+ Text', defText: 'Text', typeHere: 'Type text', bg: 'Background', fx: { none: 'Plain', shadow: 'Shadow', bg: 'Background', neon: 'Neon', glow: 'Glow', outline: 'Outline', retro: 'Retro' }, del: 'Delete', noSel: 'Select a text on the photo', itemsHint: 'Tap an item to paste it on the photo. The tick means “I wear this” (shown under the photo).', wear: 'I wear it', showFit: 'Show what I wear under the photo', noItems: 'No items in your wardrobe yet', gifSearch: 'Search GIFs', gifUpload: 'Upload your own GIF', gifOff: 'GIF search is not connected — you can upload your own file.', gifBig: 'GIF is too large (up to 260 KB)', gifBad: 'This is not a GIF', gifMax: 'Up to 3 own GIFs and 8 stickers', none: 'None', loading: 'Loading…', nothing: 'Nothing found', err: 'Could not prepare the photo', f: { none: 'Original', vivid: 'Vivid', warm: 'Warm', cool: 'Cool', bw: 'B&W', noir: 'Noir', sepia: 'Sepia', fade: 'Faded', vintage: 'Vintage', drama: 'Drama' } }
   };
   const tx = (k) => { const v = (TX[LANG()] || TX.ru)[k]; return v === undefined ? TX.ru[k] : v; };
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -58,12 +58,12 @@
 .ed-el img{width:100%;display:block;pointer-events:none;-webkit-user-drag:none}.ed-tx{font-weight:800;white-space:pre;line-height:1.2;text-shadow:0 1px 6px rgba(0,0,0,.35);font-family:-apple-system,system-ui,sans-serif}.ed-tx.bg{text-shadow:none;border-radius:.25em;padding:.1em .4em}
 .ed-sel{display:flex;gap:6px;justify-content:center;align-items:center;padding:6px 10px;min-height:44px}.ed-sel button{border:0;background:#262626;color:#fff;width:44px;height:36px;border-radius:18px;font:inherit;font-weight:800;font-size:17px;cursor:pointer}.ed-sel button.dl{color:#ff6b6b}
 .ed-area{position:relative}.ed-tabs{position:absolute;right:8px;top:50%;transform:translateY(-50%);z-index:6;display:flex;flex-direction:column;gap:10px}.ed-tabs button{display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:44px;height:44px;min-width:44px;padding:0;border:0;background:rgba(30,30,30,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#fff;font:inherit;font-weight:800;font-size:13px;border-radius:50%;cursor:pointer}.ed-tabs button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.ed-tabs button.on{background:#fff;color:#000}
-.ed-pn{height:150px;overflow:auto;padding:8px 10px calc(10px + env(safe-area-inset-bottom,0px));-webkit-overflow-scrolling:touch}
+.ed-pn{height:170px;overflow:auto;padding:8px 10px calc(10px + env(safe-area-inset-bottom,0px));-webkit-overflow-scrolling:touch}
 .ed-fl{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px}.ed-fl button{flex:none;border:0;background:none;color:#ccc;font:inherit;font-size:11px;font-weight:700;cursor:pointer;padding:0;width:64px}.ed-fl button canvas{width:64px;height:64px;border-radius:12px;display:block;margin-bottom:4px;outline:2px solid transparent}.ed-fl button.on{color:#fff}.ed-fl button.on canvas{outline-color:#fff}
 .ed-rg{display:flex;align-items:center;gap:10px;font-size:12px;color:#aaa;margin-top:4px}.ed-rg input{flex:1}
 .ed-tr{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.ed-tr input[type=text]{flex:1;min-width:120px;border:1px solid #333;background:#161616;color:#fff;border-radius:12px;padding:10px 12px;font:inherit;font-size:16px}.ed-tr input:disabled{opacity:.4}
 .ed-sw{box-sizing:border-box;width:28px;height:28px;min-width:28px;max-width:28px;min-height:28px;max-height:28px;aspect-ratio:1/1;border-radius:50%;border:2px solid #444;cursor:pointer;flex:none;padding:0}.ed-sw.on{border-color:#fff;transform:scale(1.15)}
-.ed-b{border:0;background:#262626;color:#fff;font:inherit;font-weight:700;font-size:13px;border-radius:16px;padding:9px 13px;cursor:pointer}.ed-b.on{background:#fff;color:#000}
+.ed-tb{min-width:76px;display:inline-flex;align-items:center;justify-content:center;gap:6px;height:38px;padding:0 14px}.ed-tb i{font-style:normal;opacity:.55;font-family:system-ui}.ed-cb{width:34px;height:34px;min-width:34px;max-width:34px;min-height:34px;max-height:34px}.ed-cu{position:relative;overflow:hidden;background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red)}.ed-cu input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}.ed-b{border:0;background:#262626;color:#fff;font:inherit;font-weight:700;font-size:13px;border-radius:16px;padding:9px 13px;cursor:pointer}.ed-b.on{background:#fff;color:#000}
 .ed-ig{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px}.ed-ig .ed-it{position:relative;border:0;padding:0;background:#fff;border-radius:12px;aspect-ratio:1;overflow:hidden;cursor:pointer}.ed-ig .ed-it img{width:100%;height:100%;object-fit:contain;display:block}
 .ed-ig .ed-ck{position:absolute;right:3px;top:3px;box-sizing:border-box;width:22px;height:22px;min-width:22px;max-width:22px;min-height:22px;max-height:22px;aspect-ratio:1/1;padding:0;line-height:1;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;border:1.5px solid #fff;font-size:13px;display:flex;align-items:center;justify-content:center}.ed-ig .ed-it.w .ed-ck{background:#2ecc71;border-color:#2ecc71}
 .ed-note{font-size:12px;color:#999;margin:6px 0}.ed-gg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.ed-gg button{border:0;padding:0;background:#222;border-radius:10px;aspect-ratio:1;overflow:hidden;cursor:pointer}.ed-gg img{width:100%;height:100%;object-fit:cover;display:block}
@@ -82,6 +82,21 @@
   };
   const fnt = (e) => FONTS[e.font] || FONTS.sans;
   const COLORS = ['#ffffff', '#000000', '#ff4d6d', '#ffd23f', '#3ddc84', '#4cc9f0', '#b388ff'];
+  const FXS = ['shadow', 'neon', 'glow', 'outline', 'retro', 'bg', 'none'];
+  const fxOf = (e) => e.fx || (e.bg ? 'bg' : 'shadow');
+  const NEON = (c) => (c === '#ffffff' ? '#4cc9f0' : c);
+  const CON = (c) => (c === '#000000' ? '#ffffff' : '#000000');
+  // DOM look of a text layer (the canvas bake in draw() mirrors these)
+  function fxCss(e) {
+    const f = fxOf(e), c = e.color; let col = c, sh = 'none', bg = 'transparent';
+    if (f === 'shadow') sh = '0 .04em .15em rgba(0,0,0,.35)';
+    else if (f === 'bg') bg = c === '#000000' ? 'rgba(255,255,255,.85)' : 'rgba(0,0,0,.55)';
+    else if (f === 'neon') { const g = NEON(c); col = '#ffffff'; sh = `0 0 .06em #fff,0 0 .15em #fff,0 0 .3em ${g},0 0 .6em ${g},0 0 1em ${g}`; }
+    else if (f === 'glow') sh = `0 0 .2em ${c},0 0 .5em ${c}`;
+    else if (f === 'outline') { const o = CON(c); sh = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, -1], [1, -1], [-1, 1]].map(([a, b]) => `${a * .045}em ${b * .045}em 0 ${o}`).join(','); }
+    else if (f === 'retro') sh = `.05em .05em 0 ${CON(c)},.1em .1em 0 ${CON(c)}`;
+    return { col, sh, bg };
+  }
   let uidN = 0;
 
   async function open(o) {
@@ -93,7 +108,7 @@
     const CW = Math.max(1, Math.round(base.width * k0)), CH = Math.max(1, Math.round(base.height * k0));
     const PK = Math.min(1, 760 / Math.max(CW, CH)), PW = Math.max(1, Math.round(CW * PK)), PH = Math.max(1, Math.round(CH * PK));
     const prevSt = o.state || {};
-    const E = { filter: prevSt.filter || 'none', amt: prevSt.amt == null ? 100 : prevSt.amt, els: (prevSt.els || []).map((e) => ({ ...e, id: ++uidN })), sel: null, worn: new Set(prevSt.worn || []), showFit: prevSt.showFit !== false, tab: 'filters' };
+    const E = { filter: prevSt.filter || 'none', amt: prevSt.amt == null ? 100 : prevSt.amt, els: (prevSt.els || []).map((e) => ({ ...e, id: ++uidN })), sel: null, worn: new Set(prevSt.worn || []), showFit: prevSt.showFit !== false, tab: 'filters', pal: false };
     const imgCache = new Map(); // wardrobe item id -> HTMLImageElement
     const items = (typeof S !== 'undefined' && S.items) || [];
 
@@ -139,7 +154,7 @@
       function style(e, node) {
         node.style.left = e.x + '%'; node.style.top = e.y + '%';
         node.style.transform = `translate(-50%,-50%) rotate(${e.r}deg)`;
-        if (e.k === 'text') { node.style.fontSize = (e.fs / 100 * SW) + 'px'; node.style.fontFamily = fnt(e).f; node.style.fontWeight = fnt(e).w; node.style.color = e.color; node.style.background = e.bg ? (e.color === '#000000' ? 'rgba(255,255,255,.85)' : 'rgba(0,0,0,.55)') : 'transparent'; node.style.width = ''; }
+        if (e.k === 'text') { node.style.fontSize = (e.fs / 100 * SW) + 'px'; node.style.fontFamily = fnt(e).f; node.style.fontWeight = fnt(e).w; const fc = fxCss(e); node.style.color = fc.col; node.style.background = fc.bg; node.style.textShadow = fc.sh; node.classList.toggle('bg', fxOf(e) === 'bg'); node.style.width = ''; }
         else node.style.width = e.w + '%';
         node.classList.toggle('sel', E.sel === e.id);
       }
@@ -147,7 +162,7 @@
       function layers() {
         ly.innerHTML = '';
         E.els.forEach((e) => {
-          const n = document.createElement('div'); n.className = 'ed-el' + (e.k === 'text' ? ' ed-tx' + (e.bg ? ' bg' : '') : ''); n.dataset.id = e.id; n.innerHTML = elHtml(e); style(e, n); ly.appendChild(n);
+          const n = document.createElement('div'); n.className = 'ed-el' + (e.k === 'text' ? ' ed-tx' : ''); n.dataset.id = e.id; n.innerHTML = elHtml(e); style(e, n); ly.appendChild(n);
         });
         controls();
       }
@@ -214,15 +229,19 @@
           const r = pn.querySelector('#ed-amt'); if (r) r.oninput = () => { E.amt = +r.value; paintBase(); };
         } else if (E.tab === 'text') {
           const s = selEl(), te = s && s.k === 'text' ? s : null;
+          const fo = te ? (te.font || 'sans') : 'sans', fx = te ? fxOf(te) : 'shadow';
           pn.innerHTML = `<div class="ed-tr"><button type="button" class="ed-b" id="ed-at">${esc(tx('addText'))}</button><input type="text" id="ed-ti" maxlength="80" placeholder="${esc(te ? tx('typeHere') : tx('noSel'))}" value="${te ? esc(te.text) : ''}" ${te ? '' : 'disabled'}></div>
-            <div class="ed-tr ed-fo" style="margin-top:10px">${Object.keys(FONTS).map((k) => `<button type="button" class="ed-b${te && (te.font || 'sans') === k ? ' on' : ''}" data-fo="${k}" ${te ? '' : 'disabled'} style="font-family:${FONTS[k].f.replace(/"/g, "'")};font-weight:${FONTS[k].w}">Aa</button>`).join('')}</div>
-            <div class="ed-tr" style="margin-top:10px">${COLORS.map((c) => `<button type="button" class="ed-sw${te && te.color === c ? ' on' : ''}" data-c="${c}" style="background:${c}" aria-label="${c}"></button>`).join('')}<button type="button" class="ed-b${te && te.bg ? ' on' : ''}" id="ed-bg" ${te ? '' : 'disabled'}>${esc(tx('bg'))}</button></div>`;
+            <div class="ed-tr" style="margin-top:10px"><button type="button" class="ed-b ed-tb" id="ed-fn" ${te ? '' : 'disabled'} aria-label="font" style="font-family:${FONTS[fo].f.replace(/"/g, "'")};font-weight:${FONTS[fo].w}">Aa <i>›</i></button><button type="button" class="ed-b ed-tb" id="ed-fx" ${te ? '' : 'disabled'}>${esc(tx('fx')[fx])} <i>›</i></button><button type="button" class="ed-sw ed-cb${E.pal ? ' on' : ''}" id="ed-cb" ${te ? '' : 'disabled'} aria-label="color" style="background:${te ? te.color : '#fff'}"></button></div>
+            ${E.pal && te ? `<div class="ed-tr ed-pal" style="margin-top:10px">${COLORS.map((c) => `<button type="button" class="ed-sw${te.color === c ? ' on' : ''}" data-c="${c}" style="background:${c}" aria-label="${c}"></button>`).join('')}<label class="ed-sw ed-cu" aria-label="custom"><input type="color" id="ed-cc" value="${/^#[0-9a-f]{6}$/i.test(te.color) ? te.color : '#ffffff'}"></label></div>` : ''}`;
           const live = () => { const t = selEl(); if (!t || t.k !== 'text') return null; return t; };
-          q('#ed-at').onclick = () => { addEl({ k: 'text', text: tx('defText'), x: 50, y: 50, w: 0, fs: 8, r: 0, color: '#ffffff', bg: false, font: 'sans' }); panel(); const i = q('#ed-ti'); if (i) { i.focus(); i.select(); } };
+          q('#ed-at').onclick = () => { addEl({ k: 'text', text: tx('defText'), x: 50, y: 50, w: 0, fs: 8, r: 0, color: '#ffffff', fx: 'shadow', font: 'sans' }); panel(); const i = q('#ed-ti'); if (i) { i.focus(); i.select(); } };
           const ti = q('#ed-ti'); ti.oninput = () => { const t = live(); if (!t) return; t.text = ti.value || ' '; const n = ly.querySelector(`[data-id="${t.id}"]`); if (n) n.textContent = t.text; };
           pn.querySelectorAll('[data-c]').forEach((b) => { b.onclick = () => { const t = live(); if (!t) return; t.color = b.dataset.c; place(); panel(); }; });
-          pn.querySelectorAll('[data-fo]').forEach((b) => { b.onclick = () => { const t = live(); if (!t) return; t.font = b.dataset.fo; layers(); panel(); }; });
-          const bg = q('#ed-bg'); bg.onclick = () => { const t = live(); if (!t) return; t.bg = !t.bg; layers(); panel(); };
+          const nx = (arr, v) => arr[(arr.indexOf(v) + 1) % arr.length];
+          q('#ed-fn').onclick = () => { const t = live(); if (!t) return; t.font = nx(Object.keys(FONTS), t.font || 'sans'); layers(); panel(); };
+          q('#ed-fx').onclick = () => { const t = live(); if (!t) return; t.fx = nx(FXS, fxOf(t)); delete t.bg; layers(); panel(); };
+          q('#ed-cb').onclick = () => { E.pal = !E.pal; panel(); };
+          const cc = q('#ed-cc'); if (cc) cc.oninput = () => { const t = live(); if (!t) return; t.color = cc.value; place(); const cb = q('#ed-cb'); if (cb) cb.style.background = t.color; };
         } else if (E.tab === 'items') {
           if (!items.length) { pn.innerHTML = `<p class="ed-note">${esc(tx('noItems'))}</p>`; return; }
           pn.innerHTML = `<p class="ed-note">${esc(tx('itemsHint'))}</p><div class="ed-ig">${items.map((i) => `<div style="position:relative"><button type="button" class="ed-it${E.worn.has(i.id) ? ' w' : ''}" data-i="${esc(i.id)}" aria-label="${esc(i.name)}"><img src="${esc(i.img)}" alt="${esc(i.name)}" loading="lazy"></button><button type="button" class="ed-ck" data-w="${esc(i.id)}" aria-label="${esc(tx('wear'))}" style="border:1.5px solid #fff;padding:0;cursor:pointer;${E.worn.has(i.id) ? 'background:#2ecc71;border-color:#2ecc71;' : ''}">✓</button></div>`).join('')}</div>
@@ -281,9 +300,15 @@
           else {
             const px = e.fs / 100 * CW, lines = String(e.text).split('\n'); x.font = `${fnt(e).w} ${px}px ${fnt(e).f}`; x.textAlign = 'center'; x.textBaseline = 'middle';
             const lh = px * 1.2, tw = Math.max(...lines.map((l) => x.measureText(l).width)), th = lh * lines.length;
-            if (e.bg) { x.fillStyle = e.color === '#000000' ? 'rgba(255,255,255,.85)' : 'rgba(0,0,0,.55)'; const pad = px * .4, r = px * .25, bw = tw + pad * 2, bh = th + px * .2; x.beginPath(); x.moveTo(-bw / 2 + r, -bh / 2); x.arcTo(bw / 2, -bh / 2, bw / 2, bh / 2, r); x.arcTo(bw / 2, bh / 2, -bw / 2, bh / 2, r); x.arcTo(-bw / 2, bh / 2, -bw / 2, -bh / 2, r); x.arcTo(-bw / 2, -bh / 2, bw / 2, -bh / 2, r); x.closePath(); x.fill(); }
-            else { x.shadowColor = 'rgba(0,0,0,.35)'; x.shadowBlur = px * .15; x.shadowOffsetY = px * .04; }
-            x.fillStyle = e.color; lines.forEach((l, i) => x.fillText(l, 0, (i - (lines.length - 1) / 2) * lh));
+            const f = fxOf(e), c = e.color, fill = () => lines.forEach((l, i) => x.fillText(l, 0, (i - (lines.length - 1) / 2) * lh)), ln = (dx, dy) => lines.forEach((l, i) => x.fillText(l, dx, dy + (i - (lines.length - 1) / 2) * lh));
+            x.fillStyle = c;
+            if (f === 'bg') { x.fillStyle = c === '#000000' ? 'rgba(255,255,255,.85)' : 'rgba(0,0,0,.55)'; const pad = px * .4, r = px * .25, bw = tw + pad * 2, bh = th + px * .2; x.beginPath(); x.moveTo(-bw / 2 + r, -bh / 2); x.arcTo(bw / 2, -bh / 2, bw / 2, bh / 2, r); x.arcTo(bw / 2, bh / 2, -bw / 2, bh / 2, r); x.arcTo(-bw / 2, bh / 2, -bw / 2, -bh / 2, r); x.arcTo(-bw / 2, -bh / 2, bw / 2, -bh / 2, r); x.closePath(); x.fill(); x.fillStyle = c; fill(); }
+            else if (f === 'shadow') { x.shadowColor = 'rgba(0,0,0,.35)'; x.shadowBlur = px * .15; x.shadowOffsetY = px * .04; fill(); }
+            else if (f === 'neon') { const g = NEON(c); x.fillStyle = '#fff'; x.shadowColor = g; [[.3, 1], [.6, 1], [1, 1], [.1, 1]].forEach(([bl]) => { x.shadowBlur = px * bl; fill(); }); x.shadowBlur = 0; x.shadowColor = 'transparent'; fill(); }
+            else if (f === 'glow') { x.shadowColor = c; x.shadowBlur = px * .5; fill(); x.shadowBlur = px * .2; fill(); }
+            else if (f === 'outline') { x.lineJoin = 'round'; x.lineWidth = px * .1; x.strokeStyle = CON(c); lines.forEach((l, i) => x.strokeText(l, 0, (i - (lines.length - 1) / 2) * lh)); fill(); }
+            else if (f === 'retro') { x.fillStyle = CON(c); ln(px * .1, px * .1); ln(px * .05, px * .05); x.fillStyle = c; fill(); }
+            else fill();
           }
           x.restore();
         }
