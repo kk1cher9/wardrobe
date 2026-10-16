@@ -193,6 +193,7 @@ h2.h3{font-size:15px;margin:20px 4px 12px}
 body.sv-open #app,body.sv-open nav{visibility:hidden}
 /* iOS home-screen apps anchor fixed-bottom bars ~60px higher when the page cannot scroll (Home, Wardrobe, Chats) than when it can (Outfits, Driply): always keep the page scrollable so the tab bar sits at the same place everywhere */
 #app{min-height:calc(100vh + 2px)}
+.lb{position:relative}.lkd{position:absolute;left:0;right:0;bottom:8px;display:flex;justify-content:center;gap:5px;pointer-events:none}.lkd i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.45)}.lkd i.on{background:#fff}
 </style></head><body>
 <div id="off">Нет интернета — показаны сохранённые данные</div>
 <div id="app"></div>
@@ -675,10 +676,21 @@ const curCtx=()=>rangeCtx(S.w,S.set.range||'all');
 
 function toast(t){const o=document.getElementById('toast');if(o)o.remove();const e=document.createElement('div');e.id='toast';e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.classList.add('out'),1500);setTimeout(()=>e.remove(),1900)}
 const lookTxt=r=>r.tips.slice(0,2).join(' ')+' '+(r.look||[]).join(' ');
+// swipe through today's looks: left = next (a fresh one when at the end), right = previous
+S.lkH=[];S.lkI=0;
+function swipeLook(d){
+ if(!S.w||!S.gen)return;
+ if(S.lkH.indexOf(S.gen)<0){S.lkH=[S.gen];S.lkI=0}else S.lkI=S.lkH.indexOf(S.gen);
+ if(d>0){if(S.lkI<S.lkH.length-1){S.lkI++;S.gen=S.lkH[S.lkI];S.rr=1;S.genSig=itemSig();rememberToday(S.gen);render()}
+  else{gen();S.lkH.push(S.gen);if(S.lkH.length>12){S.lkH.shift()}S.lkI=S.lkH.length-1}}
+ else if(S.lkI>0){S.lkI--;S.gen=S.lkH[S.lkI];S.rr=1;S.genSig=itemSig();rememberToday(S.gen);render()}}
+(function(){let x0=0,y0=0,on=false;
+ addEventListener('touchstart',e=>{const t=e.target.closest&&e.target.closest('.lb');on=!!t&&e.touches.length===1;if(on){x0=e.touches[0].clientX;y0=e.touches[0].clientY}},{passive:true});
+ addEventListener('touchend',e=>{if(!on)return;on=false;const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5)swipeLook(dx<0?1:-1)},{passive:true})})();
 function lbBlock(r,rr,go_){
  const L=lookUrl(r);
  const inner=L?`<img id="lbimg" src="${L.url}" alt="Outfit">`:r.demo?`<div class="lbph">${r.plan.map(i=>`<span><i class="dot" style="background:${famHex(i.color)}"></i>${esc(i.name)}</span>`).join('')}<small>Демо: этих вещей нет в вашем гардеробе</small></div>`:'<div class="lbsk"></div>';
- return `<div class="lb${rr?' rr':''} gl"${go_?` onclick="go('outfit')"`:''}>${inner}</div>`}
+ return `<div class="lb${rr?' rr':''} gl"${go_?` onclick="go('outfit')"`:''}>${inner}${S.lkH.length>1&&S.lkH.indexOf(r)>=0?`<div class="lkd">${S.lkH.map((_,k)=>`<i${k===S.lkH.indexOf(r)?' class="on"':''}></i>`).join('')}</div>`:''}</div>`}
 const PICKG=[['Футболки и поло',['T-shirts']],['Лонгсливы',['Longsleeves']],['Рубашки',['Shirts']],['Худи',['Hoodies']],['Свитеры',['Sweaters']],['Куртки',['Jackets']],['Пальто',['Coats']],['Джинсы и брюки',['Jeans','Pants']],['Спортивные штаны и шорты',['Sweatpants','Shorts']],['Обувь',['Sneakers','Shoes','Canvas shoes']]];
 const WG=[...PICKG,['Аксессуары',['Accessories']]];
 S.og=S.og||{};
