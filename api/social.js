@@ -132,7 +132,7 @@ async function hydrate(posts, me) {
     if (p.vid) out.vid = { url: `/api/social?a=pvid&id=${p.id}`, dur: p.vid.dur, w: p.vid.w, h: p.vid.h, mime: p.vid.mime };
     if (p.ov && p.ov.length) out.ov = ovPub(p.ov, `/api/social?a=ovg&id=${p.id}`);
     if (p.fit && p.fit.length) out.fit = p.fit.map((f, k) => ({ n: f.n, c: f.c, u: `/api/social?a=fit&id=${p.id}&k=${k}` }));
-    if (w) { out.rid = w.id; out.rts = w.ts; out.rby = { ...pubAuthor(prof[w.by]), me: w.by === me }; out.mine = false; }
+    if (w) { out.rid = w.id; out.rts = w.ts; out.rcap = w.cap || undefined; out.rby = { ...pubAuthor(prof[w.by]), me: w.by === me }; out.mine = false; }
     return out;
   });
 }
@@ -557,7 +557,7 @@ module.exports = handler(async (req, res, user) => {
     }
     if (orig.by === me) throw err(400, 'own_post');
     if (!mineId) {
-      const rp = { id: nowId('p'), by: me, ts: Date.now(), of: orig.id };
+      const rp = { id: nowId('p'), by: me, ts: Date.now(), of: orig.id }, rcap = txt(b.cap, 300, true); if (rcap) rp.cap = rcap;
       await dbm([['SET', P + 'post:' + rp.id, JSON.stringify(rp)], ['ZADD', P + 'feed', rp.ts, rp.id], ['ZADD', P + 'uposts:' + me, rp.ts, rp.id], ['HSET', P + 'rps:' + orig.id, me, rp.id]]);
       await notify(orig.by, { id: 'rp:' + me + ':' + orig.id, type: 'repost', by: me, post: orig.id }).catch(() => {});
     }

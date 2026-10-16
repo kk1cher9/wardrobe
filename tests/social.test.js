@@ -198,10 +198,11 @@ const WEBP='data:image/webp;base64,'+webp;
   ok('video needs a session',(await call('/api/social?a=pvid&id='+vpp.id,{raw:true})).status===401);
   // reposts
   ok('cannot repost your own post (400)',(await op(A,'repost',{id:vpp.id})).status===400);
-  const rp=await op(Bc,'repost',{id:vpp.id});
+  const rp=await op(Bc,'repost',{id:vpp.id,cap:'Класс!'});
   ok('B reposts A\'s video post',rp.status===200&&rp.json.reposted===true&&rp.json.reposts===1);
   ok('reposting twice does not duplicate',(await op(Bc,'repost',{id:vpp.id})).json.reposts===1&&(await get(Bc,'a=user&nick=bob.b')).json.posts.filter((x)=>x.id===vpp.id).length===1);
   const bp=(await get(Bc,'a=user&nick=bob.b')).json.posts.find((x)=>x.id===vpp.id);
+  ok('repost keeps the reposter comment',(await get(Bc,'a=user&nick=bob.b')).json.posts.find((x)=>x.id===vpp.id).rcap==='Класс!');
   ok('repost shows the original with the reposter, original author kept, video still playable',bp&&bp.rby.nick==='bob.b'&&bp.rby.me===true&&bp.author.nick==='alice_w'&&bp.reposted===true&&bp.reposts===1&&!!bp.vid&&bp.mine===false&&!!bp.rid);
   await op(C,'follow',{nick:'bob.b',on:true});
   ok('followers of B see the repost in their Following feed',(await get(C,'a=feed&tab=following')).json.posts.some((x)=>x.id===vpp.id&&x.rby&&x.rby.nick==='bob.b'));

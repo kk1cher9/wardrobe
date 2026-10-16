@@ -60,6 +60,9 @@ en: { foryou: 'For You', following: 'Following', trending: 'Trending', publish: 
 Object.assign(T.ru, { stReply: 'Ответить…', stSent: 'Отправлено в чат', stLike: 'Нравится', stLikes: 'Лайки' });
 Object.assign(T.uk, { stReply: 'Відповісти…', stSent: 'Надіслано в чат', stLike: 'Подобається', stLikes: 'Лайки' });
 Object.assign(T.en, { stReply: 'Reply…', stSent: 'Sent to chat', stLike: 'Like', stLikes: 'Likes' });
+Object.assign(T.ru, { rpNew: 'Репост', rpHint: 'Пост появится в вашем профиле с пометкой «репост». Можете добавить свой комментарий.', rpPh: 'Что вы думаете об этом посте? (необязательно)', rpGo: 'Репостнуть' });
+Object.assign(T.uk, { rpNew: 'Репост', rpHint: 'Допис з’явиться у вашому профілі з позначкою «репост». Можете додати свій коментар.', rpPh: 'Що ви думаєте про цей допис? (необов’язково)', rpGo: 'Репостнути' });
+Object.assign(T.en, { rpNew: 'Repost', rpHint: 'The post appears on your profile marked as a repost. You can add your own comment.', rpPh: 'What do you think about this post? (optional)', rpGo: 'Repost' });
 const CHAT_T = { ru: 'Написать', uk: 'Написати', en: 'Message' };
 const L = () => T[(window.I18N && I18N.lang) || 'ru'] || T.ru;
 Object.assign(T.ru, { myStyle: 'Мой стиль', myStyleD: 'Можно выбрать несколько', otherStyle: 'Другой стиль', otherStylePh: 'Свой вариант', add: 'Добавить', earnT: 'Статус заработка', earnD: 'Необязательно. Доход и суммы указывать не нужно.', earnNone: '— не выбрано —', earn_none: 'Пока не зарабатываю', earn_start: 'Начинаю зарабатывать', earn_style: 'Зарабатываю на своём стиле', earn_clients: 'Работаю с клиентами', earn_designer: 'Работаю как дизайнер или стилист', earn_biz: 'Предприниматель', earn_other: 'Другое', earn_hidden: 'Не указывать', earnPub: 'Показывать в моём профиле', brandsT: 'Любимые бренды', brandPh: 'Добавить бренд', saving: 'Сохранение…', saved2: 'Сохранено', styleLbl: 'Стиль', brandLbl: 'Бренды', actNever: 'Нет данных об активности', actLbl: 'Активность' });
@@ -207,7 +210,7 @@ function card(p, o) {
   const chips = [p.style ? `<span class="sc-chip">${E(styleName(p.style))}</span>` : '', p.wx ? `<span class="sc-chip">${ico('cloud', 13)} ${E(wxTxt(p.wx))}</span>` : '', palDots(p)].filter(Boolean).join('');
   const fresh = !st.shown.has(p.id) && o.id !== 'preview'; st.shown.add(p.id);
   return `<article class="sp${fresh ? ' in' : ''}" data-pid="${p.id}"${fresh ? ` style="animation-delay:${Math.min(st.fxn++, 4) * 70}ms"` : ''}>
-  ${p.rby ? `<button class="sp-rp" onclick="SOC.profile('${E(p.rby.nick)}')">${ico('repost', 15)} <b>${E(p.rby.me ? t('me') : p.rby.name || p.rby.nick)}</b> ${E(t('repostedBy'))}</button>` : ''}
+  ${p.rby ? `<button class="sp-rp" onclick="SOC.profile('${E(p.rby.nick)}')">${ico('repost', 15)} <b>${E(p.rby.me ? t('me') : p.rby.name || p.rby.nick)}</b> ${E(t('repostedBy'))}</button>${p.rcap ? `<div class="sp-rc" data-nt>${E(p.rcap)}</div>` : ''}` : ''}
   <header class="sp-h"><button class="sc-who" onclick="SOC.profile('${E(a.nick)}')">${av(a, 38)}<span><b>${E(a.name || a.nick)}${vb(a)}</b><small>@${E(a.nick)} · ${E(ago(p.ts))}</small></span></button>${menu}</header>
   <div class="sp-img" ondblclick="SOC.like('${p.id}',true)" onclick="${o.noOpen ? '' : `SOC.open('${p.id}')`}"><img src="${E(p.img)}" alt="${E(p.title || p.caption || '@' + a.nick)}" loading="lazy" decoding="async" onload="SOC.ovp(this)" onerror="this.closest('.sp-img').classList.add('bad')">${ovLayer(p.ov)}${p.vid ? `<button class="sc-play" onclick="event.stopPropagation();SOC.play('${p.id}')" aria-label="${E(t('play'))}">${ico('play', 26)}${p.vid.dur ? `<span>${E(fmtDur(p.vid.dur))}</span>` : ''}</button>` : ''}<i class="sc-pop">${ico('heart', 84)}</i></div>
   ${fitStrip(p)}
@@ -472,13 +475,20 @@ function drop(id, rbyMe) { // remove a post (or only my repost of it) from every
   Object.values(st.feed).concat([st.saved]).forEach((f) => { f.posts = f.posts.filter(keep); });
   Object.values(st.prof).forEach((d) => { const n = d.posts.length; d.posts = d.posts.filter(keep); if (d.profile && d.profile.me && d.posts.length < n) d.profile.posts = Math.max(0, d.profile.posts - (n - d.posts.length)); });
 }
-async function repost(id) {
+function repost(id) { // already reposted: undo; otherwise ask for an optional comment first
+  const p = st.byId.get(id); if (!p || p.mine) return;
+  if (p.reposted) return doRepost(id);
+  const m = sheet(`${sheetHead(t('rpNew'))}<p class="note" style="margin:0 0 8px">${E(t('rpHint'))}</p><textarea id="sc-rc" maxlength="300" rows="3" placeholder="${E(t('rpPh'))}" style="width:100%;box-sizing:border-box"></textarea><div class="row" style="margin-top:12px"><button class="btn big" id="sc-rgo" style="width:100%">${E(t('rpGo'))}</button></div>`);
+  const ta = m.querySelector('#sc-rc'); setTimeout(() => ta.focus(), 250);
+  m.querySelector('#sc-rgo').onclick = () => { const cap = ta.value.trim(); closeM(m); doRepost(id, cap); };
+}
+async function doRepost(id, cap) {
   const p = st.byId.get(id); if (!p || p.mine) return;
   const on = !p.reposted, prev = { reposts: p.reposts, reposted: p.reposted };
   p.reposted = on; p.reposts = Math.max(0, (p.reposts || 0) + (on ? 1 : -1)); patchPost(p);
   document.querySelectorAll(`[data-pid="${id}"] .sc-b.rp`).forEach((b) => { b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump'); });
   try {
-    const j = await pq(on ? 'repost' : 'unrepost', { id }); p.reposts = j.reposts; p.reposted = j.reposted; patchPost(p);
+    const j = await pq(on ? 'repost' : 'unrepost', { id, ...(on && cap ? { cap } : {}) }); p.reposts = j.reposts; p.reposted = j.reposted; patchPost(p);
     const me = st.me && st.me.profile; if (on) { if (me && st.prof[me.nick]) delete st.prof[me.nick]; } else drop(id, true);
     toast(t(on ? 'rpOn' : 'rpOff')); if (!on && st.view !== 'post') refresh();
   } catch (e) { Object.assign(p, prev); patchPost(p); note(e); }
@@ -1170,7 +1180,7 @@ const css = `
 .sc-plus{min-height:0!important;min-width:0!important;flex:none;-webkit-appearance:none;appearance:none;box-sizing:border-box;line-height:0;position:absolute;right:-1px;bottom:-1px;width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#5b8cff,#8a5cff);color:#fff;border:2.5px solid #1b2590;display:flex;align-items:center;justify-content:center;padding:0;box-shadow:0 3px 10px rgba(20,30,120,.45);cursor:pointer;transition:transform .2s cubic-bezier(.3,1.4,.5,1)}.sc-plus:active{transform:scale(.85)}.sc-plus svg{fill:none;stroke:currentColor;stroke-width:3.4;stroke-linecap:round;display:block}
 .sc-plus.lg{width:26px!important;height:26px!important;min-height:26px!important;max-height:26px!important;min-width:26px!important;aspect-ratio:1;flex:none;-webkit-appearance:none;appearance:none;right:-3px;bottom:-3px}.sc-plus.lg svg{width:14px;height:14px}
 .sc-sv{position:fixed;inset:0;z-index:200;background:#000;color:#fff;display:flex;flex-direction:column;touch-action:none;user-select:none;-webkit-user-select:none;animation:mf .2s ease}
-.sc-sbars{display:flex;gap:4px;padding:calc(10px + env(safe-area-inset-top,0px)) 10px 6px;position:relative;z-index:2}.sc-sbars i{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.3);overflow:hidden}.sc-sbars b{display:block;height:100%;background:#fff}
+.sc-sbars{display:flex;gap:5px;padding:calc(10px + env(safe-area-inset-top,0px)) 10px 8px;position:relative;z-index:2}.sc-sbars::before{content:'';position:absolute;left:0;right:0;top:0;height:90px;background:linear-gradient(rgba(0,0,0,.55),transparent);z-index:-1;pointer-events:none}.sc-sbars i{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.4);box-shadow:0 0 3px rgba(0,0,0,.5);overflow:hidden}.sc-sbars b{display:block;height:100%;background:#fff}
 .sc-sh2{display:flex;align-items:center;gap:6px;padding:4px 10px;position:relative;z-index:2}.sc-sh2 .sc-who{flex:1;color:#fff}.sc-sh2 .sc-ic{color:#fff;width:auto;padding:0 10px;gap:4px;display:flex}
 .sc-simg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}.sc-simg{overflow:hidden}.sc-simg img:not(.sc-ovg){width:100%;height:100%;object-fit:contain;pointer-events:none}.sc-simg .sc-ovg{width:auto}.sc-gone{color:#aaa;font-weight:700}
 .sc-rf{position:absolute;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:8px;z-index:3}
@@ -1209,7 +1219,7 @@ const css = `
 .sc-sheet .sc-chip.pick{transition:background .2s,color .2s,transform .15s}.sc-chip.pick:active{transform:scale(.93)}
 .sc-itl{transition:none}.sc-itl.open{animation:scFade .3s ease}
 .sc-state{animation:scUp .5s cubic-bezier(.22,1,.36,1) both}
-.sp-rp{display:flex;align-items:center;gap:6px;border:0;background:none;color:#aaa;font:inherit;font-size:12px;font-weight:700;padding:10px 14px 0;cursor:pointer}.sp-rp b{color:#fff}.sp-rp svg{flex:none}
+.sp-rc{padding:6px 14px 2px;font-size:14.5px;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere}.sp-rp{display:flex;align-items:center;gap:6px;border:0;background:none;color:#aaa;font:inherit;font-size:12px;font-weight:700;padding:10px 14px 0;cursor:pointer}.sp-rp b{color:#fff}.sp-rp svg{flex:none}
 .sp-img .sc-ov img.sc-ovg{height:auto;object-fit:fill;transition:none}.sc-ov{position:absolute;pointer-events:none;overflow:visible}.sc-ovg{position:absolute;display:block;height:auto;pointer-events:none;-webkit-user-drag:none}
 .sc-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:0;background:rgba(0,0,0,.5);color:#fff;border-radius:34px;min-width:60px;height:60px;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 16px;cursor:pointer;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);font:inherit;font-weight:800;font-size:13px;z-index:2}
 .sp-img.vp{background:#000;aspect-ratio:auto;min-height:200px}.sp-img.vp video{width:100%;max-height:80vh;display:block;background:#000}
