@@ -1005,6 +1005,7 @@ function storyOpen(gi) {
 function paintStory() {
   if (!V) return; cancelAnimationFrame(V.raf);
   const groups = st.stories.groups, g = groups[V.gi], s = g.stories[V.si];
+  V.el.classList.toggle('sw', !!V.dir); V.el.classList.toggle('pv', V.dir === 'pv'); V.dir = null;
   const bars = g.stories.map((_, i) => `<i><b style="width:${i < V.si ? 100 : 0}%"></b></i>`).join('');
   V.el.innerHTML = `<div class="sc-sbars">${bars}</div>
   <div class="sc-sh2"><button class="sc-who" data-a="prof" data-n="${E(g.author.nick)}">${av(g.author, 36)}<span><b>${E(g.author.name || g.author.nick)}${vb(g.author)}</b><small>${E(ago(s.ts))}</small></span></button>
@@ -1048,12 +1049,13 @@ async function likeStory(btn) {
 }
 function nextStory() {
   if (!V) return; const groups = st.stories.groups, g = groups[V.gi];
+  V.dir = 'nx';
   if (V.si < g.stories.length - 1) { V.si++; return paintStory(); }
   if (V.gi < groups.length - 1) { V.gi++; const n = groups[V.gi]; V.si = n.author.me ? 0 : Math.max(0, n.stories.findIndex((x) => !x.seen)); return paintStory(); }
   closeStory();
 }
 function prevStory() {
-  if (!V) return;
+  if (!V) return; V.dir = 'pv';
   if (V.si > 0) V.si--; else if (V.gi > 0) { V.gi--; V.si = 0; }
   paintStory();
 }
@@ -1185,7 +1187,7 @@ const css = `
 .sc-pav{position:relative;display:inline-flex;flex:none;border-radius:50%;padding:0}.sc-pav.ring{padding:3px;background:linear-gradient(135deg,#4d8bff,#9b6bff 55%,#ff6bb5)}.sc-pav.ring.seen{background:rgba(255,255,255,.35)}.sc-pav.ring .sc-av{border:2px solid #0b0d3b;box-sizing:border-box}.sc-pavb{border:0;background:none;padding:0;border-radius:50%;display:flex;cursor:pointer}
 .sc-plus{min-height:0!important;min-width:0!important;flex:none;-webkit-appearance:none;appearance:none;box-sizing:border-box;line-height:0;position:absolute;right:-1px;bottom:-1px;width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#5b8cff,#8a5cff);color:#fff;border:2.5px solid #1b2590;display:flex;align-items:center;justify-content:center;padding:0;box-shadow:0 3px 10px rgba(20,30,120,.45);cursor:pointer;transition:transform .2s cubic-bezier(.3,1.4,.5,1)}.sc-plus:active{transform:scale(.85)}.sc-plus svg{fill:none;stroke:currentColor;stroke-width:3.4;stroke-linecap:round;display:block}
 .sc-plus.lg{width:26px!important;height:26px!important;min-height:26px!important;max-height:26px!important;min-width:26px!important;aspect-ratio:1;flex:none;-webkit-appearance:none;appearance:none;right:-3px;bottom:-3px}.sc-plus.lg svg{width:14px;height:14px}
-.sc-sv{position:fixed;inset:0;z-index:200;background:#000;color:#fff;display:flex;flex-direction:column;touch-action:none;user-select:none;-webkit-user-select:none;animation:mf .2s ease}
+.sc-sv::after{content:'';position:absolute;left:0;right:0;top:100%;height:260px;background:#000;pointer-events:none}.sc-sv{position:fixed;inset:0;z-index:200;background:#000;color:#fff;display:flex;flex-direction:column;touch-action:none;user-select:none;-webkit-user-select:none;animation:mf .2s ease}
 .sc-sbars{display:flex;gap:5px;padding:calc(10px + env(safe-area-inset-top,0px)) 10px 8px;position:relative;z-index:2}.sc-sbars::before{content:'';position:absolute;left:0;right:0;top:0;height:90px;background:linear-gradient(rgba(0,0,0,.55),transparent);z-index:-1;pointer-events:none}.sc-sbars i{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.4);box-shadow:0 0 3px rgba(0,0,0,.5);overflow:hidden}.sc-sbars b{display:block;height:100%;background:#fff}
 .sc-sh2{display:flex;align-items:center;gap:6px;padding:4px 10px;position:relative;z-index:2}.sc-sh2 .sc-who{flex:1;color:#fff}.sc-sh2 .sc-ic{color:#fff;width:auto;padding:0 10px;gap:4px;display:flex}
 .sc-simg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}.sc-simg{overflow:hidden}.sc-simg img:not(.sc-ovg){width:100%;height:100%;object-fit:contain;pointer-events:none}.sc-simg .sc-ovg{width:auto}.sc-gone{color:#aaa;font-weight:700}
@@ -1207,6 +1209,8 @@ const css = `
 @keyframes scGlow{0%,100%{box-shadow:0 0 0 0 rgba(120,140,255,.45)}60%{box-shadow:0 0 0 7px rgba(120,140,255,0)}}
 @keyframes scShine{0%,70%{transform:translateX(-120%) skewX(-20deg)}100%{transform:translateX(240%) skewX(-20deg)}}
 @keyframes scSl{from{opacity:0;transform:translate3d(0,-12px,0)}to{opacity:1;transform:none}}
+@keyframes scNx{from{opacity:0;transform:translate3d(44px,0,0) scale(.97)}to{opacity:1;transform:none}}@keyframes scPv{from{opacity:0;transform:translate3d(-44px,0,0) scale(.97)}to{opacity:1;transform:none}}
+.sc-sv.sw .sc-sh2,.sc-sv.sw .sc-sbars,.sc-sv.sw .sc-scap,.sc-sv.sw .sc-sft{animation:none}.sc-sv.sw .sc-simg img:not(.sc-ovg){animation:none}.sc-sv.sw .sc-simg{animation:scNx .38s cubic-bezier(.22,1,.36,1)}.sc-sv.sw.pv .sc-simg{animation-name:scPv}
 @keyframes scZoom{from{opacity:0;transform:scale(1.06)}to{opacity:1;transform:none}}
 @keyframes scOpen{from{opacity:0;transform:scale(.9) translate3d(0,30px,0);border-radius:40px}to{opacity:1;transform:none}}
 .sp.in,.sc-n.in,.sc-ur.in{animation:scUp .7s cubic-bezier(.16,1,.3,1) both}
