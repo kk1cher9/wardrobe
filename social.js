@@ -974,12 +974,12 @@ function paintTray() { if (S.tab !== 'social') return; const e = document.getEle
 let V = null;
 const SDUR = 5000;
 function closeStory(quiet) {
-  if (V) { cancelAnimationFrame(V.raf); if (V.vvOff) V.vvOff(); V.el.remove(); V = null; document.body.style.overflow = ''; if (!quiet) { paintTray(); if (st.view === 'profile') refresh(); } }
+  if (V) { cancelAnimationFrame(V.raf); if (V.vvOff) V.vvOff(); V.el.remove(); V = null; document.body.style.overflow = ''; document.body.classList.remove('sv-open'); if (!quiet) { paintTray(); if (st.view === 'profile') refresh(); } }
 }
 function storyOpen(gi) {
   const groups = st.stories.groups; if (!groups || !groups[gi]) return;
   closeStory(true);
-  const el = document.createElement('div'); el.className = 'sc-sv'; el.id = 'sc-sv'; document.body.appendChild(el); document.body.style.overflow = 'hidden';
+  const el = document.createElement('div'); el.className = 'sc-sv'; el.id = 'sc-sv'; document.body.appendChild(el); document.body.style.overflow = 'hidden'; document.body.classList.add('sv-open');
   const g = groups[gi];
   V = { el, gi, si: g.author.me ? 0 : Math.max(0, g.stories.findIndex((x) => !x.seen)), left: SDUR, last: 0, paused: false, hold: false, ready: false, raf: 0, down: 0, y0: 0, panel: false };
   el.addEventListener('pointerdown', (e) => { if (e.target.closest('button,.sc-vw,form,.sc-rx')) return; V.down = Date.now(); V.y0 = e.clientY; V.x0 = e.clientX; V.hold = true; V.drag = false; });
@@ -1007,7 +1007,7 @@ function storyOpen(gi) {
     const a = b.dataset.a; if (a === 'x') closeStory(); else if (a === 'del') delStory(); else if (a === 'views') viewersPanel(); else if (a === 'vx') { V.panel = false; const w = el.querySelector('.sc-vw'); if (w) w.remove(); } else if (a === 'prof') { const n = b.dataset.n; closeStory(); profile(n); } else if (a === 'like') likeStory(b);
   });
   // iOS: the keyboard resizes/pans the page. Freeze the story at its opening size so the picture never moves or squashes; only the reply controls rise above the keyboard.
-  const H0 = window.innerHeight; el.style.height = H0 + 'px'; el.style.bottom = 'auto';
+  const H0 = window.innerHeight + (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sd')) || 0); el.style.height = H0 + 'px'; el.style.bottom = 'auto';
   const vv = window.visualViewport;
   if (vv) {
     let raf = 0; const fit = () => { if (raf) return; raf = requestAnimationFrame(() => { raf = 0; fit2(); }); };
