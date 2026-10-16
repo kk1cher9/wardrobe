@@ -974,7 +974,7 @@ function paintTray() { if (S.tab !== 'social') return; const e = document.getEle
 let V = null;
 const SDUR = 5000;
 function closeStory(quiet) {
-  if (V) { cancelAnimationFrame(V.raf); V.el.remove(); V = null; document.body.style.overflow = ''; if (!quiet) { paintTray(); if (st.view === 'profile') refresh(); } }
+  if (V) { cancelAnimationFrame(V.raf); if (V.vvOff) V.vvOff(); V.el.remove(); V = null; document.body.style.overflow = ''; if (!quiet) { paintTray(); if (st.view === 'profile') refresh(); } }
 }
 function storyOpen(gi) {
   const groups = st.stories.groups; if (!groups || !groups[gi]) return;
@@ -994,6 +994,12 @@ function storyOpen(gi) {
     const b = e.target.closest('button[data-a]'); if (!b || !V) return;
     const a = b.dataset.a; if (a === 'x') closeStory(); else if (a === 'del') delStory(); else if (a === 'views') viewersPanel(); else if (a === 'vx') { V.panel = false; const w = el.querySelector('.sc-vw'); if (w) w.remove(); } else if (a === 'prof') { const n = b.dataset.n; closeStory(); profile(n); } else if (a === 'like') likeStory(b);
   });
+  // iOS: with the keyboard open the layout viewport slides and a fixed full-screen layer leaves a gap; follow the VISUAL viewport instead
+  const vv = window.visualViewport;
+  if (vv) {
+    const fit = () => { if (!V) return; el.style.bottom = 'auto'; el.style.height = vv.height + 'px'; el.style.top = vv.offsetTop + 'px'; if (window.scrollY) window.scrollTo(0, 0); };
+    vv.addEventListener('resize', fit); vv.addEventListener('scroll', fit); V.vvOff = () => { vv.removeEventListener('resize', fit); vv.removeEventListener('scroll', fit); };
+  }
   paintStory();
 }
 function paintStory() {
