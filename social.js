@@ -1010,7 +1010,8 @@ function storyOpen(gi) {
   const H0 = window.innerHeight; el.style.height = H0 + 'px'; el.style.bottom = 'auto';
   const vv = window.visualViewport;
   if (vv) {
-    const fit = () => { if (!V) return; const kb = Math.max(0, Math.round(H0 - vv.height - vv.offsetTop + vv.offsetTop)), top = Math.round(vv.offsetTop); el.style.translate = top > 0 ? `0 ${top}px` : ''; el.style.setProperty('--kb', kb + 'px'); el.classList.toggle('kb', kb > 80); if (window.scrollY) window.scrollTo(0, 0); };
+    let raf = 0; const fit = () => { if (raf) return; raf = requestAnimationFrame(() => { raf = 0; fit2(); }); };
+    const fit2 = () => { if (!V) return; const kb = Math.max(0, Math.round(H0 - vv.height - vv.offsetTop + vv.offsetTop)), top = Math.round(vv.offsetTop); el.style.translate = top > 0 ? `0 ${top}px` : ''; el.style.setProperty('--kb', kb + 'px'); el.classList.toggle('kb', kb > 80); const up = kb > 80 ? -(kb - 10) : 0; el.style.setProperty('--up', up + 'px'); if (window.scrollY) window.scrollTo(0, 0); };
     vv.addEventListener('resize', fit); vv.addEventListener('scroll', fit); V.vvOff = () => { vv.removeEventListener('resize', fit); vv.removeEventListener('scroll', fit); };
   }
   paintStory();
@@ -1208,12 +1209,12 @@ const css = `
 .sc-sbars{display:flex;gap:5px;padding:calc(10px + env(safe-area-inset-top,0px)) 10px 8px;position:relative;z-index:2}.sc-sbars::before{content:'';position:absolute;left:0;right:0;top:0;height:90px;background:linear-gradient(rgba(0,0,0,.55),transparent);z-index:-1;pointer-events:none}.sc-sbars i{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.4);box-shadow:0 0 3px rgba(0,0,0,.5);overflow:hidden}.sc-sbars b{display:block;height:100%;background:#fff}
 .sc-sh2{display:flex;align-items:center;gap:6px;padding:4px 10px;position:relative;z-index:2}.sc-sh2 .sc-who{flex:1;color:#fff}.sc-sh2 .sc-ic{color:#fff;width:auto;padding:0 10px;gap:4px;display:flex}
 .sc-simg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}.sc-simg{overflow:hidden}.sc-simg img:not(.sc-ovg){width:100%;height:100%;object-fit:contain;pointer-events:none}.sc-simg .sc-ovg{width:auto}.sc-gone{color:#aaa;font-weight:700}
-.sc-rf{position:absolute;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));transition:bottom .25s cubic-bezier(.22,1,.36,1);display:flex;align-items:center;gap:8px;z-index:3}
+.sc-rf{position:absolute;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));will-change:transform;transition:transform .28s cubic-bezier(.22,1,.36,1);display:flex;align-items:center;gap:8px;z-index:3}
 .sc-rf input{flex:1;min-width:0;height:44px;box-sizing:border-box;border-radius:22px;border:1.5px solid rgba(255,255,255,.7);background:rgba(0,0,0,.35);color:#fff;font:inherit;font-size:16px;padding:0 16px;outline:none}.sc-rf input::placeholder{color:rgba(255,255,255,.8)}.sc-rf input:focus{border-color:#fff;background:rgba(0,0,0,.55)}
 .sc-rf button{flex:none;box-sizing:border-box;width:44px;height:44px;min-width:44px;max-width:44px;min-height:44px;padding:0;border:0;border-radius:50%;background:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}.sc-rf svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .sc-rf .sc-lk.on{color:#ff4d6d}.sc-rf .sc-lk.on svg{fill:#ff4d6d}.sc-rf .sc-lk.pop svg{animation:lkpop .4s cubic-bezier(.34,1.56,.64,1)}@keyframes lkpop{0%{transform:scale(.6)}60%{transform:scale(1.3)}100%{transform:scale(1)}}.sc-rf .sc-sn{background:#fff;color:#000}.sc-rf .sc-sn:disabled{display:none}
-.sc-sv.kb .sc-rf{bottom:calc(10px + var(--kb,0px))}
-.sc-rx{position:absolute;left:12px;right:12px;bottom:calc(66px + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-between;gap:4px;z-index:3;opacity:0;pointer-events:none;transform:translateY(14px);transition:opacity .22s,transform .25s cubic-bezier(.22,1,.36,1),bottom .25s cubic-bezier(.22,1,.36,1)}.sc-sv.typing .sc-rx{opacity:1;pointer-events:auto;transform:none}.sc-sv.kb .sc-rx{bottom:calc(66px + var(--kb,0px))}
+
+.sc-rx{position:absolute;left:12px;right:12px;bottom:calc(66px + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-between;gap:4px;z-index:3;opacity:0;pointer-events:none;transform:translateY(14px);will-change:transform,opacity;transition:opacity .22s,transform .28s cubic-bezier(.22,1,.36,1)}.sc-sv.typing .sc-rx{opacity:1;pointer-events:auto;transform:translate3d(0,var(--up,0px),0)}.sc-sv.kb .sc-rf{transform:translate3d(0,var(--up,0px),0)}
 .sc-rx button{flex:1;min-width:0;height:46px;border:0;border-radius:23px;background:rgba(0,0,0,.45);font-size:26px;line-height:1;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s}.sc-rx button:active{transform:scale(.85)}.sc-rx button.pop{animation:lkpop .4s cubic-bezier(.34,1.56,.64,1)}
 .sc-sft{gap:8px}.sc-lc{display:inline-flex;align-items:center;gap:5px}.sc-lc svg{fill:#ff4d6d;stroke:#ff4d6d}
 .sc-scap{position:absolute;left:0;right:0;bottom:calc(70px + env(safe-area-inset-bottom,0px));text-align:center;padding:10px 20px;font-weight:700;font-size:16px;background:linear-gradient(transparent,rgba(0,0,0,.6) 40%);z-index:2;overflow-wrap:anywhere}
@@ -1278,6 +1279,12 @@ const sty = document.createElement('style'); sty.textContent = css; document.hea
 
 /* ------------------------------------------------------------------ public API + boot */
 addEventListener('resize', () => { document.querySelectorAll('.sp-img > img').forEach((im) => placeOv(im, 'cover')); document.querySelectorAll('.sc-simg > img:not(.sc-ovg)').forEach((im) => placeOv(im, 'contain')); });
+// iOS leaves the page scrolled / the viewport short after the keyboard closes (a strip appears under the tab bar): put it back
+(() => {
+  let y = 0; const isF = (e) => e && /^(INPUT|TEXTAREA|SELECT)$/.test(e.tagName);
+  addEventListener('focusin', (e) => { if (isF(e.target)) y = window.scrollY; });
+  addEventListener('focusout', () => { [120, 450].forEach((d) => setTimeout(() => { if (isF(document.activeElement)) return; const vv = window.visualViewport; if (vv && (vv.offsetTop > 0 || Math.abs(vv.height - innerHeight) > 2)) window.scrollTo(0, y); }, d)); });
+})();
 window.SOC = { view, after, reset, nav, back, tab, ptab, profile, open, like, save, follow, share, comments, menu, compose, similar, toggleItems, repost, rpMenu, play, ovp: (im) => placeOv(im, 'cover'),  q, more, reload, setup, editProfile, follows, closeSheet, loadMe, setup: () => openSetup(true), settings: openSettings, storyOpen, storyCompose, reloadMe: () => { st.meErr = null; st.me = undefined; refresh(); }, state: st, name: NAME };
 try { const u = new URL(location.href), pid = u.searchParams.get('post'); if (pid && /^[a-z0-9]{6,32}$/.test(pid)) { st.deep = pid; u.searchParams.delete('post'); history.replaceState(null, '', u.pathname + (u.search || '') + u.hash); setTimeout(() => { if (S.tab !== 'social') go('social'); }, 600); } } catch (e) { /* ignore */ }
 loadCfg().then(() => { if (S.tab === 'social') render(); });
