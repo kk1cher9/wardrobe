@@ -507,7 +507,7 @@ function widgetScript(url){return ['// Weather Wardrobe widget (Scriptable)','co
 async function widgetSetup(){
  if(!S.user){toast('Sign in with Google first');return}
  let tok;try{const r=await API('/api/widget',{method:'POST',body:JSON.stringify({op:'token'})});if(!r.ok)throw 0;tok=(await r.json()).token}catch(e){toast('Could not reach the server');return}
- S.set.widget=true;save();WGSIG='';if(S.gen)widgetPush(S.gen);
+ S.set.widget=true;save();WGSIG='';try{const g=cur();if(g)widgetPush(g)}catch(e){}
  const script=widgetScript(location.origin+'/api/widget?t='+tok);
  const m=document.createElement('div');m.className='modal';m.id='md';m.onclick=ev=>{if(ev.target===m)closeM(m)};
  m.innerHTML=`<div class="sheet"><div class="lbl" style="font-size:16px">iPhone widget</div>
@@ -657,7 +657,7 @@ function cur(){
  const t=Store.get('today',null),X=curCtx();
  if(t&&t.d===dayKey()&&Math.abs(t.avg-X.avg)<=3&&t.range===(S.set.range||'all')&&t.prefs===prefSig()){ // the day's outfit stays the same until the user asks for a new one
   const P=pool(),plan=t.ids.map(id=>P.find(i=>i.id===id)).filter(Boolean);
-  if(plan.length&&plan.length===t.ids.length){S.gen=finishLocal({...t.r,plan});return S.gen}}
+  if(plan.length&&plan.length===t.ids.length){S.gen=finishLocal({...t.r,plan});try{widgetPush(S.gen)}catch(e){}return S.gen}}
  S.gen=finishLocal(recommend(X,pool(),null));rememberToday(S.gen);return S.gen}
 function gen(){if(!S.w)return;if(!pool().length){S.picking=true;S.pickDraft=dpick();return go('home')}S.rr=1;S.gen=finishLocal(recommend(curCtx(),pool(),S.gen));S.genSig=itemSig();rememberToday(S.gen);if(S.tab==='outfits')S.tab='outfit';render();scrollTo(0,0)}
 const curCtx=()=>rangeCtx(S.w,S.set.range||'all');
