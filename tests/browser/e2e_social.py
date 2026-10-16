@@ -101,6 +101,8 @@ async def main():
     ok('B: heart liked the story (server confirmed)',await B.evaluate("document.querySelector('#sc-sv .sc-lk').classList.contains('on')&&SOC.state.stories.groups.find(g=>!g.author.me).stories[0].liked===true"))
     await B.focus('#sc-ri');await B.wait_for_timeout(200)
     ok('story pauses while typing',await B.evaluate("document.activeElement.id==='sc-ri'"))
+    await B.wait_for_timeout(400)
+    ok('reaction row appears while typing',await B.evaluate("document.getElementById('sc-sv').classList.contains('typing')&&getComputedStyle(document.getElementById('sc-rx')).opacity==='1'&&document.querySelectorAll('#sc-rx button').length===6"))
     await B.fill('#sc-ri','Классный лук!');await B.press('#sc-ri','Enter');await B.wait_for_timeout(1200)
     ok('B: comment sent, field cleared',await B.evaluate("document.getElementById('sc-ri').value===''"))
     cv=await B.evaluate("fetch('/api/dm?a=convs',{headers:{'X-Requested-With':'wd'}}).then(r=>r.json()).then(async j=>{const c=j.convs[0];const m=await fetch('/api/dm?a=msgs&id='+c.id,{headers:{'X-Requested-With':'wd'}}).then(r=>r.json());return [c.user.nick,m.msgs.map(x=>[x.text,x.sy&&x.sy.live,x.sy&&x.sy.img])]})")

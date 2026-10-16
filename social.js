@@ -982,7 +982,7 @@ function storyOpen(gi) {
   const el = document.createElement('div'); el.className = 'sc-sv'; el.id = 'sc-sv'; document.body.appendChild(el); document.body.style.overflow = 'hidden';
   const g = groups[gi];
   V = { el, gi, si: g.author.me ? 0 : Math.max(0, g.stories.findIndex((x) => !x.seen)), left: SDUR, last: 0, paused: false, hold: false, ready: false, raf: 0, down: 0, y0: 0, panel: false };
-  el.addEventListener('pointerdown', (e) => { if (e.target.closest('button,.sc-vw,form')) return; V.down = Date.now(); V.y0 = e.clientY; V.hold = true; });
+  el.addEventListener('pointerdown', (e) => { if (e.target.closest('button,.sc-vw,form,.sc-rx')) return; V.down = Date.now(); V.y0 = e.clientY; V.hold = true; });
   const rel = (e) => {
     if (!V || !V.hold) return; V.hold = false;
     const dt = Date.now() - V.down, dy = e.clientY - V.y0;
@@ -994,10 +994,10 @@ function storyOpen(gi) {
     const b = e.target.closest('button[data-a]'); if (!b || !V) return;
     const a = b.dataset.a; if (a === 'x') closeStory(); else if (a === 'del') delStory(); else if (a === 'views') viewersPanel(); else if (a === 'vx') { V.panel = false; const w = el.querySelector('.sc-vw'); if (w) w.remove(); } else if (a === 'prof') { const n = b.dataset.n; closeStory(); profile(n); } else if (a === 'like') likeStory(b);
   });
-  // iOS: with the keyboard open the layout viewport slides and a fixed full-screen layer leaves a gap; follow the VISUAL viewport instead
+  // iOS: opening the keyboard pans the page under a fixed layer. Cancel the pan (the story must not move) and lift only the reply controls above the keyboard.
   const vv = window.visualViewport;
   if (vv) {
-    const fit = () => { if (!V) return; el.style.bottom = 'auto'; el.style.height = vv.height + 'px'; el.style.top = vv.offsetTop + 'px'; if (window.scrollY) window.scrollTo(0, 0); };
+    const fit = () => { if (!V) return; const kb = Math.max(0, Math.round(window.innerHeight - vv.height)); el.style.translate = `0 ${Math.round(vv.offsetTop)}px`; el.style.setProperty('--kb', kb + 'px'); el.classList.toggle('kb', kb > 80); if (window.scrollY) window.scrollTo(0, 0); };
     vv.addEventListener('resize', fit); vv.addEventListener('scroll', fit); V.vvOff = () => { vv.removeEventListener('resize', fit); vv.removeEventListener('scroll', fit); };
   }
   paintStory();
@@ -1013,12 +1013,16 @@ function paintStory() {
   <div class="sc-simg"><img src="${E(s.img)}" alt="" draggable="false">${ovLayer(s.ov)}</div>
   ${s.cap ? `<div class="sc-scap" data-nt>${E(s.cap)}</div>` : ''}
   ${g.author.me ? `<div class="sc-sft"><button class="sc-vb" data-a="views">${ico('user', 18)} ${E(t('viewers'))} · ${s.views || 0}</button><span class="sc-vb sc-lc">${ico('heart', 16)} ${s.likes || 0}</span></div>`
-    : `<form class="sc-rf" id="sc-rf" autocomplete="off"><input id="sc-ri" maxlength="300" enterkeyhint="send" placeholder="${E(t('stReply'))}" aria-label="${E(t('stReply'))}"><button type="button" class="sc-lk${s.liked ? ' on' : ''}" data-a="like" aria-label="${E(t('stLike'))}">${ico('heart', 26)}</button><button type="submit" class="sc-sn" aria-label="send" disabled>${ico('send', 22)}</button></form>`}`;
+    : `<div class="sc-rx" id="sc-rx">${['❤️', '🔥', '😂', '😮', '😢', '👏'].map((e) => `<button type="button" data-e="${e}">${e}</button>`).join('')}</div><form class="sc-rf" id="sc-rf" autocomplete="off"><input id="sc-ri" maxlength="300" enterkeyhint="send" placeholder="${E(t('stReply'))}" aria-label="${E(t('stReply'))}"><button type="button" class="sc-lk${s.liked ? ' on' : ''}" data-a="like" aria-label="${E(t('stLike'))}">${ico('heart', 26)}</button><button type="submit" class="sc-sn" aria-label="send" disabled>${ico('send', 22)}</button></form>`}`;
   V.left = SDUR; V.ready = false; V.last = performance.now();
   const rf = V.el.querySelector('#sc-rf');
   if (rf) {
     const ri = rf.querySelector('#sc-ri'), sn = rf.querySelector('.sc-sn');
-    ri.addEventListener('focus', () => { if (V) V.paused = true; }); ri.addEventListener('blur', () => { if (V) V.paused = false; });
+    ri.addEventListener('focus', () => { if (V) { V.paused = true; V.el.classList.add('typing'); } }); ri.addEventListener('blur', () => { if (V) { V.paused = false; V.el.classList.remove('typing'); } });
+    V.el.querySelectorAll('#sc-rx button').forEach((b) => {
+      b.addEventListener('pointerdown', (e) => e.preventDefault());
+      b.onclick = async () => { b.classList.add('pop'); try { await window.CHAT.storyReply(g.author.nick, s.id, b.dataset.e); toast(t('stSent')); ri.blur(); } catch (er) { if (!handleAuthErr(er)) toast(errText(er)); } };
+    });
     ri.addEventListener('input', () => { sn.disabled = !ri.value.trim(); });
     rf.addEventListener('submit', async (e) => {
       e.preventDefault(); const text = ri.value.trim(); if (!text || sn.disabled) return; sn.disabled = true;
@@ -1191,10 +1195,13 @@ const css = `
 .sc-sbars{display:flex;gap:5px;padding:calc(10px + env(safe-area-inset-top,0px)) 10px 8px;position:relative;z-index:2}.sc-sbars::before{content:'';position:absolute;left:0;right:0;top:0;height:90px;background:linear-gradient(rgba(0,0,0,.55),transparent);z-index:-1;pointer-events:none}.sc-sbars i{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.4);box-shadow:0 0 3px rgba(0,0,0,.5);overflow:hidden}.sc-sbars b{display:block;height:100%;background:#fff}
 .sc-sh2{display:flex;align-items:center;gap:6px;padding:4px 10px;position:relative;z-index:2}.sc-sh2 .sc-who{flex:1;color:#fff}.sc-sh2 .sc-ic{color:#fff;width:auto;padding:0 10px;gap:4px;display:flex}
 .sc-simg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}.sc-simg{overflow:hidden}.sc-simg img:not(.sc-ovg){width:100%;height:100%;object-fit:contain;pointer-events:none}.sc-simg .sc-ovg{width:auto}.sc-gone{color:#aaa;font-weight:700}
-.sc-rf{position:absolute;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:8px;z-index:3}
+.sc-rf{position:absolute;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));transition:bottom .25s cubic-bezier(.22,1,.36,1);display:flex;align-items:center;gap:8px;z-index:3}
 .sc-rf input{flex:1;min-width:0;height:44px;box-sizing:border-box;border-radius:22px;border:1.5px solid rgba(255,255,255,.7);background:rgba(0,0,0,.35);color:#fff;font:inherit;font-size:16px;padding:0 16px;outline:none}.sc-rf input::placeholder{color:rgba(255,255,255,.8)}.sc-rf input:focus{border-color:#fff;background:rgba(0,0,0,.55)}
 .sc-rf button{flex:none;box-sizing:border-box;width:44px;height:44px;min-width:44px;max-width:44px;min-height:44px;padding:0;border:0;border-radius:50%;background:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}.sc-rf svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .sc-rf .sc-lk.on{color:#ff4d6d}.sc-rf .sc-lk.on svg{fill:#ff4d6d}.sc-rf .sc-lk.pop svg{animation:lkpop .4s cubic-bezier(.34,1.56,.64,1)}@keyframes lkpop{0%{transform:scale(.6)}60%{transform:scale(1.3)}100%{transform:scale(1)}}.sc-rf .sc-sn{background:#fff;color:#000}.sc-rf .sc-sn:disabled{display:none}
+.sc-sv.kb .sc-rf{bottom:calc(10px + var(--kb,0px))}.sc-sv.kb .sc-scap{bottom:calc(122px + var(--kb,0px))}.sc-scap{transition:bottom .25s cubic-bezier(.22,1,.36,1)}
+.sc-rx{position:absolute;left:12px;right:12px;bottom:calc(66px + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-between;gap:4px;z-index:3;opacity:0;pointer-events:none;transform:translateY(14px);transition:opacity .22s,transform .25s cubic-bezier(.22,1,.36,1),bottom .25s cubic-bezier(.22,1,.36,1)}.sc-sv.typing .sc-rx{opacity:1;pointer-events:auto;transform:none}.sc-sv.kb .sc-rx{bottom:calc(66px + var(--kb,0px))}
+.sc-rx button{flex:1;min-width:0;height:46px;border:0;border-radius:23px;background:rgba(0,0,0,.45);font-size:26px;line-height:1;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s}.sc-rx button:active{transform:scale(.85)}.sc-rx button.pop{animation:lkpop .4s cubic-bezier(.34,1.56,.64,1)}
 .sc-sft{gap:8px}.sc-lc{display:inline-flex;align-items:center;gap:5px}.sc-lc svg{fill:#ff4d6d;stroke:#ff4d6d}
 .sc-scap{position:absolute;left:0;right:0;bottom:calc(70px + env(safe-area-inset-bottom,0px));text-align:center;padding:10px 20px;font-weight:700;font-size:16px;background:linear-gradient(transparent,rgba(0,0,0,.6) 40%);z-index:2;overflow-wrap:anywhere}
 .sc-sft{position:absolute;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;z-index:2}.sc-vb{border:0;background:rgba(255,255,255,.18);color:#fff;font:inherit;font-weight:800;font-size:13px;border-radius:22px;padding:10px 18px;display:flex;align-items:center;gap:8px;cursor:pointer;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
