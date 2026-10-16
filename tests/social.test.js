@@ -214,6 +214,18 @@ const WEBP='data:image/webp;base64,'+webp;
   // story with a GIF sticker
   const sg=await op(A,'story',{image:PNG,gifs:[GIF],ov:[{g:0,x:50,y:50,w:30,r:0}]});
   ok('story with GIF sticker: overlay served to followers only',sg.status===200&&sg.json.story.ov.length===1&&(await call(sg.json.story.ov[0].u,{cookie:A,raw:true})).status===200&&(await call(sg.json.story.ov[0].u,{cookie:Bc,raw:true})).status===404);
+  // ---- phone widget feed
+  const wt=await call('/api/widget',{method:'POST',cookie:A,body:{op:'token'}});
+  ok('widget: signed-in user gets a secret token (stable on repeat)',wt.status===200&&/^[\w-]{20,40}$/.test(wt.json.token)&&(await call('/api/widget',{method:'POST',cookie:A,body:{op:'token'}})).json.token===wt.json.token);
+  ok('widget: no session / no CSRF cannot create or write',(await call('/api/widget',{method:'POST',body:{op:'token'}})).status===401&&(await call('/api/widget',{method:'POST',cookie:A,csrf:false,body:{op:'token'}})).status===403);
+  ok('widget: feed is empty (404) before the first snapshot',(await call('/api/widget?t='+wt.json.token)).status===404);
+  const sn=await call('/api/widget',{method:'POST',cookie:A,body:{op:'snap',city:'Kyiv',temp:7.4,feels:3,txt:'Cloudy',rain:true,label:'Look',items:[{n:'Jacket',u:'https://evil.example/demo/a.webp'},{n:'Hoodie',u:'http://127.0.0.1:'+PORT+'/api/data'},{n:'Tee',b:'QUJD'},{n:'Bad',b:'<script>'}]}});
+  ok('widget: snapshot stored; foreign/invalid images dropped',sn.status===200&&sn.json.n===1);
+  const wg=await call('/api/widget?t='+wt.json.token);
+  ok('widget: public read by token only (no cookie), weather + outfit',wg.status===200&&wg.json.temp===7.4&&wg.json.city==='Kyiv'&&wg.json.items.length===1&&wg.json.items[0].b==='QUJD');
+  ok('widget: wrong token 404',(await call('/api/widget?t=AAAAAAAAAAAAAAAAAAAAAAAA')).status===404&&(await call('/api/widget?t=short')).status===404);
+  const wr=await call('/api/widget',{method:'POST',cookie:A,body:{op:'reset'}});
+  ok('widget: reset issues a new token and revokes the old link',wr.json.token!==wt.json.token&&(await call('/api/widget?t='+wt.json.token)).status===404);
  }catch(e){ok('no exception: '+e.message,false)}
  srv.kill();jw.close();console.log(fails?'\n'+fails+' FAILED':'\nall passed');process.exit(fails?1:0);
 })();

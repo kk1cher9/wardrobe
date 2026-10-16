@@ -468,7 +468,58 @@ function histPen(){const m=new Map(),now=Date.now();(S.hist||[]).slice(0,12).for
 const planSig=p=>p.map(i=>i.id).sort().join('+');
 function recordHist(r){if(!r||!r.plan.length)return;const sig=planSig(r.plan);S.hist=S.hist||[];if(S.hist[0]&&S.hist[0].sig===sig)return;
  S.hist.unshift({at:Date.now(),d:dayKey(),sig,ids:r.plan.map(i=>i.id),t:Math.round(r.avg)});S.hist=S.hist.slice(0,60);Store.set('hist',S.hist);if(S.user)qMeta()}
-function rememberToday(r){if(r.demo||r.sample){Store.set('today',{d:dayKey(),ids:r.plan.map(i=>i.id),avg:r.avg,range:S.set.range||'all',prefs:prefSig(),r:{miss:r.miss,tips:r.tips,avg:r.avg,f:r.f,tmin:r.tmin,tmax:r.tmax,short:r.short,label:r.label,look:r.look}});return}Store.set('today',{d:dayKey(),ids:r.plan.map(i=>i.id),avg:r.avg,range:S.set.range||'all',prefs:prefSig(),r:{miss:r.miss,tips:r.tips,avg:r.avg,f:r.f,tmin:r.tmin,tmax:r.tmax,short:r.short,label:r.label,look:r.look}});recordHist(r)}
+// ---- iPhone widget (Scriptable): the app pushes weather + today's outfit to /api/widget under a secret token; the widget script reads it
+let WGSIG='';
+async function widgetThumb(src){
+ const im=await new Promise((res,rej)=>{const x=new Image();x.onload=()=>res(x);x.onerror=rej;x.src=src});
+ for(const m of [170,130,100]){const k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*k));c.height=Math.max(1,Math.round(im.height*k));c.getContext('2d').drawImage(im,0,0,c.width,c.height);const b=c.toDataURL('image/png').split(',')[1];if(b.length<=38000)return b}
+ return null}
+async function widgetPush(r){
+ if(!S.user||!S.set.widget||!S.w||!r||!r.plan)return;
+ const plan=r.plan.filter(i=>i.cat!=='Accessories').slice(0,4);if(!plan.length)return;
+ const sig=dayKey()+'|'+plan.map(i=>i.id).join(',')+'|'+Math.round(S.w.temp);if(sig===WGSIG)return;WGSIG=sig;
+ const items=[];
+ for(const i of plan){try{if(i.demo)items.push({n:i.name,u:new URL(i.img,location.href).href});else{const b=await widgetThumb(i.img);if(b)items.push({n:i.name,b})}}catch(e){}}
+ try{const x=await API('/api/widget',{method:'POST',body:JSON.stringify({op:'snap',city:S.w.city,temp:S.w.temp,feels:S.w.feels,txt:S.w.txt,rain:!!S.w.rain,label:r.label||'',items})});if(!x.ok)WGSIG=''}catch(e){WGSIG=''}}
+function widgetScript(url){return ['// Weather Wardrobe widget (Scriptable)','const URL_ = '+JSON.stringify(url)+';',
+'let d = null; try { d = await new Request(URL_).loadJSON(); } catch (e) {}',
+'const w = new ListWidget(); const g = new LinearGradient(); g.colors = [new Color("#4b5593"), new Color("#1b3f8c")]; g.locations = [0, 1]; w.backgroundGradient = g; w.setPadding(12, 12, 12, 12);',
+'if (!d || !d.items) { const t = w.addText("Open Weather Wardrobe once to load your outfit"); t.textColor = Color.white(); t.font = Font.boldSystemFont(13); }',
+'else {',
+'  const top = w.addStack(); top.centerAlignContent();',
+'  const tt = top.addText(Math.round(d.temp) + "°"); tt.font = Font.boldSystemFont(30); tt.textColor = Color.white(); top.addSpacer(8);',
+'  const col = top.addStack(); col.layoutVertically();',
+'  const a = col.addText(d.txt || ""); a.font = Font.semiboldSystemFont(13); a.textColor = Color.white();',
+'  const b = col.addText((d.city || "") + (d.rain ? "  ☔" : "")); b.font = Font.systemFont(11); b.textColor = new Color("#ffffff", 0.75);',
+'  w.addSpacer(8);',
+'  const fam = config.widgetFamily, n = fam === "small" ? 2 : 4, sz = fam === "small" ? 58 : (fam === "large" ? 80 : 64);',
+'  const row = w.addStack(); row.spacing = 6;',
+'  for (const it of d.items.slice(0, n)) {',
+'    let img = null; try { img = it.u ? await new Request(it.u).loadImage() : Image.fromData(Data.fromBase64String(it.b)); } catch (e) {}',
+'    if (!img) continue;',
+'    const box = row.addStack(); box.size = new Size(sz, sz); box.cornerRadius = 12; box.backgroundColor = new Color("#ffffff", 0.2); box.centerAlignContent();',
+'    const im = box.addImage(img); im.imageSize = new Size(sz - 8, sz - 8); im.resizable = true; im.applyFittingContentMode();',
+'  }',
+'}',
+'w.refreshAfterDate = new Date(Date.now() + 30 * 60 * 1000);',
+'if (config.runsInWidget) Script.setWidget(w); else await w.presentMedium();',
+'Script.complete();'].join('\n')}
+async function widgetSetup(){
+ if(!S.user){toast('Sign in with Google first');return}
+ let tok;try{const r=await API('/api/widget',{method:'POST',body:JSON.stringify({op:'token'})});if(!r.ok)throw 0;tok=(await r.json()).token}catch(e){toast('Could not reach the server');return}
+ S.set.widget=true;save();WGSIG='';if(S.gen)widgetPush(S.gen);
+ const script=widgetScript(location.origin+'/api/widget?t='+tok);
+ const m=document.createElement('div');m.className='modal';m.id='md';m.onclick=ev=>{if(ev.target===m)closeM(m)};
+ m.innerHTML=`<div class="sheet"><div class="lbl" style="font-size:16px">iPhone widget</div>
+ <p class="note" style="margin:6px 0 10px">1. Install the free Scriptable app from the App Store.<br>2. Tap Copy script below.<br>3. In Scriptable tap +, paste, and name it Wardrobe.<br>4. On the Home Screen: hold, tap +, choose Scriptable, pick this script.<br>The widget shows the weather and today's outfit and updates when you open the Home tab.</p>
+ <textarea id="wg_t" readonly rows="4" style="width:100%;font:11px monospace">${esc(script)}</textarea>
+ <div class="row wrap"><button class="btn" id="wg_c" style="flex:1">Copy script</button><button class="btn g" id="wg_r">New link</button><button class="btn g" id="wg_o">Turn off</button><button class="btn g" id="wg_x">Close</button></div></div>`;
+ document.body.appendChild(m);
+ $('#wg_x').onclick=()=>closeM(m);
+ $('#wg_c').onclick=async()=>{try{await navigator.clipboard.writeText(script);toast('Script copied')}catch(e){const t=$('#wg_t');t.select();t.setSelectionRange(0,99999);try{document.execCommand('copy');toast('Script copied')}catch(x){toast('Select the text and copy it')}}};
+ $('#wg_r').onclick=async()=>{if(!confirm('Create a new link? The old widget script will stop working.'))return;try{await API('/api/widget',{method:'POST',body:JSON.stringify({op:'reset'})});closeM(m);WGSIG='';setTimeout(widgetSetup,300)}catch(e){toast('Could not reach the server')}};
+ $('#wg_o').onclick=async()=>{try{await API('/api/widget',{method:'POST',body:JSON.stringify({op:'off'})})}catch(e){}S.set.widget=false;save();closeM(m);toast('Widget turned off')}}
+function rememberToday(r){try{widgetPush(r)}catch(e){}if(r.demo||r.sample){Store.set('today',{d:dayKey(),ids:r.plan.map(i=>i.id),avg:r.avg,range:S.set.range||'all',prefs:prefSig(),r:{miss:r.miss,tips:r.tips,avg:r.avg,f:r.f,tmin:r.tmin,tmax:r.tmax,short:r.short,label:r.label,look:r.look}});return}Store.set('today',{d:dayKey(),ids:r.plan.map(i=>i.id),avg:r.avg,range:S.set.range||'all',prefs:prefSig(),r:{miss:r.miss,tips:r.tips,avg:r.avg,f:r.f,tmin:r.tmin,tmax:r.tmax,short:r.short,label:r.label,look:r.look}});recordHist(r)}
 // ---- explanation of the look (palette + style) ----
 function lookNotes(plan,lk){
  const out=[],cs=plan.filter(i=>i.cat!=='Accessories').map(colInfo).filter(c=>c.hex);
@@ -716,6 +767,7 @@ function settings(){
   <div>Theme<select onchange="S.set.theme=this.value;save();applyTheme();render()"><option value="light" ${s.theme=='light'?'selected':''}>Light</option><option value="dark" ${s.theme=='dark'?'selected':''}>Dark</option><option value="glass" ${s.theme=='glass'?'selected':''}>Glass</option></select></div>
   <div>Home layout<button class="btn g" style="padding:9px 14px" onclick="S.pos={};Store.set('pos',{});go('home')">Reset</button></div>
   ${window.CHAT&&CHAT.isAdmin&&CHAT.isAdmin()?`<div>Banned accounts<button class="btn g" style="padding:9px 14px" onclick="purgeBanned()">Delete…</button></div>`:''}
+  <div>iPhone widget<button class="btn g" style="padding:9px 14px" onclick="widgetSetup()">Set up</button></div>
   <div>Double-tap reaction<select onchange="S.set.dtr=this.value;save()">${['👍','❤️','😂','😮','😢','🔥','👎','🙏'].map(e=>`<option value="${e}" ${(s.dtr||'👍')===e?'selected':''}>${e}</option>`).join('')}</select></div>
   <div>Tab switch sound<input type="checkbox" style="width:24px;height:24px" ${s.snd!==false?'checked':''} onchange="S.set.snd=this.checked;save();if(this.checked)TabSnd.play()"></div>
   <div>Notifications<input type="checkbox" style="width:24px;height:24px" ${s.notify?'checked':''} onchange="toggleNotify(this)"></div></div>

@@ -102,3 +102,6 @@ npm run test:browser     # Playwright/Chromium: UI, алгоритм, демо-�
 - Новый сервис-воркер `wardrobe-v78` — после деплоя закройте и откройте приложение один раз.
 - **Шрифты в редакторе:** 8 системных шрифтов для текста на фото/в истории (без загрузки из сети, запекаются в картинку).
 - **Реакция на двойное касание в чате:** по умолчанию 👍, меняется в Настройки → «Реакция на двойное касание» (8 эмодзи); повторное двойное касание снимает реакцию.
+
+## iPhone widget
+Settings → "iPhone widget" → Set up gives a ready [Scriptable](https://scriptable.app) script. The app pushes the weather + today's outfit to `/api/widget` (secret token per account, revocable with "New link"); the script draws a small/medium/large Home Screen widget. Native WidgetKit would need Xcode + an Apple developer account.
