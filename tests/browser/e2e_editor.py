@@ -179,6 +179,7 @@ async def main():
     await A.click('#wg_x');await A.evaluate("S.gen=null;S.tab='home';go('home')");await A.wait_for_timeout(2500)
     wj=await A.evaluate("fetch(%r).then(r=>r.json())"%wurl)
     ok('opening Home pushes weather + today\'s outfit to the feed (public, tokenised)',isinstance(wj.get('items'),list) and len(wj['items'])>=1 and isinstance(wj.get('temp'),(int,float)))
+    ok('widget feed carries several looks to flip through',isinstance(wj.get('looks'),list) and len(wj['looks'])>=2 and all(l.get('items') for l in wj['looks']))
     ok('no page errors',not eA and not eB)
     if eA or eB:print(eA,eB)
     await b.close()

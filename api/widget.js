@@ -6,14 +6,20 @@ const TOK = /^[A-Za-z0-9_-]{20,40}$/;
 const num = (v, d) => (Number.isFinite(Number(v)) ? Math.round(Number(v) * 10) / 10 : d);
 const str = (v, n) => String(v == null ? '' : v).replace(/[\u0000-\u001f\u007f]/g, '').slice(0, n);
 
-function cleanSnap(b, host) {
-  const items = (Array.isArray(b.items) ? b.items : []).slice(0, 4).map((i) => {
+function cleanItems(arr, host) {
+  return (Array.isArray(arr) ? arr : []).slice(0, 4).map((i) => {
     const o = { n: str(i && i.n, 60) };
     if (i && typeof i.u === 'string') { let u; try { u = new URL(i.u); } catch { u = null; } if (u && (u.protocol === 'https:' || /^(localhost|127\.0\.0\.1)(:|$)/.test(u.host)) && u.host === host && u.pathname.startsWith('/demo/')) o.u = u.href.slice(0, 200); }
     else if (i && typeof i.b === 'string' && /^[A-Za-z0-9+/]+={0,2}$/.test(i.b) && i.b.length <= 40000) o.b = i.b;
     return o.u || o.b ? o : null;
   }).filter(Boolean);
-  return { ts: Date.now(), city: str(b.city, 40), temp: num(b.temp, 0), feels: num(b.feels, null), txt: str(b.txt, 30), rain: !!b.rain, label: str(b.label, 60), items };
+}
+function cleanSnap(b, host) {
+  const items = cleanItems(b.items, host);
+  // up to 4 looks the widget can flip through; looks[0] is today's current outfit (same as items)
+  const looks = (Array.isArray(b.looks) ? b.looks : []).slice(0, 4).map((l) => ({ label: str(l && l.label, 60), items: cleanItems(l && l.items, host) })).filter((l) => l.items.length);
+  if (!looks.length && items.length) looks.push({ label: str(b.label, 60), items });
+  return { ts: Date.now(), city: str(b.city, 40), temp: num(b.temp, 0), feels: num(b.feels, null), txt: str(b.txt, 30), rain: !!b.rain, label: str(b.label, 60), items, looks };
 }
 
 module.exports = handler(async (req, res, user) => {
@@ -38,7 +44,7 @@ module.exports = handler(async (req, res, user) => {
     if (!tok) throw err(409, 'no_token');
     await rateLimit(user, 'wdgsnap', 600);
     const snap = cleanSnap(b, String(req.headers.host || ''));
-    const json = JSON.stringify(snap); if (json.length > 150000) throw err(413, 'too_large');
+    const json = JSON.stringify(snap); if (json.length > 500000) throw err(413, 'too_large');
     await db('SET', 'wd:wg:' + tok, json, 'EX', 60 * 86400);
     return send(res, 200, { ok: true, n: snap.items.length });
   }
