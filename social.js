@@ -982,22 +982,35 @@ function storyOpen(gi) {
   const el = document.createElement('div'); el.className = 'sc-sv'; el.id = 'sc-sv'; document.body.appendChild(el); document.body.style.overflow = 'hidden';
   const g = groups[gi];
   V = { el, gi, si: g.author.me ? 0 : Math.max(0, g.stories.findIndex((x) => !x.seen)), left: SDUR, last: 0, paused: false, hold: false, ready: false, raf: 0, down: 0, y0: 0, panel: false };
-  el.addEventListener('pointerdown', (e) => { if (e.target.closest('button,.sc-vw,form,.sc-rx')) return; V.down = Date.now(); V.y0 = e.clientY; V.hold = true; });
+  el.addEventListener('pointerdown', (e) => { if (e.target.closest('button,.sc-vw,form,.sc-rx')) return; V.down = Date.now(); V.y0 = e.clientY; V.x0 = e.clientX; V.hold = true; V.drag = false; });
+  const dragTo = (dy) => { const a = Math.min(1, Math.abs(dy) / 420); el.style.transform = `translate3d(0,${dy}px,0) scale(${1 - a * .12})`; el.style.borderRadius = Math.min(32, Math.abs(dy) / 4) + 'px'; el.style.background = `rgba(0,0,0,${1 - a * .85})`; };
+  el.addEventListener('pointermove', (e) => {
+    if (!V || !V.hold) return; const dy = e.clientY - V.y0;
+    if (!V.drag && Math.abs(dy) > 14 && Math.abs(dy) > Math.abs(e.clientX - V.x0)) { V.drag = true; el.style.transition = 'none'; try { el.setPointerCapture(e.pointerId); } catch (x) { /* synthetic */ } }
+    if (V.drag) dragTo(dy);
+  });
   const rel = (e) => {
     if (!V || !V.hold) return; V.hold = false;
     const dt = Date.now() - V.down, dy = e.clientY - V.y0;
-    if (dy > 90) { closeStory(); return; }
+    if (V.drag) { // dragged up or down like a video: far enough (or a quick flick) dismisses, otherwise it springs back
+      V.drag = false; const out = Math.abs(dy) > 110 || (Math.abs(dy) > 50 && dt < 260);
+      el.style.transition = 'transform .26s cubic-bezier(.22,1,.36,1),background .26s,opacity .26s';
+      if (out) { el.style.transform = `translate3d(0,${dy > 0 ? innerHeight : -innerHeight}px,0) scale(.88)`; el.style.opacity = '0'; setTimeout(() => closeStory(), 240); }
+      else { el.style.transform = ''; el.style.borderRadius = ''; el.style.background = ''; setTimeout(() => { if (V) el.style.transition = ''; }, 280); }
+      return;
+    }
     if (dt < 260 && Math.abs(dy) < 25) { (e.clientX < innerWidth * .33 ? prevStory : nextStory)(); }
   };
-  el.addEventListener('pointerup', rel); el.addEventListener('pointercancel', () => { if (V) V.hold = false; });
+  el.addEventListener('pointerup', rel); el.addEventListener('pointercancel', () => { if (V) { V.hold = false; if (V.drag) { V.drag = false; el.style.transform = ''; el.style.background = ''; el.style.borderRadius = ''; } } });
   el.addEventListener('click', (e) => {
     const b = e.target.closest('button[data-a]'); if (!b || !V) return;
     const a = b.dataset.a; if (a === 'x') closeStory(); else if (a === 'del') delStory(); else if (a === 'views') viewersPanel(); else if (a === 'vx') { V.panel = false; const w = el.querySelector('.sc-vw'); if (w) w.remove(); } else if (a === 'prof') { const n = b.dataset.n; closeStory(); profile(n); } else if (a === 'like') likeStory(b);
   });
-  // iOS: opening the keyboard pans the page under a fixed layer. Cancel the pan (the story must not move) and lift only the reply controls above the keyboard.
+  // iOS: the keyboard resizes/pans the page. Freeze the story at its opening size so the picture never moves or squashes; only the reply controls rise above the keyboard.
+  const H0 = window.innerHeight; el.style.height = H0 + 'px'; el.style.bottom = 'auto';
   const vv = window.visualViewport;
   if (vv) {
-    const fit = () => { if (!V) return; const kb = Math.max(0, Math.round(window.innerHeight - vv.height)); el.style.translate = `0 ${Math.round(vv.offsetTop)}px`; el.style.setProperty('--kb', kb + 'px'); el.classList.toggle('kb', kb > 80); if (window.scrollY) window.scrollTo(0, 0); };
+    const fit = () => { if (!V) return; const kb = Math.max(0, Math.round(H0 - vv.height - vv.offsetTop + vv.offsetTop)), top = Math.round(vv.offsetTop); el.style.translate = top > 0 ? `0 ${top}px` : ''; el.style.setProperty('--kb', kb + 'px'); el.classList.toggle('kb', kb > 80); if (window.scrollY) window.scrollTo(0, 0); };
     vv.addEventListener('resize', fit); vv.addEventListener('scroll', fit); V.vvOff = () => { vv.removeEventListener('resize', fit); vv.removeEventListener('scroll', fit); };
   }
   paintStory();
