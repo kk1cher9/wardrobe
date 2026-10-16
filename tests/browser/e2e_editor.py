@@ -74,7 +74,19 @@ async def main():
     ok('neon: white core with coloured glow',await A.evaluate("(n=>n.style.color==='rgb(255, 255, 255)'&&/rgb\\(255, 210, 63\\)/.test(n.style.textShadow))(document.querySelector('.ed-tx'))"))
     await A.click('#ed-fn');await A.click('#ed-fn')
     await A.click('#ed-sel [data-a="p"]');await A.click('#ed-sel [data-a="r"]')
-    ok('size/rotate buttons work on the selected element',await A.evaluate("(n=>/rotate\\(10deg\\)/.test(n.style.transform)&&parseFloat(n.style.fontSize)>0)(document.querySelector('.ed-tx'))"))
+    # corner handle: drag = scale + rotate
+    hb=await A.evaluate("(r=>[r.x+r.width/2,r.y+r.height/2])(document.getElementById('ed-hd').getBoundingClientRect())")
+    f0=await A.evaluate("(n=>[parseFloat(n.style.fontSize),+/rotate\\((-?\\d+)/.exec(n.style.transform)[1]])(document.querySelector('.ed-tx'))")
+    await A.mouse.move(hb[0],hb[1]);await A.mouse.down();await A.mouse.move(hb[0]+40,hb[1]+60,steps=5);await A.mouse.up()
+    f1=await A.evaluate("(n=>[parseFloat(n.style.fontSize),+/rotate\\((-?\\d+)/.exec(n.style.transform)[1]])(document.querySelector('.ed-tx'))")
+    ok('corner handle scales and rotates the text',f1[0]>f0[0] and f1[1]!=f0[1])
+    # two fingers anywhere on the stage (2nd finger off the text) pinch the selected element
+    pz=await A.evaluate("""()=>{const st=document.getElementById('ed-st'),r=st.getBoundingClientRect(),n=document.querySelector('.ed-tx'),b=n.getBoundingClientRect(),c=[b.x+b.width/2,b.y+b.height/2];
+      const ev=(t,id,x,y)=>st.dispatchEvent(new PointerEvent(t,{pointerId:id,clientX:x,clientY:y,bubbles:true,cancelable:true,pointerType:'touch'}));
+      const f0=parseFloat(n.style.fontSize);ev('pointerdown',1,c[0],c[1]);ev('pointerdown',2,r.left+10,r.top+10);ev('pointermove',2,r.left+10-80,r.top+10-80);ev('pointermove',2,r.left-90,r.top-10);ev('pointerup',2,0,0);ev('pointerup',1,0,0);
+      return [f0,parseFloat(n.style.fontSize)]}""")
+    ok('pinch works with the 2nd finger off the element',pz[1]!=pz[0])
+    ok('size/rotate buttons work on the selected element',await A.evaluate("(n=>/rotate\\(\\-?\\d+(\\.\\d+)?deg\\)/.test(n.style.transform)&&parseFloat(n.style.fontSize)>0)(document.querySelector('.ed-tx'))"))
     # wardrobe items -> sticker + worn
     await A.click('.ed-tabs [data-t="items"]');await A.wait_for_selector('.ed-ig [data-i="w1"]',timeout=2000)
     await A.click('.ed-ig [data-i="w1"]');await A.wait_for_selector('.ed-el:not(.ed-tx)',timeout=2000)

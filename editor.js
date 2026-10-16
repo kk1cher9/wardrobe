@@ -57,7 +57,7 @@
 .ed-el{position:absolute;transform-origin:center;touch-action:none;cursor:grab;-webkit-tap-highlight-color:transparent}.ed-el.sel{outline:2px dashed rgba(255,255,255,.9);outline-offset:4px}
 .ed-el img{width:100%;display:block;pointer-events:none;-webkit-user-drag:none}.ed-tx{font-weight:800;white-space:pre;line-height:1.2;text-shadow:0 1px 6px rgba(0,0,0,.35);font-family:-apple-system,system-ui,sans-serif}.ed-tx.bg{text-shadow:none;border-radius:.25em;padding:.1em .4em}
 .ed-sel{flex:none;display:flex;gap:6px;justify-content:center;align-items:center;padding:6px 10px;min-height:44px}.ed-sel button{border:0;background:#262626;color:#fff;width:44px;height:36px;border-radius:18px;font:inherit;font-weight:800;font-size:17px;cursor:pointer}.ed-sel button.dl{color:#ff6b6b}
-.ed-area{gap:6px;padding:0 8px 0 0}.ed-box{flex:1;min-width:0;min-height:0;height:100%;overflow:hidden;display:flex;align-items:center;justify-content:center}.ed-tabs{flex:none;z-index:6;display:flex;flex-direction:column;gap:10px}.ed-tabs button{display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:44px;height:44px;min-width:44px;padding:0;border:0;background:rgba(30,30,30,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#fff;font:inherit;font-weight:800;font-size:13px;border-radius:50%;cursor:pointer}.ed-tabs button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.ed-tabs button.on{background:#fff;color:#000}
+.ed-area{gap:6px;padding:0 8px 0 0}.ed-hd{position:absolute;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;z-index:8;touch-action:none;box-shadow:0 2px 8px rgba(0,0,0,.5);cursor:nwse-resize}.ed-hd[hidden]{display:none}.ed-hd svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.ed-box{flex:1;min-width:0;min-height:0;height:100%;overflow:hidden;display:flex;align-items:center;justify-content:center}.ed-tabs{flex:none;z-index:6;display:flex;flex-direction:column;gap:10px}.ed-tabs button{display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:44px;height:44px;min-width:44px;padding:0;border:0;background:rgba(30,30,30,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#fff;font:inherit;font-weight:800;font-size:13px;border-radius:50%;cursor:pointer}.ed-tabs button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.ed-tabs button.on{background:#fff;color:#000}
 .ed-pn{flex:none;height:min(190px,32vh);overflow:auto;padding:8px 10px calc(10px + env(safe-area-inset-bottom,0px));-webkit-overflow-scrolling:touch}
 .ed-fl{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px}.ed-fl button{flex:none;border:0;background:none;color:#ccc;font:inherit;font-size:11px;font-weight:700;cursor:pointer;padding:0;width:64px}.ed-fl button canvas{width:64px;height:64px;border-radius:12px;display:block;margin-bottom:4px;outline:2px solid transparent}.ed-fl button.on{color:#fff}.ed-fl button.on canvas{outline-color:#fff}
 .ed-rg{display:flex;align-items:center;gap:10px;font-size:12px;color:#aaa;margin-top:4px}.ed-rg input{flex:1}
@@ -115,11 +115,11 @@
     return new Promise((resolve) => {
       const root = document.createElement('div'); root.className = 'ed'; root.setAttribute('role', 'dialog'); root.setAttribute('aria-label', tx('title'));
       root.innerHTML = `<div class="ed-top"><button type="button" id="ed-x">${esc(tx('cancel'))}</button><b>${esc(tx('title'))}</b><button type="button" class="ed-ok" id="ed-ok">${esc(tx('done'))}</button></div>
-        <div class="ed-area" id="ed-area"><div class="ed-box" id="ed-box"><div class="ed-stage" id="ed-st"><canvas id="ed-cv" width="${PW}" height="${PH}"></canvas><div id="ed-ly"></div></div></div><div class="ed-tabs"><button type="button" data-t="filters" title="${esc(tx('filters'))}" aria-label="${esc(tx('filters'))}"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="5.5"/><circle cx="15" cy="9" r="5.5"/><circle cx="12" cy="15" r="5.5"/></svg></button><button type="button" data-t="text" title="${esc(tx('text'))}" aria-label="${esc(tx('text'))}"><span style="font-size:16px;letter-spacing:-.5px">Aa</span></button><button type="button" data-t="items" title="${esc(tx('items'))}" aria-label="${esc(tx('items'))}"><svg viewBox="0 0 24 24"><path d="M8 3l-5 3 2 4 3-1v11h8V9l3 1 2-4-5-3a4 4 0 0 1-8 0z"/></svg></button><button type="button" data-t="gif" title="${esc(tx('gif'))}" aria-label="${esc(tx('gif'))}"><span style="font-size:12px">GIF</span></button></div></div>
+        <div class="ed-area" id="ed-area"><div class="ed-box" id="ed-box"><div class="ed-stage" id="ed-st"><canvas id="ed-cv" width="${PW}" height="${PH}"></canvas><div id="ed-ly"></div><div class="ed-hd" id="ed-hd" hidden aria-label="resize"><svg viewBox="0 0 24 24"><path d="M5 19L19 5M13 5h6v6M11 19H5v-6"/></svg></div></div></div><div class="ed-tabs"><button type="button" data-t="filters" title="${esc(tx('filters'))}" aria-label="${esc(tx('filters'))}"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="5.5"/><circle cx="15" cy="9" r="5.5"/><circle cx="12" cy="15" r="5.5"/></svg></button><button type="button" data-t="text" title="${esc(tx('text'))}" aria-label="${esc(tx('text'))}"><span style="font-size:16px;letter-spacing:-.5px">Aa</span></button><button type="button" data-t="items" title="${esc(tx('items'))}" aria-label="${esc(tx('items'))}"><svg viewBox="0 0 24 24"><path d="M8 3l-5 3 2 4 3-1v11h8V9l3 1 2-4-5-3a4 4 0 0 1-8 0z"/></svg></button><button type="button" data-t="gif" title="${esc(tx('gif'))}" aria-label="${esc(tx('gif'))}"><span style="font-size:12px">GIF</span></button></div></div>
         <div class="ed-sel" id="ed-sel"></div>
         <div class="ed-pn" id="ed-pn"></div>`;
       document.body.appendChild(root); const prevOv = document.body.style.overflow; document.body.style.overflow = 'hidden';
-      const q = (s) => root.querySelector(s), stage = q('#ed-st'), cv = q('#ed-cv'), ly = q('#ed-ly'), ctx = cv.getContext('2d', { willReadFrequently: true });
+      const q = (s) => root.querySelector(s), stage = q('#ed-st'), cv = q('#ed-cv'), ly = q('#ed-ly'), hd = q('#ed-hd'), ctx = cv.getContext('2d', { willReadFrequently: true });
       let closed = false;
       const finish = (v) => { if (closed) return; closed = true; window.removeEventListener('resize', size); document.body.style.overflow = prevOv; root.classList.add('out'); setTimeout(() => root.remove(), 230); resolve(v); };
       const flash = (m) => { const d = document.createElement('div'); d.className = 'ed-err'; d.textContent = m; root.appendChild(d); setTimeout(() => d.remove(), 2400); };
@@ -152,14 +152,19 @@
         if (e.k === 'item') { const it = items.find((x) => x.id === e.itemId); return it ? `<img alt="" src="${esc(it.img)}">` : ''; }
         return `<img alt="" src="${esc(e.src)}">`;
       };
+      function posHd(e, node) {
+        const hw = node.offsetWidth / 2 + 14, hh = node.offsetHeight / 2 + 14, a = e.r * Math.PI / 180, dx = hw * Math.cos(a) - hh * Math.sin(a), dy = hw * Math.sin(a) + hh * Math.cos(a);
+        hd.hidden = false; hd.style.left = `calc(${e.x}% + ${dx}px)`; hd.style.top = `calc(${e.y}% + ${dy}px)`;
+      }
       function style(e, node) {
         node.style.left = e.x + '%'; node.style.top = e.y + '%';
         node.style.transform = `translate(-50%,-50%) rotate(${e.r}deg)`;
         if (e.k === 'text') { node.style.fontSize = (e.fs / 100 * SW) + 'px'; node.style.fontFamily = fnt(e).f; node.style.fontWeight = fnt(e).w; const fc = fxCss(e); node.style.color = fc.col; node.style.background = fc.bg; node.style.textShadow = fc.sh; node.classList.toggle('bg', fxOf(e) === 'bg'); node.style.width = ''; }
         else node.style.width = e.w + '%';
         node.classList.toggle('sel', E.sel === e.id);
+        if (E.sel === e.id) posHd(e, node);
       }
-      function place() { ly.querySelectorAll('.ed-el').forEach((n) => { const e = E.els.find((x) => x.id === +n.dataset.id); if (e) style(e, n); }); }
+      function place() { ly.querySelectorAll('.ed-el').forEach((n) => { const e = E.els.find((x) => x.id === +n.dataset.id); if (e) style(e, n); }); if (!selEl()) hd.hidden = true; }
       function layers() {
         ly.innerHTML = '';
         E.els.forEach((e) => {
@@ -184,32 +189,52 @@
         });
       }
       // drag with one finger, pinch/rotate with two
-      const ptrs = new Map(); let g = null;
+      const ptrs = new Map(); let g = null, hdg = null, tap = null;
+      const SC = (e, f, base) => { if (e.k === 'text') e.fs = Math.max(2.5, Math.min(30, base.fs * f)); else e.w = Math.max(5, Math.min(100, base.w * f)); };
       stage.addEventListener('pointerdown', (ev) => {
+        if (ev.target === hd) return;
         const n = ev.target.closest('.ed-el');
-        if (!n) { if (!ptrs.size) select(null); return; }
-        const e = E.els.find((x) => x.id === +n.dataset.id); if (!e) return;
-        if (E.sel !== e.id) select(e.id);
-        stage.setPointerCapture && stage.setPointerCapture(ev.pointerId);
+        let e = g ? g.e : (n ? E.els.find((x) => x.id === +n.dataset.id) : selEl());   // a 2nd finger anywhere pinches the element already being held
+        if (!e) { select(null); return; }
+        if (!g && n && E.sel !== e.id) select(e.id);
+        try { stage.setPointerCapture(ev.pointerId); } catch (e2) { /* synthetic or released pointer */ }
         ptrs.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
-        g = { e, pts: [...ptrs.values()].map((p) => ({ ...p })), x: e.x, y: e.y, w: e.w, fs: e.fs, r: e.r };
-        if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; g.d0 = Math.hypot(b.x - a.x, b.y - a.y) || 1; g.a0 = Math.atan2(b.y - a.y, b.x - a.x); }
+        g = { e, pts: [...ptrs.values()].map((p) => ({ ...p })), x: e.x, y: e.y, w: e.w, fs: e.fs, r: e.r, empty: !n && ptrs.size === 1 };
+        if (g.empty) tap = { id: ev.pointerId, x: ev.clientX, y: ev.clientY, moved: false };
+        if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; g.d0 = Math.hypot(b.x - a.x, b.y - a.y) || 1; g.a0 = Math.atan2(b.y - a.y, b.x - a.x); g.empty = false; tap = null; }
         ev.preventDefault();
       });
       stage.addEventListener('pointermove', (ev) => {
         if (!g || !ptrs.has(ev.pointerId)) return; ptrs.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
+        if (tap && Math.hypot(ev.clientX - tap.x, ev.clientY - tap.y) > 8) tap.moved = true;
         const e = g.e, r = stage.getBoundingClientRect();
         if (ptrs.size >= 2 && g.d0) {
           const [a, b] = [...ptrs.values()], d = Math.hypot(b.x - a.x, b.y - a.y) || 1, an = Math.atan2(b.y - a.y, b.x - a.x);
-          const f = d / g.d0; if (e.k === 'text') e.fs = Math.max(2.5, Math.min(30, g.fs * f)); else e.w = Math.max(5, Math.min(100, g.w * f));
+          SC(e, d / g.d0, g);
           e.r = Math.max(-180, Math.min(180, Math.round(g.r + (an - g.a0) * 180 / Math.PI)));
-        } else if (ptrs.size === 1) {
+        } else if (ptrs.size === 1 && !g.empty) {
           const p0 = g.pts[0], p = ptrs.get(ev.pointerId);
           e.x = Math.max(0, Math.min(100, g.x + (p.x - p0.x) / r.width * 100)); e.y = Math.max(0, Math.min(100, g.y + (p.y - p0.y) / r.height * 100));
         }
         const n = ly.querySelector(`[data-id="${e.id}"]`); if (n) style(e, n);
       });
-      const up = (ev) => { ptrs.delete(ev.pointerId); if (!ptrs.size) g = null; else if (g) { const e = g.e; g = { e, pts: [...ptrs.values()].map((p) => ({ ...p })), x: e.x, y: e.y, w: e.w, fs: e.fs, r: e.r }; } };
+      const up = (ev) => {
+        ptrs.delete(ev.pointerId);
+        if (tap && tap.id === ev.pointerId) { if (!tap.moved && !ptrs.size) select(null); tap = null; }
+        if (!ptrs.size) g = null; else if (g) { const e = g.e; g = { e, pts: [...ptrs.values()].map((p) => ({ ...p })), x: e.x, y: e.y, w: e.w, fs: e.fs, r: e.r }; }
+      };
+      // corner handle: drag to scale + rotate around the centre in one move
+      hd.addEventListener('pointerdown', (ev) => {
+        const e = selEl(); if (!e) return; const r = stage.getBoundingClientRect(), cx = r.left + e.x / 100 * r.width, cy = r.top + e.y / 100 * r.height;
+        hdg = { e, cx, cy, d0: Math.hypot(ev.clientX - cx, ev.clientY - cy) || 1, a0: Math.atan2(ev.clientY - cy, ev.clientX - cx), fs: e.fs, w: e.w, r: e.r };
+        try { hd.setPointerCapture(ev.pointerId); } catch (e2) { /* synthetic pointer */ } ev.preventDefault(); ev.stopPropagation();
+      });
+      hd.addEventListener('pointermove', (ev) => {
+        if (!hdg) return; const e = hdg.e, d = Math.hypot(ev.clientX - hdg.cx, ev.clientY - hdg.cy) || 1, an = Math.atan2(ev.clientY - hdg.cy, ev.clientX - hdg.cx);
+        SC(e, d / hdg.d0, hdg); let rr = Math.round(hdg.r + (an - hdg.a0) * 180 / Math.PI); while (rr > 180) rr -= 360; while (rr < -180) rr += 360; e.r = rr;
+        const n = ly.querySelector(`[data-id="${e.id}"]`); if (n) style(e, n);
+      });
+      const hup = () => { hdg = null; }; hd.addEventListener('pointerup', hup); hd.addEventListener('pointercancel', hup);
       stage.addEventListener('pointerup', up); stage.addEventListener('pointercancel', up);
 
       const gifCount = () => E.els.filter((e) => e.k === 'gif').length;
