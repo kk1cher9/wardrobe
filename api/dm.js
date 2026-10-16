@@ -40,7 +40,7 @@ async function getConv(cid, me) {
 }
 const REACTS = ['❤️', '👍', '😂', '😮', '😢', '🔥', '👎', '🙏'];
 const rxView = (raw, me) => { const o = jp(raw); if (!o) return null; const cnt = {}; let mine = ''; for (const [sub, e] of Object.entries(o)) { cnt[e] = (cnt[e] || 0) + 1; if (sub === me) mine = e; } const a = Object.keys(cnt).map((e) => ({ e, n: cnt[e], me: e === mine })).sort((x, y) => y.n - x.n); return a.length ? a : null; };
-const view = (m, cid, me) => (m.del ? { id: m.id, mine: m.by === me, ts: m.ts, del: true } : { id: m.id, mine: m.by === me, ts: m.ts, text: m.text || '', img: m.img ? '/api/dm?a=mimg&c=' + cid + '&id=' + m.id : null, th: m.th ? '/api/dm?a=mimg&t=1&c=' + cid + '&id=' + m.id : undefined, iw: m.iw || undefined, ih: m.ih || undefined, re: m.re ? { id: m.re.id, mine: m.re.by === me, x: m.re.x, img: !!m.re.img } : undefined, fwd: m.fwd ? 1 : undefined, vid: m.vid ? { url: '/api/dm?a=mvid&c=' + cid + '&id=' + m.id, poster: '/api/dm?a=mposter&c=' + cid + '&id=' + m.id, dur: m.vid.dur, w: m.vid.w, h: m.vid.h, size: m.vid.size } : undefined });
+const view = (m, cid, me) => (m.del ? { id: m.id, mine: m.by === me, ts: m.ts, del: true } : { id: m.id, mine: m.by === me, ts: m.ts, text: m.text || '', img: m.img ? '/api/dm?a=mimg&c=' + cid + '&id=' + m.id : null, th: m.th ? '/api/dm?a=mimg&t=1&c=' + cid + '&id=' + m.id : undefined, iw: m.iw || undefined, ih: m.ih || undefined, re: m.re ? { id: m.re.id, mine: m.re.by === me, x: m.re.x, img: !!m.re.img } : undefined, fwd: m.fwd ? 1 : undefined, sy: m.sy ? { id: m.sy.id, img: '/api/social?a=simg&id=' + m.sy.id, live: Date.now() - m.sy.ts < 24 * 3600 * 1000 } : undefined, vid: m.vid ? { url: '/api/dm?a=mvid&c=' + cid + '&id=' + m.id, poster: '/api/dm?a=mposter&c=' + cid + '&id=' + m.id, dur: m.vid.dur, w: m.vid.w, h: m.vid.h, size: m.vid.size } : undefined });
 const preview = (m, me) => ({ by: m.by === me ? 'me' : 'them', t: m.del ? 'del' : m.vid && !m.text ? 'vid' : m.img && !m.text ? 'img' : 'text', x: m.del ? '' : (m.text || '').slice(0, 80), ts: m.ts });
 
 async function resolveTarget(b, me) {
@@ -226,6 +226,10 @@ module.exports = handler(async (req, res, user) => {
     if (img) m.img = 1;
     const th = img && b.thumb ? parseImg(b.thumb, 90 * 1024) : null; if (th) { m.th = 1; m.iw = Math.min(8192, Number(b.iw) | 0); m.ih = Math.min(8192, Number(b.ih) | 0); }
     if (b.fwd) m.fwd = 1;
+    if (b.story && idOk(String(b.story))) { // a comment on somebody's story: the chat shows the story above the message
+      const sj = jp(await db('GET', P + 'story:' + String(b.story)));
+      if (sj && sj.by === other && Date.now() - sj.ts < 24 * 3600 * 1000) m.sy = { id: sj.id, ts: sj.ts };
+    }
     if (b.reply && idOk(String(b.reply))) { // quote of an earlier message in the same chat
       const q = jp(await db('HGET', M + 'msg:' + cid, String(b.reply)));
       if (q && !q.del) m.re = { id: q.id, by: q.by, x: (q.text || '').slice(0, 80), img: q.img ? 1 : 0, vid: q.vid ? 1 : 0 };

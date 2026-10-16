@@ -292,15 +292,15 @@ module.exports = handler(async (req, res, user) => {
       const authors = [...new Set(items.map((x) => x.by))];
       if (!authors.length) return send(res, 200, { groups: [] });
       const cmds = [];
-      items.forEach((x) => { cmds.push(['GET', P + 'story:' + x.id]); cmds.push(['SISMEMBER', P + 'sviews:' + x.id, me]); cmds.push(['SCARD', P + 'sviews:' + x.id]); });
+      items.forEach((x) => { cmds.push(['GET', P + 'story:' + x.id]); cmds.push(['SISMEMBER', P + 'sviews:' + x.id, me]); cmds.push(['SCARD', P + 'sviews:' + x.id]); cmds.push(['SISMEMBER', P + 'slikes:' + x.id, me]); cmds.push(['SCARD', P + 'slikes:' + x.id]); });
       authors.forEach((x) => cmds.push(['GET', P + 'prof:' + x]));
-      const r = await dbm(cmds), groups = {};
+      const r = await dbm(cmds), groups = {}, SS = 5;
       items.forEach((x, i) => {
-        const st = jp(r[i * 3]); if (!st || !live(st.ts)) return;
-        (groups[x.by] = groups[x.by] || []).push({ id: st.id, ts: st.ts, cap: st.cap || '', ov: st.ov && st.ov.length ? ovPub(st.ov, '/api/social?a=sovg&id=' + st.id) : undefined, img: '/api/social?a=simg&id=' + st.id, seen: x.by === me || !!r[i * 3 + 1], views: x.by === me ? Number(r[i * 3 + 2]) || 0 : undefined });
+        const st = jp(r[i * SS]); if (!st || !live(st.ts)) return;
+        (groups[x.by] = groups[x.by] || []).push({ id: st.id, ts: st.ts, cap: st.cap || '', ov: st.ov && st.ov.length ? ovPub(st.ov, '/api/social?a=sovg&id=' + st.id) : undefined, img: '/api/social?a=simg&id=' + st.id, seen: x.by === me || !!r[i * SS + 1], views: x.by === me ? Number(r[i * SS + 2]) || 0 : undefined, liked: !!r[i * SS + 3], likes: Number(r[i * SS + 4]) || 0 });
       });
       const out = authors.map((x, k) => {
-        const pr = jp(r[items.length * 3 + k]); const list = (groups[x] || []).sort((m, n) => m.ts - n.ts);
+        const pr = jp(r[items.length * SS + k]); const list = (groups[x] || []).sort((m, n) => m.ts - n.ts);
         return pr && list.length ? { author: { ...pubAuthor(pr), me: x === me }, stories: list, allSeen: list.every((y) => y.seen), last: list[list.length - 1].ts } : null;
       }).filter(Boolean).sort((m, n) => (m.author.me ? -1 : 0) - (n.author.me ? -1 : 0) || (m.allSeen ? 1 : 0) - (n.allSeen ? 1 : 0) || n.last - m.last);
       return send(res, 200, { groups: out });
@@ -457,7 +457,7 @@ module.exports = handler(async (req, res, user) => {
       report.push(r); if (dry) continue;
       const cmds = [['SET', P + 'ban:' + sub, prof && prof.nick ? prof.nick : '1'], ['SADD', P + 'bans', sub]]; // keep them locked out for good
       for (const id of postIds) { const pj = jp(await db('GET', P + 'post:' + id)) || { id }, savers = ((await db('SMEMBERS', P + 'savers:' + id)) || []).slice(0, 5000); cmds.push(['DEL', ...postKeysToDelete(pj)], ['ZREM', P + 'feed', id], ['ZREM', P + 'hot', id], ...savers.map((x) => ['ZREM', P + 'saved:' + x, id])); if (pj.of) cmds.push(['HDEL', P + 'rps:' + pj.of, sub]); }
-      for (const id of storyIds) cmds.push(['DEL', P + 'story:' + id, P + 'simg:' + id, P + 'sviews:' + id]);
+      for (const id of storyIds) cmds.push(['DEL', P + 'story:' + id, P + 'simg:' + id, P + 'sviews:' + id, P + 'slikes:' + id]);
       for (const f of fr) cmds.push(['SREM', P + 'following:' + f, sub]); for (const g of fg) cmds.push(['SREM', P + 'followers:' + g, sub]);
       for (const cid of cids) {
         const c = jp(await db('GET', M + 'conv:' + cid)), other = c && c.m ? c.m.find((x) => x !== sub) : null;
@@ -477,8 +477,18 @@ module.exports = handler(async (req, res, user) => {
     const st = jp(await db('GET', P + 'story:' + id));
     if (!st) throw err(404, 'not_found');
     if (st.by !== me) throw err(403, 'forbidden');
-    await dbm([['DEL', P + 'story:' + id], ['DEL', P + 'simg:' + id], ['DEL', P + 'sviews:' + id], ['DEL', P + 'sovg:' + id + ':0', P + 'sovg:' + id + ':1', P + 'sovg:' + id + ':2'], ['ZREM', P + 'ustories:' + me, id]]);
+    await dbm([['DEL', P + 'story:' + id], ['DEL', P + 'simg:' + id], ['DEL', P + 'sviews:' + id], ['DEL', P + 'slikes:' + id], ['DEL', P + 'sovg:' + id + ':0', P + 'sovg:' + id + ':1', P + 'sovg:' + id + ':2'], ['ZREM', P + 'ustories:' + me, id]]);
     return send(res, 200, { ok: true });
+  }
+  if (op === 'storyLike') { // heart a story you may see (author or follower); idempotent on/off
+    await rateLimit(user, 'slike', 300);
+    const id = String(b.id || ''); if (!idOk(id)) throw err(404, 'not_found');
+    const st = jp(await db('GET', P + 'story:' + id));
+    if (!st || Date.now() - st.ts >= STORY_TTL) throw err(404, 'not_found');
+    if (st.by !== me && !(await db('SISMEMBER', P + 'following:' + me, st.by))) throw err(404, 'not_found');
+    const on = b.on !== false;
+    await dbm([[on ? 'SADD' : 'SREM', P + 'slikes:' + id, me], ['EXPIRE', P + 'slikes:' + id, 90000]]);
+    return send(res, 200, { liked: on, likes: Number(await db('SCARD', P + 'slikes:' + id)) || 0 });
   }
   if (op === 'storySeen') {
     const id = String(b.id || ''); if (!idOk(id)) throw err(404, 'not_found');

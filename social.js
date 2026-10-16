@@ -57,6 +57,9 @@ en: { foryou: 'For You', following: 'Following', trending: 'Trending', publish: 
   col: { black: 'black', white: 'white', gray: 'grey', 'dark gray': 'dark grey', 'light gray': 'light grey', beige: 'beige', brown: 'brown', red: 'red', burgundy: 'burgundy', pink: 'pink', orange: 'orange', yellow: 'yellow', olive: 'olive', green: 'green', teal: 'teal', navy: 'navy', denim: 'denim', 'light blue': 'light blue', blue: 'blue', purple: 'purple' },
   pl: { comments: ['comment', 'comments'], likes: ['like', 'likes'], items: ['item', 'items'] } }
 };
+Object.assign(T.ru, { stReply: 'Ответить…', stSent: 'Отправлено в чат', stLike: 'Нравится', stLikes: 'Лайки' });
+Object.assign(T.uk, { stReply: 'Відповісти…', stSent: 'Надіслано в чат', stLike: 'Подобається', stLikes: 'Лайки' });
+Object.assign(T.en, { stReply: 'Reply…', stSent: 'Sent to chat', stLike: 'Like', stLikes: 'Likes' });
 const CHAT_T = { ru: 'Написать', uk: 'Написати', en: 'Message' };
 const L = () => T[(window.I18N && I18N.lang) || 'ru'] || T.ru;
 Object.assign(T.ru, { myStyle: 'Мой стиль', myStyleD: 'Можно выбрать несколько', otherStyle: 'Другой стиль', otherStylePh: 'Свой вариант', add: 'Добавить', earnT: 'Статус заработка', earnD: 'Необязательно. Доход и суммы указывать не нужно.', earnNone: '— не выбрано —', earn_none: 'Пока не зарабатываю', earn_start: 'Начинаю зарабатывать', earn_style: 'Зарабатываю на своём стиле', earn_clients: 'Работаю с клиентами', earn_designer: 'Работаю как дизайнер или стилист', earn_biz: 'Предприниматель', earn_other: 'Другое', earn_hidden: 'Не указывать', earnPub: 'Показывать в моём профиле', brandsT: 'Любимые бренды', brandPh: 'Добавить бренд', saving: 'Сохранение…', saved2: 'Сохранено', styleLbl: 'Стиль', brandLbl: 'Бренды', actNever: 'Нет данных об активности', actLbl: 'Активность' });
@@ -76,6 +79,7 @@ const E = (s) => esc(String(s == null ? '' : s));
 
 /* ------------------------------------------------------------------ icons */
 Object.assign(I, {
+  send: '<path d="M4 12l16-7-6 15-2.5-6.2z"/><path d="M11.5 13.8L20 5"/>',
   heart: '<path d="M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0112 7.7a4.3 4.3 0 017.5 2.6c0 5.6-7.5 10.2-7.5 10.2z"/>',
   chat: '<path d="M4 5h16a1 1 0 011 1v10a1 1 0 01-1 1h-8l-5 4v-4H4a1 1 0 01-1-1V6a1 1 0 011-1z"/>',
   mark: '<path d="M6 3h12a1 1 0 011 1v17l-7-4.5L5 21V4a1 1 0 011-1z"/>',
@@ -968,7 +972,7 @@ function storyOpen(gi) {
   const el = document.createElement('div'); el.className = 'sc-sv'; el.id = 'sc-sv'; document.body.appendChild(el); document.body.style.overflow = 'hidden';
   const g = groups[gi];
   V = { el, gi, si: g.author.me ? 0 : Math.max(0, g.stories.findIndex((x) => !x.seen)), left: SDUR, last: 0, paused: false, hold: false, ready: false, raf: 0, down: 0, y0: 0, panel: false };
-  el.addEventListener('pointerdown', (e) => { if (e.target.closest('button,.sc-vw')) return; V.down = Date.now(); V.y0 = e.clientY; V.hold = true; });
+  el.addEventListener('pointerdown', (e) => { if (e.target.closest('button,.sc-vw,form')) return; V.down = Date.now(); V.y0 = e.clientY; V.hold = true; });
   const rel = (e) => {
     if (!V || !V.hold) return; V.hold = false;
     const dt = Date.now() - V.down, dy = e.clientY - V.y0;
@@ -978,7 +982,7 @@ function storyOpen(gi) {
   el.addEventListener('pointerup', rel); el.addEventListener('pointercancel', () => { if (V) V.hold = false; });
   el.addEventListener('click', (e) => {
     const b = e.target.closest('button[data-a]'); if (!b || !V) return;
-    const a = b.dataset.a; if (a === 'x') closeStory(); else if (a === 'del') delStory(); else if (a === 'views') viewersPanel(); else if (a === 'vx') { V.panel = false; const w = el.querySelector('.sc-vw'); if (w) w.remove(); } else if (a === 'prof') { const n = b.dataset.n; closeStory(); profile(n); }
+    const a = b.dataset.a; if (a === 'x') closeStory(); else if (a === 'del') delStory(); else if (a === 'views') viewersPanel(); else if (a === 'vx') { V.panel = false; const w = el.querySelector('.sc-vw'); if (w) w.remove(); } else if (a === 'prof') { const n = b.dataset.n; closeStory(); profile(n); } else if (a === 'like') likeStory(b);
   });
   paintStory();
 }
@@ -991,8 +995,19 @@ function paintStory() {
    ${g.author.me ? `<button class="sc-ic" data-a="del" aria-label="${E(t('del'))}"><span style="font-size:13px;font-weight:800">${E(t('del'))}</span></button>` : ''}<button class="sc-ic" data-a="x" aria-label="${E(t('close'))}">${ico('x')}</button></div>
   <div class="sc-simg"><img src="${E(s.img)}" alt="" draggable="false">${ovLayer(s.ov)}</div>
   ${s.cap ? `<div class="sc-scap" data-nt>${E(s.cap)}</div>` : ''}
-  ${g.author.me ? `<div class="sc-sft"><button class="sc-vb" data-a="views">${ico('user', 18)} ${E(t('viewers'))} · ${s.views || 0}</button></div>` : ''}`;
+  ${g.author.me ? `<div class="sc-sft"><button class="sc-vb" data-a="views">${ico('user', 18)} ${E(t('viewers'))} · ${s.views || 0}</button><span class="sc-vb sc-lc">${ico('heart', 16)} ${s.likes || 0}</span></div>`
+    : `<form class="sc-rf" id="sc-rf" autocomplete="off"><input id="sc-ri" maxlength="300" enterkeyhint="send" placeholder="${E(t('stReply'))}" aria-label="${E(t('stReply'))}"><button type="button" class="sc-lk${s.liked ? ' on' : ''}" data-a="like" aria-label="${E(t('stLike'))}">${ico('heart', 26)}</button><button type="submit" class="sc-sn" aria-label="send" disabled>${ico('send', 22)}</button></form>`}`;
   V.left = SDUR; V.ready = false; V.last = performance.now();
+  const rf = V.el.querySelector('#sc-rf');
+  if (rf) {
+    const ri = rf.querySelector('#sc-ri'), sn = rf.querySelector('.sc-sn');
+    ri.addEventListener('focus', () => { if (V) V.paused = true; }); ri.addEventListener('blur', () => { if (V) V.paused = false; });
+    ri.addEventListener('input', () => { sn.disabled = !ri.value.trim(); });
+    rf.addEventListener('submit', async (e) => {
+      e.preventDefault(); const text = ri.value.trim(); if (!text || sn.disabled) return; sn.disabled = true;
+      try { await window.CHAT.storyReply(g.author.nick, s.id, text); ri.value = ''; ri.blur(); toast(t('stSent')); } catch (er) { sn.disabled = false; if (!handleAuthErr(er)) toast(errText(er)); }
+    });
+  }
   const im = V.el.querySelector('.sc-simg img');
   im.onload = () => { placeOv(im, 'contain'); if (V) { V.ready = true; V.last = performance.now(); } };
   im.onerror = () => { if (V) { V.ready = true; im.replaceWith(Object.assign(document.createElement('div'), { className: 'sc-gone', textContent: t('storyGone') })); } };
@@ -1008,6 +1023,12 @@ function paintStory() {
     V.raf = requestAnimationFrame(loop);
   };
   V.raf = requestAnimationFrame(loop);
+}
+async function likeStory(btn) {
+  if (!V) return; const g = st.stories.groups[V.gi], s = g.stories[V.si], on = !s.liked;
+  s.liked = on; s.likes = Math.max(0, (s.likes || 0) + (on ? 1 : -1)); btn.classList.toggle('on', on); btn.classList.remove('pop'); void btn.offsetWidth; if (on) btn.classList.add('pop');
+  try { const j = await pq('storyLike', { id: s.id, on }); s.liked = j.liked; s.likes = j.likes; btn.classList.toggle('on', !!j.liked); }
+  catch (e) { s.liked = !on; s.likes = Math.max(0, (s.likes || 0) + (on ? -1 : 1)); btn.classList.toggle('on', !!s.liked); if (!handleAuthErr(e)) toast(errText(e)); }
 }
 function nextStory() {
   if (!V) return; const groups = st.stories.groups, g = groups[V.gi];
@@ -1152,6 +1173,11 @@ const css = `
 .sc-sbars{display:flex;gap:4px;padding:calc(10px + env(safe-area-inset-top,0px)) 10px 6px;position:relative;z-index:2}.sc-sbars i{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.3);overflow:hidden}.sc-sbars b{display:block;height:100%;background:#fff}
 .sc-sh2{display:flex;align-items:center;gap:6px;padding:4px 10px;position:relative;z-index:2}.sc-sh2 .sc-who{flex:1;color:#fff}.sc-sh2 .sc-ic{color:#fff;width:auto;padding:0 10px;gap:4px;display:flex}
 .sc-simg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}.sc-simg{overflow:hidden}.sc-simg img:not(.sc-ovg){width:100%;height:100%;object-fit:contain;pointer-events:none}.sc-simg .sc-ovg{width:auto}.sc-gone{color:#aaa;font-weight:700}
+.sc-rf{position:absolute;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:8px;z-index:3}
+.sc-rf input{flex:1;min-width:0;height:44px;box-sizing:border-box;border-radius:22px;border:1.5px solid rgba(255,255,255,.7);background:rgba(0,0,0,.35);color:#fff;font:inherit;font-size:16px;padding:0 16px;outline:none}.sc-rf input::placeholder{color:rgba(255,255,255,.8)}.sc-rf input:focus{border-color:#fff;background:rgba(0,0,0,.55)}
+.sc-rf button{flex:none;box-sizing:border-box;width:44px;height:44px;min-width:44px;max-width:44px;min-height:44px;padding:0;border:0;border-radius:50%;background:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}.sc-rf svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sc-rf .sc-lk.on{color:#ff4d6d}.sc-rf .sc-lk.on svg{fill:#ff4d6d}.sc-rf .sc-lk.pop svg{animation:lkpop .4s cubic-bezier(.34,1.56,.64,1)}@keyframes lkpop{0%{transform:scale(.6)}60%{transform:scale(1.3)}100%{transform:scale(1)}}.sc-rf .sc-sn{background:#fff;color:#000}.sc-rf .sc-sn:disabled{display:none}
+.sc-sft{gap:8px}.sc-lc{display:inline-flex;align-items:center;gap:5px}.sc-lc svg{fill:#ff4d6d;stroke:#ff4d6d}
 .sc-scap{position:absolute;left:0;right:0;bottom:calc(70px + env(safe-area-inset-bottom,0px));text-align:center;padding:10px 20px;font-weight:700;font-size:16px;background:linear-gradient(transparent,rgba(0,0,0,.6) 40%);z-index:2;overflow-wrap:anywhere}
 .sc-sft{position:absolute;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;z-index:2}.sc-vb{border:0;background:rgba(255,255,255,.18);color:#fff;font:inherit;font-weight:800;font-size:13px;border-radius:22px;padding:10px 18px;display:flex;align-items:center;gap:8px;cursor:pointer;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .sc-vw{position:absolute;left:0;right:0;bottom:0;max-height:62%;background:#111;border-radius:28px 28px 0 0;padding:14px 16px calc(18px + env(safe-area-inset-bottom,0px));z-index:5;display:flex;flex-direction:column}.sc-vwh{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.sc-vwl{overflow:auto}
