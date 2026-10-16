@@ -56,9 +56,9 @@
 .ed-stage{position:relative;background:#111;overflow:hidden;touch-action:none;flex:none}.ed-stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .ed-el{position:absolute;transform-origin:center;touch-action:none;cursor:grab;-webkit-tap-highlight-color:transparent}.ed-el.sel{outline:2px dashed rgba(255,255,255,.9);outline-offset:4px}
 .ed-el img{width:100%;display:block;pointer-events:none;-webkit-user-drag:none}.ed-tx{font-weight:800;white-space:pre;line-height:1.2;text-shadow:0 1px 6px rgba(0,0,0,.35);font-family:-apple-system,system-ui,sans-serif}.ed-tx.bg{text-shadow:none;border-radius:.25em;padding:.1em .4em}
-.ed-sel{display:flex;gap:6px;justify-content:center;align-items:center;padding:6px 10px;min-height:44px}.ed-sel button{border:0;background:#262626;color:#fff;width:44px;height:36px;border-radius:18px;font:inherit;font-weight:800;font-size:17px;cursor:pointer}.ed-sel button.dl{color:#ff6b6b}
-.ed-area{position:relative}.ed-tabs{position:absolute;right:8px;top:50%;transform:translateY(-50%);z-index:6;display:flex;flex-direction:column;gap:10px}.ed-tabs button{display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:44px;height:44px;min-width:44px;padding:0;border:0;background:rgba(30,30,30,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#fff;font:inherit;font-weight:800;font-size:13px;border-radius:50%;cursor:pointer}.ed-tabs button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.ed-tabs button.on{background:#fff;color:#000}
-.ed-pn{height:170px;overflow:auto;padding:8px 10px calc(10px + env(safe-area-inset-bottom,0px));-webkit-overflow-scrolling:touch}
+.ed-sel{flex:none;display:flex;gap:6px;justify-content:center;align-items:center;padding:6px 10px;min-height:44px}.ed-sel button{border:0;background:#262626;color:#fff;width:44px;height:36px;border-radius:18px;font:inherit;font-weight:800;font-size:17px;cursor:pointer}.ed-sel button.dl{color:#ff6b6b}
+.ed-area{gap:6px;padding:0 8px 0 0}.ed-box{flex:1;min-width:0;min-height:0;height:100%;overflow:hidden;display:flex;align-items:center;justify-content:center}.ed-tabs{flex:none;z-index:6;display:flex;flex-direction:column;gap:10px}.ed-tabs button{display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:44px;height:44px;min-width:44px;padding:0;border:0;background:rgba(30,30,30,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#fff;font:inherit;font-weight:800;font-size:13px;border-radius:50%;cursor:pointer}.ed-tabs button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.ed-tabs button.on{background:#fff;color:#000}
+.ed-pn{flex:none;height:min(190px,32vh);overflow:auto;padding:8px 10px calc(10px + env(safe-area-inset-bottom,0px));-webkit-overflow-scrolling:touch}
 .ed-fl{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px}.ed-fl button{flex:none;border:0;background:none;color:#ccc;font:inherit;font-size:11px;font-weight:700;cursor:pointer;padding:0;width:64px}.ed-fl button canvas{width:64px;height:64px;border-radius:12px;display:block;margin-bottom:4px;outline:2px solid transparent}.ed-fl button.on{color:#fff}.ed-fl button.on canvas{outline-color:#fff}
 .ed-rg{display:flex;align-items:center;gap:10px;font-size:12px;color:#aaa;margin-top:4px}.ed-rg input{flex:1}
 .ed-tr{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.ed-tr input[type=text]{flex:1;min-width:120px;border:1px solid #333;background:#161616;color:#fff;border-radius:12px;padding:10px 12px;font:inherit;font-size:16px}.ed-tr input:disabled{opacity:.4}
@@ -115,7 +115,7 @@
     return new Promise((resolve) => {
       const root = document.createElement('div'); root.className = 'ed'; root.setAttribute('role', 'dialog'); root.setAttribute('aria-label', tx('title'));
       root.innerHTML = `<div class="ed-top"><button type="button" id="ed-x">${esc(tx('cancel'))}</button><b>${esc(tx('title'))}</b><button type="button" class="ed-ok" id="ed-ok">${esc(tx('done'))}</button></div>
-        <div class="ed-area" id="ed-area"><div class="ed-stage" id="ed-st"><canvas id="ed-cv" width="${PW}" height="${PH}"></canvas><div id="ed-ly"></div></div><div class="ed-tabs"><button type="button" data-t="filters" title="${esc(tx('filters'))}" aria-label="${esc(tx('filters'))}"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="5.5"/><circle cx="15" cy="9" r="5.5"/><circle cx="12" cy="15" r="5.5"/></svg></button><button type="button" data-t="text" title="${esc(tx('text'))}" aria-label="${esc(tx('text'))}"><span style="font-size:16px;letter-spacing:-.5px">Aa</span></button><button type="button" data-t="items" title="${esc(tx('items'))}" aria-label="${esc(tx('items'))}"><svg viewBox="0 0 24 24"><path d="M8 3l-5 3 2 4 3-1v11h8V9l3 1 2-4-5-3a4 4 0 0 1-8 0z"/></svg></button><button type="button" data-t="gif" title="${esc(tx('gif'))}" aria-label="${esc(tx('gif'))}"><span style="font-size:12px">GIF</span></button></div></div>
+        <div class="ed-area" id="ed-area"><div class="ed-box" id="ed-box"><div class="ed-stage" id="ed-st"><canvas id="ed-cv" width="${PW}" height="${PH}"></canvas><div id="ed-ly"></div></div></div><div class="ed-tabs"><button type="button" data-t="filters" title="${esc(tx('filters'))}" aria-label="${esc(tx('filters'))}"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="5.5"/><circle cx="15" cy="9" r="5.5"/><circle cx="12" cy="15" r="5.5"/></svg></button><button type="button" data-t="text" title="${esc(tx('text'))}" aria-label="${esc(tx('text'))}"><span style="font-size:16px;letter-spacing:-.5px">Aa</span></button><button type="button" data-t="items" title="${esc(tx('items'))}" aria-label="${esc(tx('items'))}"><svg viewBox="0 0 24 24"><path d="M8 3l-5 3 2 4 3-1v11h8V9l3 1 2-4-5-3a4 4 0 0 1-8 0z"/></svg></button><button type="button" data-t="gif" title="${esc(tx('gif'))}" aria-label="${esc(tx('gif'))}"><span style="font-size:12px">GIF</span></button></div></div>
         <div class="ed-sel" id="ed-sel"></div>
         <div class="ed-pn" id="ed-pn"></div>`;
       document.body.appendChild(root); const prevOv = document.body.style.overflow; document.body.style.overflow = 'hidden';
@@ -135,11 +135,12 @@
       // ---- layout
       let SW = 1, SH = 1;
       function size() {
-        const a = q('#ed-area').getBoundingClientRect(); if (!a.width || !a.height) return;
+        const a = q('#ed-box').getBoundingClientRect(); if (!a.width || !a.height) return;
         const k = Math.min(a.width / CW, a.height / CH); SW = Math.max(40, Math.floor(CW * k)); SH = Math.max(40, Math.floor(CH * k));
         stage.style.width = SW + 'px'; stage.style.height = SH + 'px'; place();
       }
       window.addEventListener('resize', size);
+      if (window.ResizeObserver) { try { new ResizeObserver(() => size()).observe(q('#ed-box')); } catch (e) { /* resize event still covers it */ } }
 
       // ---- layers
       const itemImg = async (id) => {
