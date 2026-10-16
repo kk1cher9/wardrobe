@@ -6,9 +6,9 @@
   'use strict';
   const LANG = () => (window.I18N && I18N.lang) || 'ru';
   const TX = {
-    ru: { title: 'Редактор', cancel: 'Отмена', done: 'Готово', filters: 'Фильтры', text: 'Текст', items: 'Вещи', gif: 'GIF', amount: 'Сила фильтра', addText: '+ Текст', defText: 'Текст', typeHere: 'Введите текст', bg: 'Фон', fx: { none: 'Чистый', shadow: 'Тень', bg: 'Фон', neon: 'Неон', glow: 'Свечение', outline: 'Контур', retro: 'Ретро' }, del: 'Удалить', noSel: 'Выберите текст на фото', itemsHint: 'Нажмите на вещь — она появится на фото. Галочка — «на мне» (покажем под фото).', wear: 'На мне', showFit: 'Показать под фото, во что я одет(а)', noItems: 'В гардеробе пока нет вещей', gifSearch: 'Поиск GIF', gifUpload: 'Загрузить свой GIF', gifOff: 'Поиск GIF не подключён — можно загрузить свой файл.', gifBig: 'GIF слишком большой (до 260 КБ)', gifBad: 'Это не GIF', gifMax: 'Не больше 3 своих GIF и 8 наклеек', none: 'Нет', loading: 'Загрузка…', nothing: 'Ничего не найдено', err: 'Не удалось подготовить фото', f: { none: 'Оригинал', vivid: 'Яркий', warm: 'Тёплый', cool: 'Холодный', bw: 'Ч/б', noir: 'Нуар', sepia: 'Сепия', fade: 'Выцветший', vintage: 'Винтаж', drama: 'Драма' } },
-    uk: { title: 'Редактор', cancel: 'Скасувати', done: 'Готово', filters: 'Фільтри', text: 'Текст', items: 'Речі', gif: 'GIF', amount: 'Сила фільтра', addText: '+ Текст', defText: 'Текст', typeHere: 'Введіть текст', bg: 'Тло', fx: { none: 'Чистий', shadow: 'Тінь', bg: 'Тло', neon: 'Неон', glow: 'Сяйво', outline: 'Контур', retro: 'Ретро' }, del: 'Видалити', noSel: 'Оберіть текст на фото', itemsHint: 'Натисніть на річ — вона з’явиться на фото. Пташка — «на мені» (покажемо під фото).', wear: 'На мені', showFit: 'Показати під фото, у що я вдягнений(а)', noItems: 'У гардеробі поки немає речей', gifSearch: 'Пошук GIF', gifUpload: 'Завантажити свій GIF', gifOff: 'Пошук GIF не підключено — можна завантажити свій файл.', gifBig: 'GIF завеликий (до 260 КБ)', gifBad: 'Це не GIF', gifMax: 'Не більше 3 своїх GIF і 8 наліпок', none: 'Ні', loading: 'Завантаження…', nothing: 'Нічого не знайдено', err: 'Не вдалося підготувати фото', f: { none: 'Оригінал', vivid: 'Яскравий', warm: 'Теплий', cool: 'Холодний', bw: 'Ч/б', noir: 'Нуар', sepia: 'Сепія', fade: 'Вицвілий', vintage: 'Вінтаж', drama: 'Драма' } },
-    en: { title: 'Editor', cancel: 'Cancel', done: 'Done', filters: 'Filters', text: 'Text', items: 'Items', gif: 'GIF', amount: 'Filter strength', addText: '+ Text', defText: 'Text', typeHere: 'Type text', bg: 'Background', fx: { none: 'Plain', shadow: 'Shadow', bg: 'Background', neon: 'Neon', glow: 'Glow', outline: 'Outline', retro: 'Retro' }, del: 'Delete', noSel: 'Select a text on the photo', itemsHint: 'Tap an item to paste it on the photo. The tick means “I wear this” (shown under the photo).', wear: 'I wear it', showFit: 'Show what I wear under the photo', noItems: 'No items in your wardrobe yet', gifSearch: 'Search GIFs', gifUpload: 'Upload your own GIF', gifOff: 'GIF search is not connected — you can upload your own file.', gifBig: 'GIF is too large (up to 260 KB)', gifBad: 'This is not a GIF', gifMax: 'Up to 3 own GIFs and 8 stickers', none: 'None', loading: 'Loading…', nothing: 'Nothing found', err: 'Could not prepare the photo', f: { none: 'Original', vivid: 'Vivid', warm: 'Warm', cool: 'Cool', bw: 'B&W', noir: 'Noir', sepia: 'Sepia', fade: 'Faded', vintage: 'Vintage', drama: 'Drama' } }
+    ru: { title: 'Редактор', cancel: 'Отмена', done: 'Готово', filters: 'Фильтры', text: 'Текст', items: 'Вещи', gif: 'GIF', amount: 'Сила фильтра', addText: '+ Текст', defText: 'Текст', typeHere: 'Введите текст', bg: 'Фон', fx: { none: 'Чистый', shadow: 'Тень', bg: 'Фон', neon: 'Неон', glow: 'Свечение', outline: 'Контур', retro: 'Ретро' }, photo: 'Фото', addPhoto: '+ Фото', photoHint: 'Выберите форму, затем фото из галереи. Нажмите на другую форму, чтобы изменить уже добавленное.', shapes: { rect: 'Скруглённый', star: 'Звезда', circle: 'Круг', square: 'Квадрат' }, del: 'Удалить', noSel: 'Выберите текст на фото', itemsHint: 'Нажмите на вещь — она появится на фото. Галочка — «на мне» (покажем под фото).', wear: 'На мне', showFit: 'Показать под фото, во что я одет(а)', noItems: 'В гардеробе пока нет вещей', gifSearch: 'Поиск GIF', gifUpload: 'Загрузить свой GIF', gifOff: 'Поиск GIF не подключён — можно загрузить свой файл.', gifBig: 'GIF слишком большой (до 260 КБ)', gifBad: 'Это не GIF', gifMax: 'Не больше 3 своих GIF и 8 наклеек', none: 'Нет', loading: 'Загрузка…', nothing: 'Ничего не найдено', err: 'Не удалось подготовить фото', f: { none: 'Оригинал', vivid: 'Яркий', warm: 'Тёплый', cool: 'Холодный', bw: 'Ч/б', noir: 'Нуар', sepia: 'Сепия', fade: 'Выцветший', vintage: 'Винтаж', drama: 'Драма' } },
+    uk: { title: 'Редактор', cancel: 'Скасувати', done: 'Готово', filters: 'Фільтри', text: 'Текст', items: 'Речі', gif: 'GIF', amount: 'Сила фільтра', addText: '+ Текст', defText: 'Текст', typeHere: 'Введіть текст', bg: 'Тло', fx: { none: 'Чистий', shadow: 'Тінь', bg: 'Тло', neon: 'Неон', glow: 'Сяйво', outline: 'Контур', retro: 'Ретро' }, photo: 'Фото', addPhoto: '+ Фото', photoHint: 'Оберіть форму, потім фото з галереї. Натисніть іншу форму, щоб змінити вже додане.', shapes: { rect: 'Заокруглений', star: 'Зірка', circle: 'Коло', square: 'Квадрат' }, del: 'Видалити', noSel: 'Оберіть текст на фото', itemsHint: 'Натисніть на річ — вона з’явиться на фото. Пташка — «на мені» (покажемо під фото).', wear: 'На мені', showFit: 'Показати під фото, у що я вдягнений(а)', noItems: 'У гардеробі поки немає речей', gifSearch: 'Пошук GIF', gifUpload: 'Завантажити свій GIF', gifOff: 'Пошук GIF не підключено — можна завантажити свій файл.', gifBig: 'GIF завеликий (до 260 КБ)', gifBad: 'Це не GIF', gifMax: 'Не більше 3 своїх GIF і 8 наліпок', none: 'Ні', loading: 'Завантаження…', nothing: 'Нічого не знайдено', err: 'Не вдалося підготувати фото', f: { none: 'Оригінал', vivid: 'Яскравий', warm: 'Теплий', cool: 'Холодний', bw: 'Ч/б', noir: 'Нуар', sepia: 'Сепія', fade: 'Вицвілий', vintage: 'Вінтаж', drama: 'Драма' } },
+    en: { title: 'Editor', cancel: 'Cancel', done: 'Done', filters: 'Filters', text: 'Text', items: 'Items', gif: 'GIF', amount: 'Filter strength', addText: '+ Text', defText: 'Text', typeHere: 'Type text', bg: 'Background', fx: { none: 'Plain', shadow: 'Shadow', bg: 'Background', neon: 'Neon', glow: 'Glow', outline: 'Outline', retro: 'Retro' }, photo: 'Photo', addPhoto: '+ Photo', photoHint: 'Pick a shape, then a photo from your gallery. Tap another shape to change one you already added.', shapes: { rect: 'Rounded', star: 'Star', circle: 'Circle', square: 'Square' }, del: 'Delete', noSel: 'Select a text on the photo', itemsHint: 'Tap an item to paste it on the photo. The tick means “I wear this” (shown under the photo).', wear: 'I wear it', showFit: 'Show what I wear under the photo', noItems: 'No items in your wardrobe yet', gifSearch: 'Search GIFs', gifUpload: 'Upload your own GIF', gifOff: 'GIF search is not connected — you can upload your own file.', gifBig: 'GIF is too large (up to 260 KB)', gifBad: 'This is not a GIF', gifMax: 'Up to 3 own GIFs and 8 stickers', none: 'None', loading: 'Loading…', nothing: 'Nothing found', err: 'Could not prepare the photo', f: { none: 'Original', vivid: 'Vivid', warm: 'Warm', cool: 'Cool', bw: 'B&W', noir: 'Noir', sepia: 'Sepia', fade: 'Faded', vintage: 'Vintage', drama: 'Drama' } }
   };
   const tx = (k) => { const v = (TX[LANG()] || TX.ru)[k]; return v === undefined ? TX.ru[k] : v; };
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -41,6 +41,26 @@
     }
     throw new Error('thumb');
   }
+  // ---- photo stickers: a gallery photo cut to a shape (rounded rectangle, star with rounded tips, circle, square), rendered to a PNG with transparent corners
+  function shapePhoto(im, shape) {
+    const S = 520, sq = shape !== 'rect', ar = sq ? 1 : Math.max(.6, Math.min(1.7, im.width / im.height));
+    const W = ar >= 1 ? S : Math.round(S * ar), H = ar >= 1 ? Math.round(S / ar) : S;
+    const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
+    x.beginPath();
+    if (shape === 'circle') x.arc(W / 2, H / 2, W / 2, 0, Math.PI * 2);
+    else if (shape === 'star') {
+      const R = W / 1.902, cx = W / 2, cy = (H - 1.809 * R) / 2 + R, pts = [];
+      for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? R * .52 : R; pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); }
+      const mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], rad = R * .17, m0 = mid(pts[9], pts[0]);
+      x.moveTo(m0[0], m0[1]);
+      pts.forEach((pt, i) => { const m = mid(pt, pts[(i + 1) % 10]); x.arcTo(pt[0], pt[1], m[0], m[1], rad); });
+      x.closePath();
+    } else if (shape === 'square') x.rect(0, 0, W, H);
+    else { const r = Math.min(W, H) * .12; x.moveTo(r, 0); x.arcTo(W, 0, W, H, r); x.arcTo(W, H, 0, H, r); x.arcTo(0, H, 0, 0, r); x.arcTo(0, 0, W, 0, r); x.closePath(); }
+    x.clip();
+    const k = Math.max(W / im.width, H / im.height), dw = im.width * k, dh = im.height * k; x.drawImage(im, (W - dw) / 2, (H - dh) / 2, dw, dh);
+    return c.toDataURL('image/png');
+  }
   const CSS = `
 .ed{position:fixed;inset:0;z-index:400;background:#000;color:#fff;display:flex;flex-direction:column;font:inherit;touch-action:manipulation;user-select:none;-webkit-user-select:none;animation:edIn .34s cubic-bezier(.22,1,.36,1);transition:opacity .22s ease,transform .22s ease}
 .ed.out{opacity:0;transform:translateY(18px)}
@@ -63,7 +83,7 @@
 .ed-rg{display:flex;align-items:center;gap:10px;font-size:12px;color:#aaa;margin-top:4px}.ed-rg input{flex:1}
 .ed-tr{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.ed-tr input[type=text]{flex:1;min-width:120px;border:1px solid #333;background:#161616;color:#fff;border-radius:12px;padding:10px 12px;font:inherit;font-size:16px}.ed-tr input:disabled{opacity:.4}
 .ed-sw{box-sizing:border-box;width:28px;height:28px;min-width:28px;max-width:28px;min-height:28px;max-height:28px;aspect-ratio:1/1;border-radius:50%;border:2px solid #444;cursor:pointer;flex:none;padding:0}.ed-sw.on{border-color:#fff;transform:scale(1.15)}
-.ed-tb{min-width:76px;display:inline-flex;align-items:center;justify-content:center;gap:6px;height:38px;padding:0 14px}.ed-tb i{font-style:normal;opacity:.55;font-family:system-ui}.ed-cb{width:34px;height:34px;min-width:34px;max-width:34px;min-height:34px;max-height:34px}.ed-cu{position:relative;overflow:hidden;background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red)}.ed-cu input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}.ed-b{border:0;background:#262626;color:#fff;font:inherit;font-weight:700;font-size:13px;border-radius:16px;padding:9px 13px;cursor:pointer}.ed-b.on{background:#fff;color:#000}
+.ed-tb{min-width:76px;display:inline-flex;align-items:center;justify-content:center;gap:6px;height:38px;padding:0 14px}.ed-tb i{font-style:normal;opacity:.55;font-family:system-ui}.ed-cb{width:34px;height:34px;min-width:34px;max-width:34px;min-height:34px;max-height:34px}.ed-cu{position:relative;overflow:hidden;background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red)}.ed-cu input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}.ed-shb{width:44px;height:40px;padding:0;display:inline-flex;align-items:center;justify-content:center}.ed-shb svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2}.ed-b{border:0;background:#262626;color:#fff;font:inherit;font-weight:700;font-size:13px;border-radius:16px;padding:9px 13px;cursor:pointer}.ed-b.on{background:#fff;color:#000}
 .ed-ig{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px}.ed-ig .ed-it{position:relative;border:0;padding:0;background:#fff;border-radius:12px;aspect-ratio:1;overflow:hidden;cursor:pointer}.ed-ig .ed-it img{width:100%;height:100%;object-fit:contain;display:block}
 .ed-ig .ed-ck{position:absolute;right:3px;top:3px;box-sizing:border-box;width:22px;height:22px;min-width:22px;max-width:22px;min-height:22px;max-height:22px;aspect-ratio:1/1;padding:0;line-height:1;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;border:1.5px solid #fff;font-size:13px;display:flex;align-items:center;justify-content:center}.ed-ig .ed-it.w .ed-ck{background:#2ecc71;border-color:#2ecc71}
 .ed-note{font-size:12px;color:#999;margin:6px 0}.ed-gg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.ed-gg button{border:0;padding:0;background:#222;border-radius:10px;aspect-ratio:1;overflow:hidden;cursor:pointer}.ed-gg img{width:100%;height:100%;object-fit:cover;display:block}
@@ -115,7 +135,7 @@
     return new Promise((resolve) => {
       const root = document.createElement('div'); root.className = 'ed'; root.setAttribute('role', 'dialog'); root.setAttribute('aria-label', tx('title'));
       root.innerHTML = `<div class="ed-top"><button type="button" id="ed-x">${esc(tx('cancel'))}</button><b>${esc(tx('title'))}</b><button type="button" class="ed-ok" id="ed-ok">${esc(tx('done'))}</button></div>
-        <div class="ed-area" id="ed-area"><div class="ed-box" id="ed-box"><div class="ed-stage" id="ed-st"><canvas id="ed-cv" width="${PW}" height="${PH}"></canvas><div id="ed-ly"></div><div class="ed-hd" id="ed-hd" hidden aria-label="resize"><svg viewBox="0 0 24 24"><path d="M5 19L19 5M13 5h6v6M11 19H5v-6"/></svg></div></div></div><div class="ed-tabs"><button type="button" data-t="filters" title="${esc(tx('filters'))}" aria-label="${esc(tx('filters'))}"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="5.5"/><circle cx="15" cy="9" r="5.5"/><circle cx="12" cy="15" r="5.5"/></svg></button><button type="button" data-t="text" title="${esc(tx('text'))}" aria-label="${esc(tx('text'))}"><span style="font-size:16px;letter-spacing:-.5px">Aa</span></button><button type="button" data-t="items" title="${esc(tx('items'))}" aria-label="${esc(tx('items'))}"><svg viewBox="0 0 24 24"><path d="M8 3l-5 3 2 4 3-1v11h8V9l3 1 2-4-5-3a4 4 0 0 1-8 0z"/></svg></button><button type="button" data-t="gif" title="${esc(tx('gif'))}" aria-label="${esc(tx('gif'))}"><span style="font-size:12px">GIF</span></button></div></div>
+        <div class="ed-area" id="ed-area"><div class="ed-box" id="ed-box"><div class="ed-stage" id="ed-st"><canvas id="ed-cv" width="${PW}" height="${PH}"></canvas><div id="ed-ly"></div><div class="ed-hd" id="ed-hd" hidden aria-label="resize"><svg viewBox="0 0 24 24"><path d="M5 19L19 5M13 5h6v6M11 19H5v-6"/></svg></div></div></div><div class="ed-tabs"><button type="button" data-t="filters" title="${esc(tx('filters'))}" aria-label="${esc(tx('filters'))}"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="5.5"/><circle cx="15" cy="9" r="5.5"/><circle cx="12" cy="15" r="5.5"/></svg></button><button type="button" data-t="text" title="${esc(tx('text'))}" aria-label="${esc(tx('text'))}"><span style="font-size:16px;letter-spacing:-.5px">Aa</span></button><button type="button" data-t="items" title="${esc(tx('items'))}" aria-label="${esc(tx('items'))}"><svg viewBox="0 0 24 24"><path d="M8 3l-5 3 2 4 3-1v11h8V9l3 1 2-4-5-3a4 4 0 0 1-8 0z"/></svg></button><button type="button" data-t="photo" title="${esc(tx('photo'))}" aria-label="${esc(tx('photo'))}"><svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="3.5"/><circle cx="9" cy="10" r="1.7"/><path d="M4.5 18l5-5 3.5 3.5 2.5-2.5 4 4"/></svg></button><button type="button" data-t="gif" title="${esc(tx('gif'))}" aria-label="${esc(tx('gif'))}"><span style="font-size:12px">GIF</span></button></div></div>
         <div class="ed-sel" id="ed-sel"></div>
         <div class="ed-pn" id="ed-pn"></div>`;
       document.body.appendChild(root); const prevOv = document.body.style.overflow; document.body.style.overflow = 'hidden';
@@ -168,12 +188,12 @@
       function layers() {
         ly.innerHTML = '';
         E.els.forEach((e) => {
-          const n = document.createElement('div'); n.className = 'ed-el' + (e.k === 'text' ? ' ed-tx' : ''); n.dataset.id = e.id; n.innerHTML = elHtml(e); style(e, n); ly.appendChild(n);
+          const n = document.createElement('div'); n.className = 'ed-el' + (e.k === 'text' ? ' ed-tx' : ''); n.dataset.id = e.id; n.dataset.k = e.k; n.innerHTML = elHtml(e); style(e, n); ly.appendChild(n);
         });
         controls();
       }
       const selEl = () => E.els.find((x) => x.id === E.sel) || null;
-      function select(id) { E.sel = id; place(); controls(); if (E.tab === 'text') panel(); }
+      function select(id) { E.sel = id; place(); controls(); if (E.tab === 'text' || E.tab === 'photo') panel(); }
       function controls() {
         const e = selEl(), bar = q('#ed-sel');
         bar.innerHTML = e ? `<button type="button" data-a="m">−</button><button type="button" data-a="p">+</button><button type="button" data-a="l">⟲</button><button type="button" data-a="r">⟳</button><button type="button" class="dl" data-a="d" aria-label="${esc(tx('del'))}">✕</button>` : '';
@@ -281,9 +301,38 @@
             };
           });
           const sf = pn.querySelector('#ed-sf'); if (sf) sf.onchange = () => { E.showFit = sf.checked; };
+        } else if (E.tab === 'photo') {
+          photoPanel(pn);
         } else {
           gifPanel(pn);
         }
+      }
+      const SHAPES = ['rect', 'star', 'circle', 'square'], SHI = {
+        rect: '<rect x="4" y="6" width="16" height="12" rx="4"/>',
+        star: '<path d="M12 3.6l2.5 5.2 5.7.8-4.1 4 1 5.6L12 16.5l-5.1 2.7 1-5.6-4.1-4 5.7-.8z" stroke-linejoin="round"/>',
+        circle: '<circle cx="12" cy="12" r="8"/>',
+        square: '<rect x="5" y="5" width="14" height="14"/>' };
+      function photoPanel(pn) {
+        const se = selEl(), ph = se && se.k === 'photo' ? se : null, cur = ph ? ph.shape : (E.shape || 'rect');
+        pn.innerHTML = `<div class="ed-tr ed-sh">${SHAPES.map((k) => `<button type="button" class="ed-b ed-shb${cur === k ? ' on' : ''}" data-sh="${k}" aria-label="${esc(tx('shapes')[k])}"><svg viewBox="0 0 24 24">${SHI[k]}</svg></button>`).join('')}<button type="button" class="ed-b" id="ed-pa">${esc(tx('addPhoto'))}</button></div><input type="file" id="ed-pf" accept="image/*" hidden><p class="ed-note">${esc(tx('photoHint'))}</p>`;
+        pn.querySelectorAll('[data-sh]').forEach((b) => { b.onclick = async () => {
+          E.shape = b.dataset.sh; const t = selEl();
+          if (t && t.k === 'photo') { try { t.shape = E.shape; t.src = shapePhoto(await loadImage(t.raw), t.shape); layers(); } catch (e) { flash(tx('err')); } }
+          panel();
+        }; });
+        q('#ed-pa').onclick = () => q('#ed-pf').click();
+        q('#ed-pf').onchange = async (ev) => {
+          const f = ev.target.files && ev.target.files[0]; ev.target.value = ''; if (!f) return;
+          if (E.els.length >= 24) return;
+          const u = URL.createObjectURL(f);
+          try {
+            const im = await loadImage(u), k = Math.min(1, 1100 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.max(1, Math.round(im.width * k)); c.height = Math.max(1, Math.round(im.height * k));
+            c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+            const raw = c.toDataURL('image/jpeg', .86), shape = E.shape || 'rect';
+            addEl({ k: 'photo', x: 50, y: 50, w: shape === 'rect' ? 56 : 44, r: 0, shape, raw, src: shapePhoto(await loadImage(raw), shape) });
+            panel();
+          } catch (e) { flash(tx('err')); } finally { URL.revokeObjectURL(u); }
+        };
       }
       let gifTimer = 0;
       async function gifPanel(pn) {
@@ -322,7 +371,8 @@
         for (const e of E.els) {
           if (e.k === 'gif') continue;
           x.save(); x.translate(e.x / 100 * CW, e.y / 100 * CH); x.rotate(e.r * Math.PI / 180);
-          if (e.k === 'item') { const im = await itemImg(e.itemId); if (im) { const w = e.w / 100 * CW, h = w * im.height / im.width; x.drawImage(im, -w / 2, -h / 2, w, h); } }
+          if (e.k === 'photo') { const im = imgCache.get(e.src) || await loadImage(e.src); imgCache.set(e.src, im); const w = e.w / 100 * CW, h = w * im.height / im.width; x.drawImage(im, -w / 2, -h / 2, w, h); }
+          else if (e.k === 'item') { const im = await itemImg(e.itemId); if (im) { const w = e.w / 100 * CW, h = w * im.height / im.width; x.drawImage(im, -w / 2, -h / 2, w, h); } }
           else {
             const px = e.fs / 100 * CW, lines = String(e.text).split('\n'); x.font = `${fnt(e).w} ${px}px ${fnt(e).f}`; x.textAlign = 'center'; x.textBaseline = 'middle';
             const lh = px * 1.2, tw = Math.max(...lines.map((l) => x.measureText(l).width)), th = lh * lines.length;

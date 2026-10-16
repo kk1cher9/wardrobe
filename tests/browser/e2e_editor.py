@@ -94,6 +94,24 @@ async def main():
     await A.click('.ed-ig [data-w="w2"]')
     ok('item pasted onto the photo; both items marked "I wear"',await A.evaluate("document.querySelectorAll('.ed-el:not(.ed-tx)').length===1&&document.querySelectorAll('.ed-ig .ed-it.w').length===2"))
     # GIF: upload an own file
+    # ---- photo stickers cut to shapes
+    import io
+    from PIL import Image as PI
+    bio=io.BytesIO();PI.new('RGB',(300,200),(200,60,90)).save(bio,'PNG');PNG=bio.getvalue()
+    await A.click('.ed-tabs [data-t="photo"]');await A.wait_for_selector('.ed-sh [data-sh]',timeout=2000)
+    ok('photo tab offers 4 shapes + add button',await A.evaluate("document.querySelectorAll('.ed-sh [data-sh]').length===4&&!!document.getElementById('ed-pa')"))
+    await A.click('.ed-sh [data-sh="star"]');await A.set_input_files('#ed-pf',files=[{'name':'p.png','mimeType':'image/png','buffer':PNG}]);await A.wait_for_selector('.ed-el[data-k=photo] img',timeout=4000)
+    PX="""async()=>{const im=document.querySelector('.ed-el[data-k=photo] img');await im.decode();const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0);return [x.getImageData(2,2,1,1).data[3],x.getImageData(c.width>>1,c.height>>1,1,1).data[0],x.getImageData(c.width>>1,c.height>>1,1,1).data[3],c.width,c.height]}"""
+    sq=await A.evaluate(PX)
+    ok('star photo: transparent corner, photo colour in the middle, square canvas',sq[0]==0 and sq[1]>150 and sq[3]==sq[4])
+    await A.click('.ed-sh [data-sh="circle"]');await A.wait_for_timeout(400)
+    ci=await A.evaluate(PX)
+    ok('shape of the added photo can be changed (circle: transparent corner, solid centre)',ci[0]==0 and ci[2]==255)
+    await A.click('.ed-sh [data-sh="rect"]');await A.wait_for_timeout(400)
+    rc=await A.evaluate(PX)
+    ok('rounded rectangle keeps the photo aspect (wider than tall)',rc[3]>rc[4])
+    await A.click('#ed-sel .dl');await A.wait_for_timeout(200)
+    ok('photo sticker can be deleted',await A.evaluate("""()=>!document.querySelector('.ed-el[data-k=photo] img')"""))
     await A.click('.ed-tabs [data-t="gif"]');await A.wait_for_selector('#ed-gf',state='attached');await A.set_input_files('#ed-gf',files=[{'name':'a.gif','mimeType':'image/gif','buffer':GIF}])
     await A.wait_for_function("document.querySelectorAll('.ed-el img[src^=\"data:image/gif\"]').length===1",timeout=4000)
     ok('own GIF added as a movable overlay',True)
