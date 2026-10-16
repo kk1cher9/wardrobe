@@ -501,13 +501,9 @@ function widgetScript(url){return ['// Weather Wardrobe widget (Scriptable)','co
 '    const im = box.addImage(img); im.imageSize = new Size(sz - 8, sz - 8); im.resizable = true; im.applyFittingContentMode();',
 '  }',
 '}',
-'w.addSpacer(); const nl = w.addText("↻ Tap for a new look"); nl.font = Font.systemFont(10); nl.textColor = new Color("#ffffff", 0.7);',
-'w.url = URL_.replace(/\\/api\\/widget.*$/, "/?newlook=1");',
 'w.refreshAfterDate = new Date(Date.now() + 30 * 60 * 1000);',
 'if (config.runsInWidget) Script.setWidget(w); else await w.presentMedium();',
 'Script.complete();'].join('\n')}
-(function(){let q='';try{q=new URLSearchParams(location.search).get('newlook')}catch(e){}if(!q)return;let n=0;
-const t=setInterval(()=>{if(++n>60){clearInterval(t);return}if(!S.w||!pool().length)return;clearInterval(t);try{history.replaceState(null,'',location.pathname);gen()}catch(e){}},500)})();
 async function widgetSetup(){
  if(!S.user){toast('Sign in with Google first');return}
  let tok;try{const r=await API('/api/widget',{method:'POST',body:JSON.stringify({op:'token'})});if(!r.ok)throw 0;tok=(await r.json()).token}catch(e){toast('Could not reach the server');return}
