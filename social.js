@@ -1007,7 +1007,7 @@ function storyOpen(gi) {
     const a = b.dataset.a; if (a === 'x') closeStory(); else if (a === 'del') delStory(); else if (a === 'views') viewersPanel(); else if (a === 'vx') { V.panel = false; const w = el.querySelector('.sc-vw'); if (w) w.remove(); } else if (a === 'prof') { const n = b.dataset.n; closeStory(); profile(n); } else if (a === 'like') likeStory(b);
   });
   // iOS: the keyboard resizes/pans the page. Freeze the story at its opening size so the picture never moves or squashes; only the reply controls rise above the keyboard.
-  const H0 = window.innerHeight + (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sd')) || 0); el.style.height = H0 + 'px'; el.style.bottom = 'auto';
+  const H0 = window.innerHeight; el.style.height = H0 + 'px'; el.style.bottom = 'auto';
   const vv = window.visualViewport;
   if (vv) {
     let raf = 0; const fit = () => { if (raf) return; raf = requestAnimationFrame(() => { raf = 0; fit2(); }); };

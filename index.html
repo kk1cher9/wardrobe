@@ -10,8 +10,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="icon" href="icons/icon-192.png">
-<script>/* iOS home-screen apps can report a layout viewport shorter than the screen: measure the missing strip (--sd) so bottom-anchored layers reach the real bottom edge */
-(function(){function f(){try{var a=document.activeElement;if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))return;var d=0,st=navigator.standalone||(matchMedia&&matchMedia('(display-mode: standalone)').matches);if(st&&innerHeight>innerWidth){d=Math.round(screen.height-innerHeight);if(d<8||d>120)d=0}document.documentElement.style.setProperty('--sd',d+'px')}catch(e){}}f();addEventListener('resize',f);addEventListener('orientationchange',f);addEventListener('pageshow',f);addEventListener('focusout',function(){setTimeout(f,500)})})();</script>
+<script>/* iOS home-screen apps can report a layout viewport shorter than the screen (strip at the bottom, content there is clipped): then the strip already provides the home-indicator margin, so the tab bar sits 8px above the layout edge on every page */
+(function(){function f(){try{var a=document.activeElement;if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))return;var d=0,st=navigator.standalone||(matchMedia&&matchMedia('(display-mode: standalone)').matches);if(st&&innerHeight>innerWidth){d=Math.round(screen.height-innerHeight);if(d<8||d>120)d=0}document.documentElement.style.setProperty('--sd',d+'px');document.documentElement.style.setProperty('--nb',d>0?'8px':'calc(8px + env(safe-area-inset-bottom,0px) * .4)')}catch(e){}}f();addEventListener('resize',f);addEventListener('orientationchange',f);addEventListener('pageshow',f);addEventListener('focusout',function(){setTimeout(f,500)})})();</script>
 <style>
 :root{--h:#000;--bg1:#fff;--bg2:#8d8d8d;--card:#000;--fg:#fff;--mut:#9a9a9a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
 :root[data-theme=dark]{--h:#fff;--bg1:#2a2a2a;--bg2:#000;--card:#111;--fg:#fff}
@@ -49,7 +49,7 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
 .hr{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid #222}
 .hr:last-child{border:0}
 .hr i{font-style:normal;color:var(--mut);font-weight:600}
-nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(8px + env(safe-area-inset-bottom,0px) * .4 - var(--sd,0px));background:#000;border-radius:30px;display:flex;gap:4px;padding:6px;width:min(calc(100% - 32px),488px)}
+nav{position:fixed;left:50%;transform:translateX(-50%);bottom:var(--nb,calc(8px + env(safe-area-inset-bottom,0px) * .4));background:#000;border-radius:30px;display:flex;gap:4px;padding:6px;width:min(calc(100% - 32px),488px)}
 nav button{flex:1;background:none;border:0;color:#777;font:inherit;font-size:11px;padding:8px 0;border-radius:24px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
 nav button.on{color:#000}
 nav{touch-action:none;-webkit-user-select:none;user-select:none}
@@ -190,7 +190,6 @@ h2.h3{font-size:15px;margin:20px 4px 12px}
 .gp{margin:8px 0;border-radius:20px;background:rgba(127,127,127,.12);border:1px solid rgba(127,127,127,.28);overflow:hidden}.gh{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;cursor:pointer;color:var(--h);-webkit-tap-highlight-color:transparent}.gh:focus-visible{outline:2px solid currentColor;outline-offset:-3px;border-radius:20px}.gt{flex:1;min-width:0;font-size:13px;font-weight:800}.gm{display:flex;flex:none}.gm img{width:26px;height:26px;object-fit:contain;margin-left:-10px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}.gm img:first-child{margin-left:0}.gc{flex:none;font-size:12px;font-weight:800;min-width:26px;text-align:center;background:rgba(127,127,127,.25);border-radius:10px;padding:2px 8px}.chev{flex:none;width:8px;height:8px;margin:0 4px 3px 2px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);transition:transform .25s}.gp.open .chev{transform:rotate(-135deg);margin-bottom:-3px}.gp.open .gm{display:none}.gb{display:none;padding:2px 8px 10px}.gp.open .gb{display:block}
 .sbk{display:flex;align-items:center;gap:6px;margin:0 0 4px}.sbk h2{margin:0}.sbb{border:0;background:none;color:var(--h);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;margin-left:-10px;transition:background .2s,transform .15s}.sbb:active{transform:scale(.88)}:root[data-theme=glass] .sbb,:root[data-theme=dark] .sbb{color:#fff}.sbb svg{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 
-.ed,.ch-iv,.modal{bottom:calc(var(--sd,0px)*-1)!important}.ch-ov{height:calc(100% + var(--sd,0px))!important}
 body.sv-open #app,body.sv-open nav{visibility:hidden}
 </style></head><body>
 <div id="off">Нет интернета — показаны сохранённые данные</div>
