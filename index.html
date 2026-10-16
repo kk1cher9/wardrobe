@@ -191,6 +191,8 @@ h2.h3{font-size:15px;margin:20px 4px 12px}
 .sbk{display:flex;align-items:center;gap:6px;margin:0 0 4px}.sbk h2{margin:0}.sbb{border:0;background:none;color:var(--h);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;margin-left:-10px;transition:background .2s,transform .15s}.sbb:active{transform:scale(.88)}:root[data-theme=glass] .sbb,:root[data-theme=dark] .sbb{color:#fff}.sbb svg{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 
 body.sv-open #app,body.sv-open nav{visibility:hidden}
+/* iOS home-screen apps anchor fixed-bottom bars ~60px higher when the page cannot scroll (Home, Wardrobe, Chats) than when it can (Outfits, Driply): always keep the page scrollable so the tab bar sits at the same place everywhere */
+#app{min-height:calc(100vh + 2px)}
 </style></head><body>
 <div id="off">Нет интернета — показаны сохранённые данные</div>
 <div id="app"></div>
