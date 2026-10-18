@@ -1125,7 +1125,7 @@ async function storyCam() {
   if (!md || !md.getUserMedia) return storyCompose();
   let stream = null, face = 'environment', tpl = '1', shots = [], closed = false, zl = 1, dig = 1, ultra = CAMKEEP.u || '', tele = CAMKEEP.l || '', rec = null, lastTap = 0;
   const w = document.createElement('div'); w.className = 'sc-cam';
-  w.innerHTML = `<video id="sc-cv" playsinline muted autoplay></video>
+  w.innerHTML = `<video id="sc-cv" playsinline muted autoplay></video><canvas class="sc-cfz" id="sc-cfz" hidden></canvas>
   <div class="sc-cmt"><button type="button" class="sc-cb" id="sc-cx" aria-label="${E(t('camClose'))}">${ico('x', 20)}</button><span class="sc-cr"><button type="button" class="sc-cb sc-ctb" id="sc-ct" aria-label="${E(t('camTpl'))}"></button><button type="button" class="sc-cb" id="sc-cf" aria-label="${E(t('camFlip'))}">${ico('cam', 20)}</button></span></div>
   <div class="sc-cst" id="sc-cs"></div>
   <div class="sc-crec" id="sc-crec" hidden>● <b id="sc-crt">0:00</b></div><div class="sc-cbt"><div class="sc-zr" id="sc-zr" hidden><button type="button" data-z="0.5">0.5</button><button type="button" data-z="1" class="on">1×</button><button type="button" data-z="3">3×</button></div>
@@ -1145,9 +1145,13 @@ async function storyCam() {
   };
   let hasWide = !!ultra;
   const vtf = () => { vid.style.transform = (face === 'user' ? 'scaleX(-1) ' : '') + (dig > 1 ? `scale(${dig})` : ''); };
-  const camBtn = () => { const r = g('#sc-zr'); r.hidden = face !== 'environment'; r.querySelector('[data-z="0.5"]').hidden = !hasWide; r.querySelectorAll('button').forEach((b) => { b.classList.toggle('on', +b.dataset.z === zl); const x = +b.dataset.z; b.textContent = (x === zl ? x + '×' : String(x)); }); };
+  const camBtn = () => { const r = g('#sc-zr'); r.hidden = face !== 'environment'; r.querySelector('[data-z="0.5"]').hidden = !hasWide; r.querySelectorAll('button').forEach((b) => { b.classList.toggle('on', +b.dataset.z === zl); const x = +b.dataset.z; b.textContent = x === 0.5 ? '.5' : (x === zl ? x + '×' : String(x)); }); };
+  const freeze = () => { // keep the last frame (blurred) on screen while the other lens starts, like the iOS camera
+    try { const z = g('#sc-cfz'); if (!vid.videoWidth) return; z.width = 270; z.height = Math.round(270 * vid.videoHeight / vid.videoWidth); z.getContext('2d').drawImage(vid, 0, 0, z.width, z.height); z.style.transform = vid.style.transform; z.hidden = false; z.style.opacity = '1'; } catch (e) { /* ignore */ }
+  };
+  const thaw = () => { const z = g('#sc-cfz'); z.style.opacity = '0'; setTimeout(() => { z.hidden = true; }, 220); };
   const start = async (fresh) => {
-    clearTimeout(CAMKEEP.t);
+    clearTimeout(CAMKEEP.t); if (fresh) freeze();
     if (!fresh && CAMKEEP.s && CAMKEEP.s.getTracks().some((x) => x.readyState === 'live') && CAMKEEP.f === face && CAMKEEP.w === zl) { dig = zl === 3 && !tele && !CAMKEEP.zm ? 3 : 1; camBtn(); stream = CAMKEEP.s; CAMKEEP.s = null; stream.getTracks().forEach((x) => { x.enabled = true; }); vid.srcObject = stream; vtf(); vid.play().catch(() => {}); return; }
     if (CAMKEEP.s) { CAMKEEP.s.getTracks().forEach((x) => x.stop()); CAMKEEP.s = null; }
     stop();
@@ -1163,14 +1167,21 @@ async function storyCam() {
         if (face === 'environment' && zl === 3 && !tele) { if (caps.zoom && caps.zoom.max >= 3) { await tr.applyConstraints({ advanced: [{ zoom: 3 }] }); CAMKEEP.zm = true; } else dig = 3; }
         hasWide = !!ultra || !!(caps.zoom && caps.zoom.min < 1);
       } catch (e) { /* optional */ }
-      camBtn(); vid.srcObject = stream; vtf(); vid.play().catch(() => {});
-    } catch (e) { if (!closed) { close(); storyCompose(); } }
+      camBtn(); vid.srcObject = stream; vtf(); vid.addEventListener('playing', thaw, { once: true }); vid.play().catch(() => {});
+    } catch (e) { thaw(); if (!closed) { close(); storyCompose(); } }
   };
   const add = (u) => { if (shots.length >= 12) return; shots.push(u); paint(); };
   g('#sc-cx').onclick = close;
   const flip = () => { if (rec) return; face = face === 'user' ? 'environment' : 'user'; zl = 1; start(true); };
   g('#sc-cf').onclick = flip;
-  g('#sc-zr').onclick = (ev) => { const b = ev.target.closest('[data-z]'); if (!b || rec) return; const z = +b.dataset.z; if (z === zl) return; zl = z; start(true); };
+  g('#sc-zr').onclick = (ev) => { const b = ev.target.closest('[data-z]'); if (!b || rec) return; const z = +b.dataset.z; if (z === zl) return;
+    const tr = stream && stream.getVideoTracks()[0], caps = tr && tr.getCapabilities ? tr.getCapabilities() : {};
+    if (face === 'environment' && stream && (z === 1 || z === 3) && (zl === 1 || zl === 3) && !tele) { // same lens: zoom in place, no restart, no flicker
+      zl = z; dig = 1;
+      if (caps.zoom && caps.zoom.max >= 3) { tr.applyConstraints({ advanced: [{ zoom: z === 3 ? 3 : (caps.zoom.min || 1) }] }).catch(() => {}); CAMKEEP.zm = z === 3; } else if (z === 3) dig = 3;
+      vtf(); camBtn(); return;
+    }
+    zl = z; start(true); };
   w.addEventListener('pointerup', (ev) => { // double tap on the picture flips the camera
     if (ev.target.closest('button,.sc-cst,.sc-cbt')) return; const n = Date.now(); if (n - lastTap < 320) { lastTap = 0; flip(); } else lastTap = n; });
   g('#sc-ct').onclick = () => { const ks = ['1', '2v', '2h', '3', '4', '6']; tpl = ks[(ks.indexOf(tpl) + 1) % ks.length]; paint(); };
@@ -1342,9 +1353,9 @@ const css = `
 .sc-ctp{display:flex;gap:10px;justify-content:center;margin-bottom:14px}
 .sc-cb[hidden],.sc-crec[hidden]{display:none}.sc-cr{display:flex;gap:10px}.sc-ctb{width:44px}.sc-cth{width:40px;height:50px;border-radius:12px;border:1.5px solid rgba(255,255,255,.35);background:rgba(0,0,0,.35);color:rgba(255,255,255,.75);display:grid;place-items:center;padding:0;cursor:pointer}
 .sc-cth.on{border-color:#fff;color:#fff;background:rgba(255,255,255,.22)}
-.sc-crow{display:flex;align-items:center;justify-content:space-between}
+.sc-crow{display:grid;grid-template-columns:1fr auto 1fr;align-items:center}.sc-crow>:first-child{justify-self:start}.sc-crow>:last-child{justify-self:end}
 .sc-csh{width:76px;height:76px;border-radius:50%;border:5px solid #fff;background:rgba(255,255,255,.25);padding:0;cursor:pointer;transition:transform .15s,background .15s}
-.sc-csh.rec{border-color:#ff3b30;background:#ff3b30;transform:scale(1.12)}.sc-crec{position:absolute;top:calc(22px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:rgba(255,59,48,.9);padding:5px 12px;border-radius:14px;font:700 14px system-ui}.sc-zr{display:flex;justify-content:center;gap:8px;margin-bottom:12px}.sc-zr button{min-width:38px;height:38px;border-radius:19px;border:0;background:rgba(0,0,0,.5);color:#fff;font:700 13px system-ui;padding:0 10px;cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}.sc-zr button.on{background:#fff;color:#000;font-weight:800}.sc-zr button[hidden],.sc-zr[hidden]{display:none}.sc-csh{-webkit-touch-callout:none;user-select:none;-webkit-user-select:none;touch-action:none}.sc-csh.fl{transform:scale(.88);background:#fff}
+.sc-csh.rec{border-color:#ff3b30;background:#ff3b30;transform:scale(1.12)}.sc-crec{position:absolute;top:calc(22px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:rgba(255,59,48,.9);padding:5px 12px;border-radius:14px;font:700 14px system-ui}.sc-zr{display:flex;justify-content:center;gap:8px;margin-bottom:12px}.sc-zr button{width:42px;min-width:42px;max-width:42px;height:42px;min-height:42px;border-radius:50%;border:0;background:rgba(0,0,0,.5);color:#fff;font:700 13px system-ui;padding:0;display:grid;place-items:center;box-sizing:border-box;cursor:pointer;transition:transform .2s,background .2s;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}.sc-zr button.on{background:#fff;color:#000;font-weight:800;transform:scale(1.12)}.sc-cam video{transition:transform .25s ease}.sc-cfz{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(10px);transition:opacity .2s;pointer-events:none}.sc-cfz[hidden]{display:none}.sc-zr button[hidden],.sc-zr[hidden]{display:none}.sc-csh{-webkit-touch-callout:none;user-select:none;-webkit-user-select:none;touch-action:none}.sc-csh.fl{transform:scale(.88);background:#fff}
 .sc-cn{min-width:88px;height:44px;border-radius:22px;border:0;background:#fff;color:#000;font:800 15px system-ui;padding:0 18px;cursor:pointer}.sc-cn:disabled{opacity:.35}
 .sc-sv::after{content:'';position:absolute;left:0;right:0;top:100%;height:260px;background:#000;pointer-events:none}.sc-sv{position:fixed;inset:0;z-index:200;background:#000;color:#fff;display:flex;flex-direction:column;touch-action:none;user-select:none;-webkit-user-select:none;animation:mf .2s ease}
 .sc-sbars{display:flex;gap:5px;padding:calc(10px + env(safe-area-inset-top,0px)) 10px 8px;position:relative;z-index:2}.sc-sbars::before{content:'';position:absolute;left:0;right:0;top:0;height:90px;background:linear-gradient(rgba(0,0,0,.55),transparent);z-index:-1;pointer-events:none}.sc-sbars i{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.4);box-shadow:0 0 3px rgba(0,0,0,.5);overflow:hidden}.sc-sbars b{display:block;height:100%;background:#fff}
