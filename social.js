@@ -1119,23 +1119,23 @@ async function camCollage(tpl, imgs) {
   });
   return c.toDataURL('image/jpeg', .9);
 }
-const CAMKEEP = { s: null, f: 'environment', t: 0 };
+const CAMKEEP = { s: null, f: 'environment', t: 0, w: false, u: '' };
 async function storyCam() {
   const md = navigator.mediaDevices;
   if (!md || !md.getUserMedia) return storyCompose();
-  let stream = null, face = 'environment', tpl = '1', shots = [], closed = false;
+  let stream = null, face = 'environment', tpl = '1', shots = [], closed = false, wide = false, ultra = CAMKEEP.u || '', rec = null, lastTap = 0;
   const w = document.createElement('div'); w.className = 'sc-cam';
   w.innerHTML = `<video id="sc-cv" playsinline muted autoplay></video>
-  <div class="sc-cmt"><button type="button" class="sc-cb" id="sc-cx" aria-label="${E(t('camClose'))}">${ico('x', 20)}</button><span class="sc-cr"><button type="button" class="sc-cb sc-ctb" id="sc-ct" aria-label="${E(t('camTpl'))}"></button><button type="button" class="sc-cb" id="sc-cf" aria-label="${E(t('camFlip'))}">${ico('cam', 20)}</button></span></div>
+  <div class="sc-cmt"><button type="button" class="sc-cb" id="sc-cx" aria-label="${E(t('camClose'))}">${ico('x', 20)}</button><span class="sc-cr"><button type="button" class="sc-cb sc-czb" id="sc-cz" hidden>0.5×</button><button type="button" class="sc-cb sc-ctb" id="sc-ct" aria-label="${E(t('camTpl'))}"></button><button type="button" class="sc-cb" id="sc-cf" aria-label="${E(t('camFlip'))}">${ico('cam', 20)}</button></span></div>
   <div class="sc-cst" id="sc-cs"></div>
-  <div class="sc-cbt">
+  <div class="sc-crec" id="sc-crec" hidden>● <b id="sc-crt">0:00</b></div><div class="sc-cbt">
   <div class="sc-crow"><button type="button" class="sc-cg" id="sc-cg" aria-label="${E(t('camGal'))}">${ico('img', 22)}</button><button type="button" class="sc-csh" id="sc-csh" aria-label="${E(t('camShot'))}"></button><button type="button" class="sc-cn" id="sc-cn" disabled>${E(t('camNext'))}</button></div></div>
   <input type="file" id="sc-cfi" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,video/mp4,video/quicktime" multiple hidden>`;
   document.body.appendChild(w);
   const g = (q) => w.querySelector(q), vid = g('#sc-cv');
   const stop = () => { if (stream) stream.getTracks().forEach((x) => x.stop()); stream = null; if (CAMKEEP.s === stream) CAMKEEP.s = null; };
   // closing only switches the camera off (track disabled) and keeps the granted stream for a while, so iOS does not ask again on every open
-  const close = () => { closed = true; clearTimeout(CAMKEEP.t); if (stream) { stream.getTracks().forEach((x) => { x.enabled = false; }); CAMKEEP.s = stream; CAMKEEP.f = face; CAMKEEP.t = setTimeout(() => { if (CAMKEEP.s) CAMKEEP.s.getTracks().forEach((x) => x.stop()); CAMKEEP.s = null; }, 10 * 60 * 1000); } stream = null; vid.srcObject = null; w.remove(); };
+  const close = () => { closed = true; if (rec && rec.mr.state !== 'inactive') { rec.mr.onstop = null; try { rec.mr.stop(); } catch (e) { /* ignore */ } rec = null; } clearTimeout(CAMKEEP.t); if (stream) { stream.getTracks().forEach((x) => { x.enabled = false; }); CAMKEEP.s = stream; CAMKEEP.f = face; CAMKEEP.w = wide; CAMKEEP.u = ultra; CAMKEEP.t = setTimeout(() => { if (CAMKEEP.s) CAMKEEP.s.getTracks().forEach((x) => x.stop()); CAMKEEP.s = null; }, 10 * 60 * 1000); } stream = null; vid.srcObject = null; w.remove(); };
   const paint = () => {
     const n = CAMTPL[tpl].length;
     g('#sc-cs').innerHTML = shots.map((u, k) => `<div class="sc-cim${k >= n ? ' off' : ''}"><img src="${u}" alt=""><button type="button" data-rm="${k}" aria-label="${E(t('camDel'))}">×</button><i>${k + 1}</i></div>`).join('');
@@ -1143,24 +1143,38 @@ async function storyCam() {
     g('#sc-ct').innerHTML = `<svg viewBox="0 0 24 36" width="18" height="26">${CAMTPL[tpl].map((r) => `<rect x="${1 + r[0] * 22 + .6}" y="${1 + r[1] * 34 + .6}" width="${r[2] * 22 - 1.2}" height="${r[3] * 34 - 1.2}" rx="2" fill="currentColor"/>`).join('')}</svg>`;
     g('#sc-cs').scrollTop = 1e6;
   };
+  let zoomOk = !!ultra;
+  const camBtn = () => { const b = g('#sc-cz'); b.hidden = !(zoomOk && face === 'environment'); b.textContent = wide ? '1×' : '0.5×'; b.classList.toggle('on', wide); };
   const start = async (fresh) => {
     clearTimeout(CAMKEEP.t);
-    if (!fresh && CAMKEEP.s && CAMKEEP.s.getTracks().some((x) => x.readyState === 'live') && CAMKEEP.f === face) { stream = CAMKEEP.s; CAMKEEP.s = null; stream.getTracks().forEach((x) => { x.enabled = true; }); vid.srcObject = stream; vid.style.transform = face === 'user' ? 'scaleX(-1)' : ''; vid.play().catch(() => {}); return; }
+    if (!fresh && CAMKEEP.s && CAMKEEP.s.getTracks().some((x) => x.readyState === 'live') && CAMKEEP.f === face && !!CAMKEEP.w === wide) { camBtn(); stream = CAMKEEP.s; CAMKEEP.s = null; stream.getTracks().forEach((x) => { x.enabled = true; }); vid.srcObject = stream; vid.style.transform = face === 'user' ? 'scaleX(-1)' : ''; vid.play().catch(() => {}); return; }
     if (CAMKEEP.s) { CAMKEEP.s.getTracks().forEach((x) => x.stop()); CAMKEEP.s = null; }
     stop();
     try {
-      stream = await md.getUserMedia({ video: { facingMode: { ideal: face }, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false });
-      if (closed) { stop(); return; } vid.srcObject = stream; vid.style.transform = face === 'user' ? 'scaleX(-1)' : ''; vid.play().catch(() => {});
+      const dev = wide && face === 'environment' && ultra ? { deviceId: { exact: ultra } } : { facingMode: { ideal: face } };
+      stream = await md.getUserMedia({ video: { ...dev, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false });
+      if (closed) { stop(); return; }
+      try { // find the ultra-wide (0.5x) back camera once the labels are readable
+        if (!ultra) { const ds = await md.enumerateDevices(); const u = ds.find((d) => d.kind === 'videoinput' && /ultra/i.test(d.label)); if (u) ultra = u.deviceId; }
+        const tr = stream.getVideoTracks()[0], caps = tr && tr.getCapabilities ? tr.getCapabilities() : {};
+        if (wide && face === 'environment' && !ultra && caps.zoom && caps.zoom.min < 1) await tr.applyConstraints({ advanced: [{ zoom: caps.zoom.min }] });
+        zoomOk = !!ultra || !!(caps.zoom && caps.zoom.min < 1);
+      } catch (e) { /* optional */ }
+      camBtn(); vid.srcObject = stream; vid.style.transform = face === 'user' ? 'scaleX(-1)' : ''; vid.play().catch(() => {});
     } catch (e) { if (!closed) { close(); storyCompose(); } }
   };
   const add = (u) => { if (shots.length >= 12) return; shots.push(u); paint(); };
   g('#sc-cx').onclick = close;
-  g('#sc-cf').onclick = () => { face = face === 'user' ? 'environment' : 'user'; start(true); };
+  const flip = () => { if (rec) return; face = face === 'user' ? 'environment' : 'user'; wide = false; start(true); };
+  g('#sc-cf').onclick = flip;
+  g('#sc-cz').onclick = () => { if (rec) return; wide = !wide; start(true); };
+  w.addEventListener('pointerup', (ev) => { // double tap on the picture flips the camera
+    if (ev.target.closest('button,.sc-cst,.sc-cbt')) return; const n = Date.now(); if (n - lastTap < 320) { lastTap = 0; flip(); } else lastTap = n; });
   g('#sc-ct').onclick = () => { const ks = ['1', '2v', '2h', '3', '4', '6']; tpl = ks[(ks.indexOf(tpl) + 1) % ks.length]; paint(); };
   g('#sc-cs').onclick = (ev) => { const b = ev.target.closest('[data-rm]'); if (b) { shots.splice(+b.dataset.rm, 1); paint(); } };
   g('#sc-cg').onclick = () => g('#sc-cfi').click();
   g('#sc-cfi').onchange = async (ev) => { const fl = Array.from(ev.target.files || []); ev.target.value = ''; for (const f of fl) { if (/^video\//.test(f.type) || /\.(mov|mp4|m4v|webm)$/i.test(f.name)) { close(); compose({ video: f }); return; } try { add(await encodeImg(await fileToUrl(f), 1600, .85, 900 * 1024)); } catch (e) { toast(t('errImg')); } } };
-  g('#sc-csh').onclick = () => {
+  const shot = () => {
     if (!vid.videoWidth) return;
     const c = document.createElement('canvas'); c.width = vid.videoWidth; c.height = vid.videoHeight; const x = c.getContext('2d');
     if (face === 'user') { x.translate(c.width, 0); x.scale(-1, 1); } x.drawImage(vid, 0, 0);
@@ -1168,6 +1182,32 @@ async function storyCam() {
     g('#sc-csh').classList.add('fl'); setTimeout(() => g('#sc-csh').classList.remove('fl'), 160);
     if (tpl === '1') g('#sc-cn').click();
   };
+  const startRec = async () => { // hold the shutter: record a video (it becomes a post; stories are photo-only)
+    if (!stream || typeof MediaRecorder === 'undefined') return;
+    let st2 = stream;
+    try { const a = await md.getUserMedia({ audio: true }); st2 = new MediaStream([...stream.getVideoTracks(), ...a.getAudioTracks()]); } catch (e) { /* no microphone: silent video */ }
+    const mt = ['video/mp4', 'video/webm;codecs=vp8,opus', 'video/webm'].find((m) => MediaRecorder.isTypeSupported(m)) || '';
+    let mr; try { mr = new MediaRecorder(st2, { ...(mt ? { mimeType: mt } : {}), videoBitsPerSecond: 2000000 }); } catch (e) { return; }
+    const chunks = [], t0 = Date.now(); rec = { mr, st2, stream };
+    mr.ondataavailable = (ev) => { if (ev.data && ev.data.size) chunks.push(ev.data); };
+    mr.onstop = () => {
+      clearInterval(rec.iv); const aud = st2.getAudioTracks(); aud.forEach((x) => x.stop()); const ok = Date.now() - t0 > 700; rec = null; g('#sc-crec').hidden = true; g('#sc-csh').classList.remove('rec');
+      if (!ok || !chunks.length) return;
+      const type = (mr.mimeType || mt || 'video/mp4').split(';')[0], f = new File(chunks, 'video.' + (/mp4/.test(type) ? 'mp4' : 'webm'), { type });
+      close(); compose({ video: f });
+    };
+    g('#sc-csh').classList.add('rec'); g('#sc-crec').hidden = false;
+    rec.iv = setInterval(() => { const sec = Math.floor((Date.now() - t0) / 1000); g('#sc-crt').textContent = Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0'); if (sec >= 30) stopRec(); }, 250);
+    mr.start(500);
+  };
+  const stopRec = () => { if (rec && rec.mr.state !== 'inactive') rec.mr.stop(); };
+  let hold = 0, held = false, starting = false;
+  const sh = g('#sc-csh');
+  sh.onpointerdown = () => { held = false; hold = setTimeout(async () => { held = true; starting = true; await startRec(); starting = false; if (!rec) held = false; }, 450); };
+  const up = () => { clearTimeout(hold); if (held) { if (starting) setTimeout(stopRec, 400); else stopRec(); } };
+  sh.onpointerup = up; sh.onpointercancel = up; sh.onpointerleave = () => { if (held) up(); };
+  sh.onclick = () => { if (held) { held = false; return; } shot(); };
+  sh.oncontextmenu = (ev) => ev.preventDefault();
   g('#sc-cn').onclick = async () => {
     if (!shots.length) return;
     const n = CAMTPL[tpl].length; let out;
@@ -1297,11 +1337,11 @@ const css = `
 .sc-cim i{position:absolute;left:4px;bottom:3px;font:800 11px/1 system-ui;font-style:normal;text-shadow:0 1px 3px #000}
 .sc-cbt{position:absolute;left:0;right:0;bottom:0;padding:12px 18px calc(16px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,rgba(0,0,0,.65))}
 .sc-ctp{display:flex;gap:10px;justify-content:center;margin-bottom:14px}
-.sc-cr{display:flex;gap:10px}.sc-ctb{width:44px}.sc-cth{width:40px;height:50px;border-radius:12px;border:1.5px solid rgba(255,255,255,.35);background:rgba(0,0,0,.35);color:rgba(255,255,255,.75);display:grid;place-items:center;padding:0;cursor:pointer}
+.sc-cb[hidden],.sc-crec[hidden]{display:none}.sc-cr{display:flex;gap:10px}.sc-ctb{width:44px}.sc-cth{width:40px;height:50px;border-radius:12px;border:1.5px solid rgba(255,255,255,.35);background:rgba(0,0,0,.35);color:rgba(255,255,255,.75);display:grid;place-items:center;padding:0;cursor:pointer}
 .sc-cth.on{border-color:#fff;color:#fff;background:rgba(255,255,255,.22)}
 .sc-crow{display:flex;align-items:center;justify-content:space-between}
 .sc-csh{width:76px;height:76px;border-radius:50%;border:5px solid #fff;background:rgba(255,255,255,.25);padding:0;cursor:pointer;transition:transform .15s,background .15s}
-.sc-csh.fl{transform:scale(.88);background:#fff}
+.sc-csh.rec{border-color:#ff3b30;background:#ff3b30;transform:scale(1.12)}.sc-crec{position:absolute;top:calc(22px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:rgba(255,59,48,.9);padding:5px 12px;border-radius:14px;font:700 14px system-ui}.sc-czb{font:800 13px system-ui}.sc-czb.on{background:#fff;color:#000}.sc-csh{-webkit-touch-callout:none;user-select:none;-webkit-user-select:none;touch-action:none}.sc-csh.fl{transform:scale(.88);background:#fff}
 .sc-cn{min-width:88px;height:44px;border-radius:22px;border:0;background:#fff;color:#000;font:800 15px system-ui;padding:0 18px;cursor:pointer}.sc-cn:disabled{opacity:.35}
 .sc-sv::after{content:'';position:absolute;left:0;right:0;top:100%;height:260px;background:#000;pointer-events:none}.sc-sv{position:fixed;inset:0;z-index:200;background:#000;color:#fff;display:flex;flex-direction:column;touch-action:none;user-select:none;-webkit-user-select:none;animation:mf .2s ease}
 .sc-sbars{display:flex;gap:5px;padding:calc(10px + env(safe-area-inset-top,0px)) 10px 8px;position:relative;z-index:2}.sc-sbars::before{content:'';position:absolute;left:0;right:0;top:0;height:90px;background:linear-gradient(rgba(0,0,0,.55),transparent);z-index:-1;pointer-events:none}.sc-sbars i{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.4);box-shadow:0 0 3px rgba(0,0,0,.5);overflow:hidden}.sc-sbars b{display:block;height:100%;background:#fff}

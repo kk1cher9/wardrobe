@@ -16,7 +16,7 @@ async def main():
       async with async_playwright() as p:
         for fake in (True,False):
             args=['--use-fake-device-for-media-stream','--use-fake-ui-for-media-stream'] if fake else []
-            b=await p.chromium.launch(args=args);c=await b.new_context(viewport={'width':390,'height':780},permissions=['camera'] if fake else [])
+            b=await p.chromium.launch(args=args);c=await b.new_context(viewport={'width':390,'height':780},permissions=['camera','microphone'] if fake else [])
             pg=await c.new_page();errs=[];pg.on('pageerror',lambda e:errs.append(str(e)))
             await pg.goto(f'http://localhost:{P}/');await pg.wait_for_timeout(1500)
             await pg.evaluate("SOC.storyCam()")
@@ -39,6 +39,16 @@ async def main():
                 await pg.evaluate("window.__gum=0;const o=navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);navigator.mediaDevices.getUserMedia=(c)=>{__gum++;return o(c)};SOC.storyCam()");await pg.wait_for_selector('.sc-cam');await pg.wait_for_function("document.getElementById('sc-cv').videoWidth>0")
                 await pg.click('#sc-cx');await pg.evaluate("SOC.storyCam()");await pg.wait_for_function("document.getElementById('sc-cv').videoWidth>0")
                 ok('reopening reuses the granted camera (no new permission request)',await pg.evaluate("__gum")<=1)
+                await pg.evaluate("document.querySelectorAll('.sc-cam,.modal').forEach(e=>e.remove());SOC.storyCam()");await pg.wait_for_selector('.sc-cam');await pg.wait_for_function("document.getElementById('sc-cv').videoWidth>0")
+                await pg.mouse.click(200,300);await pg.mouse.click(200,300);await pg.wait_for_timeout(1500)
+                ok('double tap on the picture flips the camera',await pg.evaluate("document.getElementById('sc-cv').style.transform")=='scaleX(-1)')
+                await pg.mouse.click(200,300);await pg.mouse.click(200,300);await pg.wait_for_timeout(1500)
+                sb=await pg.query_selector('#sc-csh');bb=await sb.bounding_box()
+                await pg.mouse.move(bb['x']+bb['width']/2,bb['y']+bb['height']/2);await pg.mouse.down();await pg.wait_for_timeout(1400)
+                ok('holding the shutter records (red shutter + timer)',await pg.evaluate("document.getElementById('sc-csh').classList.contains('rec')&&!document.getElementById('sc-crec').hidden"))
+                await pg.mouse.up();await pg.wait_for_selector('.sc-comp',timeout=10000)
+                ok('released: the video goes to the post composer',not await pg.query_selector('.sc-cam'))
+                await pg.evaluate("document.querySelectorAll('.sc-cam,.modal').forEach(e=>e.remove());SOC.storyCam()");await pg.wait_for_selector('#sc-cfi',state='attached')
                 ac=await pg.evaluate("document.getElementById('sc-cfi').accept");ok('gallery picker offers photos and videos',ac.startswith('image/') and 'video/' in ac)
             else:
                 await pg.wait_for_selector('#sc-sf1',state='attached',timeout=6000)
