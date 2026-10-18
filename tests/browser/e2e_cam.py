@@ -39,7 +39,7 @@ async def main():
                 await pg.evaluate("window.__gum=0;const o=navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);navigator.mediaDevices.getUserMedia=(c)=>{__gum++;return o(c)};SOC.storyCam()");await pg.wait_for_selector('.sc-cam');await pg.wait_for_function("document.getElementById('sc-cv').videoWidth>0")
                 await pg.click('#sc-cx');await pg.evaluate("SOC.storyCam()");await pg.wait_for_function("document.getElementById('sc-cv').videoWidth>0")
                 ok('reopening reuses the granted camera (no new permission request)',await pg.evaluate("__gum")<=1)
-                ok('gallery picker offers photos and videos',await pg.evaluate("document.getElementById('sc-cfi').accept")=='image/*,video/*')
+                ok('gallery picker offers photos and videos',await pg.evaluate("document.getElementById('sc-cfi').accept").startswith('image/') and 'video/' in await pg.evaluate("document.getElementById('sc-cfi').accept"))
             else:
                 await pg.wait_for_selector('#sc-sf1',state='attached',timeout=6000)
                 ok('no camera: falls back to the normal story composer',not await pg.query_selector('.sc-cam'))

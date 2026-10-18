@@ -1130,7 +1130,7 @@ async function storyCam() {
   <div class="sc-cst" id="sc-cs"></div>
   <div class="sc-cbt">
   <div class="sc-crow"><button type="button" class="sc-cg" id="sc-cg" aria-label="${E(t('camGal'))}">${ico('img', 22)}</button><button type="button" class="sc-csh" id="sc-csh" aria-label="${E(t('camShot'))}"></button><button type="button" class="sc-cn" id="sc-cn" disabled>${E(t('camNext'))}</button></div></div>
-  <input type="file" id="sc-cfi" accept="image/*,video/*" multiple hidden>`;
+  <input type="file" id="sc-cfi" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,video/mp4,video/quicktime" multiple hidden>`;
   document.body.appendChild(w);
   const g = (q) => w.querySelector(q), vid = g('#sc-cv');
   const stop = () => { if (stream) stream.getTracks().forEach((x) => x.stop()); stream = null; if (CAMKEEP.s === stream) CAMKEEP.s = null; };
