@@ -951,6 +951,7 @@ function compose(o) {
     }
   };
   paint();
+  try { if (!edit && !o.photo && !saved && !d.img) m.querySelector('#sc-f1').click(); } catch (e) {} // open the phone's photo library right away (same tap)
   if (!edit && o.photo) setImg(o.photo);
   return m;
 }
@@ -1139,6 +1140,7 @@ function storyCompose() {
     };
   };
   paint();
+  try { if (!img) m.querySelector('#sc-sf1').click(); } catch (e) {} // open the phone's photo library right away (same tap)
 }
 
 /* ------------------------------------------------------------------ styles (theme-aware: black cards by default, glass in the glass theme) */
