@@ -1150,10 +1150,10 @@ async function storyCam() {
   const camBtn = () => { const r = g('#sc-zr'); r.hidden = face !== 'environment'; r.querySelector('[data-z="0.5"]').hidden = !hasWide; r.querySelectorAll('button').forEach((b) => { b.classList.toggle('on', +b.dataset.z === zl); const x = +b.dataset.z; b.textContent = x === 0.5 ? '.5' : (x === zl ? x + '×' : String(x)); }); };
   const freeze = () => { vid.classList.add('sw'); }; // dim while the other lens starts
   const thaw = () => { vid.classList.remove('sw'); };
-  const mount = () => { // a fresh <video> for every stream: iOS keeps the old size/aspect of the element otherwise (shrunken picture after switching lenses)
-    const old = vid, nv = old.cloneNode(false); old.removeAttribute('id'); nv.classList.remove('sw'); nv.muted = true; nv.srcObject = stream; vid = nv; vtf(); old.after(nv);
-    nv.addEventListener('playing', () => { old.srcObject = null; old.remove(); }, { once: true }); nv.play().catch(() => {});
-    setTimeout(() => { if (old.parentNode) { old.srcObject = null; old.remove(); } }, 2500);
+  const mount = () => { // plain srcObject swap on the same element (a cloned element caused black bars on open)
+    vid.srcObject = stream; vtf();
+    const done = () => { thaw(); }; vid.addEventListener('playing', done, { once: true }); setTimeout(done, 2500);
+    vid.play().catch(() => {});
   };
   let busy = false, again = null; // taps while a lens is still starting are queued (only the last one counts)
   const start = async (fresh) => {
