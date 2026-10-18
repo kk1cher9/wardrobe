@@ -1448,6 +1448,7 @@ addEventListener('resize', () => { document.querySelectorAll('.sp-img > img').fo
   addEventListener('focusin', (e) => { if (isF(e.target)) y = window.scrollY; });
   addEventListener('focusout', () => { [120, 450].forEach((d) => setTimeout(() => { if (isF(document.activeElement)) return; const vv = window.visualViewport; if (vv && (vv.offsetTop > 0 || Math.abs(vv.height - innerHeight) > 2)) window.scrollTo(0, y); }, d)); });
 })();
+window.SOC_V = 'v121';
 window.SOC = { storyCam, view, after, reset, nav, back, tab, ptab, profile, open, like, save, follow, share, comments, menu, compose, similar, toggleItems, repost, rpMenu, play, ovp: (im) => placeOv(im, 'cover'),  q, more, reload, setup, editProfile, follows, closeSheet, loadMe, setup: () => openSetup(true), settings: openSettings, storyOpen, storyCompose, reloadMe: () => { st.meErr = null; st.me = undefined; refresh(); }, state: st, name: NAME };
 try { const u = new URL(location.href), pid = u.searchParams.get('post'); if (pid && /^[a-z0-9]{6,32}$/.test(pid)) { st.deep = pid; u.searchParams.delete('post'); history.replaceState(null, '', u.pathname + (u.search || '') + u.hash); setTimeout(() => { if (S.tab !== 'social') go('social'); }, 600); } } catch (e) { /* ignore */ }
 loadCfg().then(() => { if (S.tab === 'social') render(); });

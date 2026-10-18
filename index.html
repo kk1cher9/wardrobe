@@ -194,6 +194,7 @@ body.sv-open #app,body.sv-open nav{visibility:hidden}
 /* iOS home-screen apps anchor fixed-bottom bars ~60px higher when the page cannot scroll (Home, Wardrobe, Chats) than when it can (Outfits, Driply): always keep the page scrollable so the tab bar sits at the same place everywhere */
 #app{min-height:calc(100vh + 2px)}
 .lb{position:relative}.lkd{position:absolute;left:0;right:0;bottom:8px;display:flex;justify-content:center;gap:5px;pointer-events:none}.lkd i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.45)}.lkd i.on{background:#fff}
+.appv{margin:14px 0 4px;text-align:center;font:600 11px/1.3 ui-monospace,Menlo,monospace;color:var(--mut,rgba(255,255,255,.4));opacity:.7;user-select:text}
 </style></head><body>
 <div id="off">Нет интернета — показаны сохранённые данные</div>
 <div id="app"></div>
@@ -531,6 +532,7 @@ async function widgetSetup(){
  $('#wg_c').onclick=async()=>{try{await navigator.clipboard.writeText(script);toast('Script copied')}catch(e){const t=$('#wg_t');t.select();t.setSelectionRange(0,99999);try{document.execCommand('copy');toast('Script copied')}catch(x){toast('Select the text and copy it')}}};
  $('#wg_r').onclick=async()=>{if(!confirm('Create a new link? The old widget script will stop working.'))return;try{await API('/api/widget',{method:'POST',body:JSON.stringify({op:'reset'})});closeM(m);WGSIG='';setTimeout(widgetSetup,300)}catch(e){toast('Could not reach the server')}};
  $('#wg_o').onclick=async()=>{try{await API('/api/widget',{method:'POST',body:JSON.stringify({op:'off'})})}catch(e){}S.set.widget=false;save();closeM(m);toast('Widget turned off')}}
+const APP_V='v121';
 function rememberToday(r){try{widgetPush(r)}catch(e){}if(r.demo||r.sample){Store.set('today',{d:dayKey(),ids:r.plan.map(i=>i.id),avg:r.avg,range:S.set.range||'all',prefs:prefSig(),r:{miss:r.miss,tips:r.tips,avg:r.avg,f:r.f,tmin:r.tmin,tmax:r.tmax,short:r.short,label:r.label,look:r.look}});return}Store.set('today',{d:dayKey(),ids:r.plan.map(i=>i.id),avg:r.avg,range:S.set.range||'all',prefs:prefSig(),r:{miss:r.miss,tips:r.tips,avg:r.avg,f:r.f,tmin:r.tmin,tmax:r.tmax,short:r.short,label:r.label,look:r.look}});recordHist(r)}
 // ---- explanation of the look (palette + style) ----
 function lookNotes(plan,lk){
@@ -750,7 +752,7 @@ function home(){
   ${r&&r.stale?'<p class="tips warn">Прогноз изменился с момента подбора — нажмите «Другой образ».</p>':''}
   ${r&&r.miss.length&&S.items.length?`<p class="tips warn">${esc(r.miss.join(' · '))}</p>`:''}
   <div class="row wrap"><button class="btn big" onclick="gen()">Другой образ</button>${!S.items.length?'<button class="btn g" onclick="editPick()">Изменить выбор</button>':''}${n&&!r.demo&&!r.sample?'<button class="btn g" onclick="saveOutfit()">Save outfit</button>':''}</div>
- </div>`}</div>`;
+ </div>`}${window.CHAT&&CHAT.isAdmin&&CHAT.isAdmin()?`<div class="appv">app ${APP_V} · social ${window.SOC_V||'?'} · sw ${(window.__swv)||'?'}</div>`:''}</div>`;
 }
 function wardrobe(){
  return `<h2>My wardrobe</h2>
@@ -1165,6 +1167,7 @@ async function boot(){
 boot();
 const offBar=()=>{$('#off').style.display=navigator.onLine?'none':'block'};
 addEventListener('online',()=>{offBar();loadWeather()});addEventListener('offline',offBar);offBar();
+try{caches.keys().then(k=>{const v=k.find(x=>/^wardrobe-v/.test(x));window.__swv=v?v.replace('wardrobe-',''):'?';const e=document.querySelector('.appv');if(e)e.textContent=e.textContent.replace(/sw \S+$/,'sw '+window.__swv)})}catch(e){}
 if('serviceWorker'in navigator&&location.protocol!=='file:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script>
 <script src="social.js"></script>

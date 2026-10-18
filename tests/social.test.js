@@ -214,6 +214,9 @@ const WEBP='data:image/webp;base64,'+webp;
   // story with a GIF sticker
   const sg=await op(A,'story',{image:PNG,gifs:[GIF],ov:[{g:0,x:50,y:50,w:30,r:0}]});
   ok('story with GIF sticker: overlay served to followers only',sg.status===200&&sg.json.story.ov.length===1&&(await call(sg.json.story.ov[0].u,{cookie:A,raw:true})).status===200&&(await call(sg.json.story.ov[0].u,{cookie:Bc,raw:true})).status===404);
+  { const fs=require('fs'),rd=(f)=>fs.readFileSync(require('path').join(__dirname,'..',f),'utf8');
+    const v1=(rd('sw.js').match(/wardrobe-v(\d+)/)||[])[1],v2=(rd('index.html').match(/APP_V='v(\d+)'/)||[])[1],v3=(rd('social.js').match(/SOC_V = 'v(\d+)'/)||[])[1];
+    ok('version labels match (sw.js / index.html APP_V / social.js SOC_V)',!!v1&&v1===v2&&v1===v3); }
   // ---- phone widget feed
   const wt=await call('/api/widget',{method:'POST',cookie:A,body:{op:'token'}});
   ok('widget: signed-in user gets a secret token (stable on repeat)',wt.status===200&&/^[\w-]{20,40}$/.test(wt.json.token)&&(await call('/api/widget',{method:'POST',cookie:A,body:{op:'token'}})).json.token===wt.json.token);
