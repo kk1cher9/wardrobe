@@ -1119,23 +1119,23 @@ async function camCollage(tpl, imgs) {
   });
   return c.toDataURL('image/jpeg', .9);
 }
-const CAMKEEP = { s: null, f: 'environment', t: 0, w: false, u: '' };
+const CAMKEEP = { s: null, f: 'environment', t: 0, w: 1, u: '', l: '', zm: false };
 async function storyCam() {
   const md = navigator.mediaDevices;
   if (!md || !md.getUserMedia) return storyCompose();
-  let stream = null, face = 'environment', tpl = '1', shots = [], closed = false, wide = false, ultra = CAMKEEP.u || '', rec = null, lastTap = 0;
+  let stream = null, face = 'environment', tpl = '1', shots = [], closed = false, zl = 1, dig = 1, ultra = CAMKEEP.u || '', tele = CAMKEEP.l || '', rec = null, lastTap = 0;
   const w = document.createElement('div'); w.className = 'sc-cam';
   w.innerHTML = `<video id="sc-cv" playsinline muted autoplay></video>
-  <div class="sc-cmt"><button type="button" class="sc-cb" id="sc-cx" aria-label="${E(t('camClose'))}">${ico('x', 20)}</button><span class="sc-cr"><button type="button" class="sc-cb sc-czb" id="sc-cz" hidden>0.5×</button><button type="button" class="sc-cb sc-ctb" id="sc-ct" aria-label="${E(t('camTpl'))}"></button><button type="button" class="sc-cb" id="sc-cf" aria-label="${E(t('camFlip'))}">${ico('cam', 20)}</button></span></div>
+  <div class="sc-cmt"><button type="button" class="sc-cb" id="sc-cx" aria-label="${E(t('camClose'))}">${ico('x', 20)}</button><span class="sc-cr"><button type="button" class="sc-cb sc-ctb" id="sc-ct" aria-label="${E(t('camTpl'))}"></button><button type="button" class="sc-cb" id="sc-cf" aria-label="${E(t('camFlip'))}">${ico('cam', 20)}</button></span></div>
   <div class="sc-cst" id="sc-cs"></div>
-  <div class="sc-crec" id="sc-crec" hidden>● <b id="sc-crt">0:00</b></div><div class="sc-cbt">
+  <div class="sc-crec" id="sc-crec" hidden>● <b id="sc-crt">0:00</b></div><div class="sc-cbt"><div class="sc-zr" id="sc-zr" hidden><button type="button" data-z="0.5">0.5</button><button type="button" data-z="1" class="on">1×</button><button type="button" data-z="3">3×</button></div>
   <div class="sc-crow"><button type="button" class="sc-cg" id="sc-cg" aria-label="${E(t('camGal'))}">${ico('img', 22)}</button><button type="button" class="sc-csh" id="sc-csh" aria-label="${E(t('camShot'))}"></button><button type="button" class="sc-cn" id="sc-cn" disabled>${E(t('camNext'))}</button></div></div>
   <input type="file" id="sc-cfi" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,video/mp4,video/quicktime" multiple hidden>`;
   document.body.appendChild(w);
   const g = (q) => w.querySelector(q), vid = g('#sc-cv');
   const stop = () => { if (stream) stream.getTracks().forEach((x) => x.stop()); stream = null; if (CAMKEEP.s === stream) CAMKEEP.s = null; };
   // closing only switches the camera off (track disabled) and keeps the granted stream for a while, so iOS does not ask again on every open
-  const close = () => { closed = true; if (rec && rec.mr.state !== 'inactive') { rec.mr.onstop = null; try { rec.mr.stop(); } catch (e) { /* ignore */ } rec = null; } clearTimeout(CAMKEEP.t); if (stream) { stream.getTracks().forEach((x) => { x.enabled = false; }); CAMKEEP.s = stream; CAMKEEP.f = face; CAMKEEP.w = wide; CAMKEEP.u = ultra; CAMKEEP.t = setTimeout(() => { if (CAMKEEP.s) CAMKEEP.s.getTracks().forEach((x) => x.stop()); CAMKEEP.s = null; }, 10 * 60 * 1000); } stream = null; vid.srcObject = null; w.remove(); };
+  const close = () => { closed = true; if (rec && rec.mr.state !== 'inactive') { rec.mr.onstop = null; try { rec.mr.stop(); } catch (e) { /* ignore */ } rec = null; } clearTimeout(CAMKEEP.t); if (stream) { stream.getTracks().forEach((x) => { x.enabled = false; }); CAMKEEP.s = stream; CAMKEEP.f = face; CAMKEEP.w = zl; CAMKEEP.u = ultra; CAMKEEP.l = tele; CAMKEEP.t = setTimeout(() => { if (CAMKEEP.s) CAMKEEP.s.getTracks().forEach((x) => x.stop()); CAMKEEP.s = null; }, 10 * 60 * 1000); } stream = null; vid.srcObject = null; w.remove(); };
   const paint = () => {
     const n = CAMTPL[tpl].length;
     g('#sc-cs').innerHTML = shots.map((u, k) => `<div class="sc-cim${k >= n ? ' off' : ''}"><img src="${u}" alt=""><button type="button" data-rm="${k}" aria-label="${E(t('camDel'))}">×</button><i>${k + 1}</i></div>`).join('');
@@ -1143,31 +1143,34 @@ async function storyCam() {
     g('#sc-ct').innerHTML = `<svg viewBox="0 0 24 36" width="18" height="26">${CAMTPL[tpl].map((r) => `<rect x="${1 + r[0] * 22 + .6}" y="${1 + r[1] * 34 + .6}" width="${r[2] * 22 - 1.2}" height="${r[3] * 34 - 1.2}" rx="2" fill="currentColor"/>`).join('')}</svg>`;
     g('#sc-cs').scrollTop = 1e6;
   };
-  let zoomOk = !!ultra;
-  const camBtn = () => { const b = g('#sc-cz'); b.hidden = !(zoomOk && face === 'environment'); b.textContent = wide ? '1×' : '0.5×'; b.classList.toggle('on', wide); };
+  let hasWide = !!ultra;
+  const vtf = () => { vid.style.transform = (face === 'user' ? 'scaleX(-1) ' : '') + (dig > 1 ? `scale(${dig})` : ''); };
+  const camBtn = () => { const r = g('#sc-zr'); r.hidden = face !== 'environment'; r.querySelector('[data-z="0.5"]').hidden = !hasWide; r.querySelectorAll('button').forEach((b) => { b.classList.toggle('on', +b.dataset.z === zl); const x = +b.dataset.z; b.textContent = (x === zl ? x + '×' : String(x)); }); };
   const start = async (fresh) => {
     clearTimeout(CAMKEEP.t);
-    if (!fresh && CAMKEEP.s && CAMKEEP.s.getTracks().some((x) => x.readyState === 'live') && CAMKEEP.f === face && !!CAMKEEP.w === wide) { camBtn(); stream = CAMKEEP.s; CAMKEEP.s = null; stream.getTracks().forEach((x) => { x.enabled = true; }); vid.srcObject = stream; vid.style.transform = face === 'user' ? 'scaleX(-1)' : ''; vid.play().catch(() => {}); return; }
+    if (!fresh && CAMKEEP.s && CAMKEEP.s.getTracks().some((x) => x.readyState === 'live') && CAMKEEP.f === face && CAMKEEP.w === zl) { dig = zl === 3 && !tele && !CAMKEEP.zm ? 3 : 1; camBtn(); stream = CAMKEEP.s; CAMKEEP.s = null; stream.getTracks().forEach((x) => { x.enabled = true; }); vid.srcObject = stream; vtf(); vid.play().catch(() => {}); return; }
     if (CAMKEEP.s) { CAMKEEP.s.getTracks().forEach((x) => x.stop()); CAMKEEP.s = null; }
     stop();
     try {
-      const dev = wide && face === 'environment' && ultra ? { deviceId: { exact: ultra } } : { facingMode: { ideal: face } };
+      const dev = face === 'environment' && zl === 0.5 && ultra ? { deviceId: { exact: ultra } } : face === 'environment' && zl === 3 && tele ? { deviceId: { exact: tele } } : { facingMode: { ideal: face } };
       stream = await md.getUserMedia({ video: { ...dev, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false });
       if (closed) { stop(); return; }
       try { // find the ultra-wide (0.5x) back camera once the labels are readable
-        if (!ultra) { const ds = await md.enumerateDevices(); const u = ds.find((d) => d.kind === 'videoinput' && /ultra/i.test(d.label)); if (u) ultra = u.deviceId; }
+        if (!ultra || !tele) { const ds = await md.enumerateDevices(); const bk = ds.filter((d) => d.kind === 'videoinput'); const u = bk.find((d) => /ultra/i.test(d.label)), te = bk.find((d) => /tele/i.test(d.label)); if (u) ultra = u.deviceId; if (te) tele = te.deviceId; }
         const tr = stream.getVideoTracks()[0], caps = tr && tr.getCapabilities ? tr.getCapabilities() : {};
-        if (wide && face === 'environment' && !ultra && caps.zoom && caps.zoom.min < 1) await tr.applyConstraints({ advanced: [{ zoom: caps.zoom.min }] });
-        zoomOk = !!ultra || !!(caps.zoom && caps.zoom.min < 1);
+        dig = 1; CAMKEEP.zm = false;
+        if (face === 'environment' && zl === 0.5 && !ultra && caps.zoom && caps.zoom.min < 1) await tr.applyConstraints({ advanced: [{ zoom: caps.zoom.min }] });
+        if (face === 'environment' && zl === 3 && !tele) { if (caps.zoom && caps.zoom.max >= 3) { await tr.applyConstraints({ advanced: [{ zoom: 3 }] }); CAMKEEP.zm = true; } else dig = 3; }
+        hasWide = !!ultra || !!(caps.zoom && caps.zoom.min < 1);
       } catch (e) { /* optional */ }
-      camBtn(); vid.srcObject = stream; vid.style.transform = face === 'user' ? 'scaleX(-1)' : ''; vid.play().catch(() => {});
+      camBtn(); vid.srcObject = stream; vtf(); vid.play().catch(() => {});
     } catch (e) { if (!closed) { close(); storyCompose(); } }
   };
   const add = (u) => { if (shots.length >= 12) return; shots.push(u); paint(); };
   g('#sc-cx').onclick = close;
-  const flip = () => { if (rec) return; face = face === 'user' ? 'environment' : 'user'; wide = false; start(true); };
+  const flip = () => { if (rec) return; face = face === 'user' ? 'environment' : 'user'; zl = 1; start(true); };
   g('#sc-cf').onclick = flip;
-  g('#sc-cz').onclick = () => { if (rec) return; wide = !wide; start(true); };
+  g('#sc-zr').onclick = (ev) => { const b = ev.target.closest('[data-z]'); if (!b || rec) return; const z = +b.dataset.z; if (z === zl) return; zl = z; start(true); };
   w.addEventListener('pointerup', (ev) => { // double tap on the picture flips the camera
     if (ev.target.closest('button,.sc-cst,.sc-cbt')) return; const n = Date.now(); if (n - lastTap < 320) { lastTap = 0; flip(); } else lastTap = n; });
   g('#sc-ct').onclick = () => { const ks = ['1', '2v', '2h', '3', '4', '6']; tpl = ks[(ks.indexOf(tpl) + 1) % ks.length]; paint(); };
@@ -1177,7 +1180,7 @@ async function storyCam() {
   const shot = () => {
     if (!vid.videoWidth) return;
     const c = document.createElement('canvas'); c.width = vid.videoWidth; c.height = vid.videoHeight; const x = c.getContext('2d');
-    if (face === 'user') { x.translate(c.width, 0); x.scale(-1, 1); } x.drawImage(vid, 0, 0);
+    if (face === 'user') { x.translate(c.width, 0); x.scale(-1, 1); } if (dig > 1) x.drawImage(vid, c.width * (1 - 1 / dig) / 2, c.height * (1 - 1 / dig) / 2, c.width / dig, c.height / dig, 0, 0, c.width, c.height); else x.drawImage(vid, 0, 0);
     add(c.toDataURL('image/jpeg', .9));
     g('#sc-csh').classList.add('fl'); setTimeout(() => g('#sc-csh').classList.remove('fl'), 160);
     if (tpl === '1') g('#sc-cn').click();
@@ -1333,7 +1336,7 @@ const css = `
 .sc-cst::-webkit-scrollbar{display:none}
 .sc-cim{position:relative;flex:none;width:58px;height:82px;border-radius:12px;overflow:hidden;border:2px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.5)}
 .sc-cim.off{opacity:.45;border-color:rgba(255,255,255,.4)}.sc-cim img{width:100%;height:100%;object-fit:cover;display:block}
-.sc-cim button{position:absolute;top:2px;right:2px;width:22px;height:22px;min-width:22px;max-width:22px;aspect-ratio:1;box-sizing:border-box;display:grid;place-items:center;border:0;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:15px;line-height:1;padding:0;cursor:pointer}
+.sc-cim button{min-height:22px!important;height:22px!important;width:22px!important;position:absolute;top:2px;right:2px;width:22px;height:22px;min-width:22px;max-width:22px;aspect-ratio:1;box-sizing:border-box;display:grid;place-items:center;border:0;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:15px;line-height:1;padding:0;cursor:pointer}
 .sc-cim i{position:absolute;left:4px;bottom:3px;font:800 11px/1 system-ui;font-style:normal;text-shadow:0 1px 3px #000}
 .sc-cbt{position:absolute;left:0;right:0;bottom:0;padding:12px 18px calc(16px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,rgba(0,0,0,.65))}
 .sc-ctp{display:flex;gap:10px;justify-content:center;margin-bottom:14px}
@@ -1341,7 +1344,7 @@ const css = `
 .sc-cth.on{border-color:#fff;color:#fff;background:rgba(255,255,255,.22)}
 .sc-crow{display:flex;align-items:center;justify-content:space-between}
 .sc-csh{width:76px;height:76px;border-radius:50%;border:5px solid #fff;background:rgba(255,255,255,.25);padding:0;cursor:pointer;transition:transform .15s,background .15s}
-.sc-csh.rec{border-color:#ff3b30;background:#ff3b30;transform:scale(1.12)}.sc-crec{position:absolute;top:calc(22px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:rgba(255,59,48,.9);padding:5px 12px;border-radius:14px;font:700 14px system-ui}.sc-czb{font:800 13px system-ui}.sc-czb.on{background:#fff;color:#000}.sc-csh{-webkit-touch-callout:none;user-select:none;-webkit-user-select:none;touch-action:none}.sc-csh.fl{transform:scale(.88);background:#fff}
+.sc-csh.rec{border-color:#ff3b30;background:#ff3b30;transform:scale(1.12)}.sc-crec{position:absolute;top:calc(22px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:rgba(255,59,48,.9);padding:5px 12px;border-radius:14px;font:700 14px system-ui}.sc-zr{display:flex;justify-content:center;gap:8px;margin-bottom:12px}.sc-zr button{min-width:38px;height:38px;border-radius:19px;border:0;background:rgba(0,0,0,.5);color:#fff;font:700 13px system-ui;padding:0 10px;cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}.sc-zr button.on{background:#fff;color:#000;font-weight:800}.sc-zr button[hidden],.sc-zr[hidden]{display:none}.sc-csh{-webkit-touch-callout:none;user-select:none;-webkit-user-select:none;touch-action:none}.sc-csh.fl{transform:scale(.88);background:#fff}
 .sc-cn{min-width:88px;height:44px;border-radius:22px;border:0;background:#fff;color:#000;font:800 15px system-ui;padding:0 18px;cursor:pointer}.sc-cn:disabled{opacity:.35}
 .sc-sv::after{content:'';position:absolute;left:0;right:0;top:100%;height:260px;background:#000;pointer-events:none}.sc-sv{position:fixed;inset:0;z-index:200;background:#000;color:#fff;display:flex;flex-direction:column;touch-action:none;user-select:none;-webkit-user-select:none;animation:mf .2s ease}
 .sc-sbars{display:flex;gap:5px;padding:calc(10px + env(safe-area-inset-top,0px)) 10px 8px;position:relative;z-index:2}.sc-sbars::before{content:'';position:absolute;left:0;right:0;top:0;height:90px;background:linear-gradient(rgba(0,0,0,.55),transparent);z-index:-1;pointer-events:none}.sc-sbars i{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.4);box-shadow:0 0 3px rgba(0,0,0,.5);overflow:hidden}.sc-sbars b{display:block;height:100%;background:#fff}

@@ -49,6 +49,12 @@ async def main():
                 await pg.mouse.up();await pg.wait_for_selector('.sc-comp',timeout=10000)
                 ok('released: the video goes to the post composer',not await pg.query_selector('.sc-cam'))
                 await pg.evaluate("document.querySelectorAll('.sc-cam,.modal').forEach(e=>e.remove());SOC.storyCam()");await pg.wait_for_selector('#sc-cfi',state='attached')
+                await pg.evaluate("document.querySelectorAll('.sc-cam,.modal').forEach(e=>e.remove());SOC.storyCam()");await pg.wait_for_selector('#sc-zr');await pg.wait_for_function("document.getElementById('sc-cv').videoWidth>0")
+                ok('zoom row (0.5 / 1 / 3) sits above the shutter',await pg.evaluate("(()=>{const z=document.getElementById('sc-zr').getBoundingClientRect(),s=document.getElementById('sc-csh').getBoundingClientRect();return z.bottom<=s.top&&document.querySelectorAll('#sc-zr button').length===3})()"))
+                await pg.click('#sc-zr [data-z="3"]');await pg.wait_for_timeout(1200)
+                ok('3x zooms in and the button is highlighted','scale(3)' in await pg.evaluate("document.getElementById('sc-cv').style.transform") and await pg.evaluate("document.querySelector('#sc-zr .on').dataset.z")=='3')
+                await pg.click('#sc-zr [data-z="1"]');await pg.wait_for_timeout(1200)
+                ok('back to 1x',await pg.evaluate("document.getElementById('sc-cv').style.transform.indexOf('scale(3)')")==-1)
                 ac=await pg.evaluate("document.getElementById('sc-cfi').accept");ok('gallery picker offers photos and videos',ac.startswith('image/') and 'video/' in ac)
             else:
                 await pg.wait_for_selector('#sc-sf1',state='attached',timeout=6000)
