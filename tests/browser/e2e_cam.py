@@ -55,6 +55,9 @@ async def main():
                 await pg.click('#sc-zr [data-z="3"]');await pg.wait_for_timeout(1200)
                 ok('3x zooms in and the button is highlighted','scale(3)' in await pg.evaluate("document.getElementById('sc-cv').style.transform") and await pg.evaluate("document.querySelector('#sc-zr .on').dataset.z")=='3')
                 await pg.click('#sc-zr [data-z="1"]');await pg.wait_for_timeout(1200)
+                for z in ['3','1','3','1','3','1']:await pg.click('#sc-zr [data-z="%s"]'%z,force=True)
+                await pg.wait_for_timeout(1500)
+                ok('many quick zoom taps: camera still live, buttons still there',await pg.evaluate("document.getElementById('sc-cv').videoWidth>0&&document.querySelectorAll('#sc-zr button:not([hidden])').length>=2&&!!document.querySelector('.sc-cam')"))
                 ok('back to 1x',await pg.evaluate("document.getElementById('sc-cv').style.transform.indexOf('scale(3)')")==-1)
                 ac=await pg.evaluate("document.getElementById('sc-cfi').accept");ok('gallery picker offers photos and videos',ac.startswith('image/') and 'video/' in ac)
             else:

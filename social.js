@@ -1119,11 +1119,13 @@ async function camCollage(tpl, imgs) {
   });
   return c.toDataURL('image/jpeg', .9);
 }
+const lsGet = (k) => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* ignore */ } };
 const CAMKEEP = { s: null, f: 'environment', t: 0, w: 1, u: '', l: '', zm: false };
 async function storyCam() {
   const md = navigator.mediaDevices;
   if (!md || !md.getUserMedia) return storyCompose();
-  let stream = null, face = 'environment', tpl = '1', shots = [], closed = false, zl = 1, dig = 1, ultra = CAMKEEP.u || '', tele = CAMKEEP.l || '', rec = null, lastTap = 0;
+  let stream = null, face = 'environment', tpl = '1', shots = [], closed = false, zl = 1, dig = 1, ultra = CAMKEEP.u || lsGet('wdCamU'), tele = CAMKEEP.l || lsGet('wdCamT'), rec = null, lastTap = 0;
   const w = document.createElement('div'); w.className = 'sc-cam';
   w.innerHTML = `<video id="sc-cv" playsinline muted autoplay></video>
   <div class="sc-cmt"><button type="button" class="sc-cb" id="sc-cx" aria-label="${E(t('camClose'))}">${ico('x', 20)}</button><span class="sc-cr"><button type="button" class="sc-cb sc-ctb" id="sc-ct" aria-label="${E(t('camTpl'))}"></button><button type="button" class="sc-cb" id="sc-cf" aria-label="${E(t('camFlip'))}">${ico('cam', 20)}</button></span></div>
@@ -1153,7 +1155,13 @@ async function storyCam() {
     nv.addEventListener('playing', () => { old.srcObject = null; old.remove(); }, { once: true }); nv.play().catch(() => {});
     setTimeout(() => { if (old.parentNode) { old.srcObject = null; old.remove(); } }, 2500);
   };
+  let busy = false, again = null; // taps while a lens is still starting are queued (only the last one counts)
   const start = async (fresh) => {
+    if (busy) { again = !!fresh || !!again; return; }
+    busy = true;
+    try { await start0(fresh); } finally { busy = false; if (again !== null && !closed) { const f = again; again = null; start(f); } }
+  };
+  const start0 = async (fresh) => {
     clearTimeout(CAMKEEP.t); if (fresh) freeze();
     if (!fresh && CAMKEEP.s && CAMKEEP.s.getTracks().some((x) => x.readyState === 'live') && CAMKEEP.f === face && CAMKEEP.w === zl) { dig = zl === 3 && !tele && !CAMKEEP.zm ? 3 : 1; camBtn(); stream = CAMKEEP.s; CAMKEEP.s = null; stream.getTracks().forEach((x) => { x.enabled = true; }); mount(); return; }
     if (CAMKEEP.s) { CAMKEEP.s.getTracks().forEach((x) => x.stop()); CAMKEEP.s = null; }
@@ -1163,12 +1171,12 @@ async function storyCam() {
       stream = await md.getUserMedia({ video: { ...dev, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false });
       if (closed) { stop(); return; }
       try { // find the ultra-wide (0.5x) back camera once the labels are readable
-        if (!ultra || !tele) { const ds = await md.enumerateDevices(); const bk = ds.filter((d) => d.kind === 'videoinput'); const u = bk.find((d) => /ultra/i.test(d.label)), te = bk.find((d) => /tele/i.test(d.label)); if (u) ultra = u.deviceId; if (te) tele = te.deviceId; }
+        if (!ultra || !tele) { const ds = await md.enumerateDevices(); const bk = ds.filter((d) => d.kind === 'videoinput'); const u = bk.find((d) => /ultra/i.test(d.label)), te = bk.find((d) => /tele/i.test(d.label)); if (u) { ultra = u.deviceId; lsSet('wdCamU', ultra); } if (te) { tele = te.deviceId; lsSet('wdCamT', tele); } }
         const tr = stream.getVideoTracks()[0], caps = tr && tr.getCapabilities ? tr.getCapabilities() : {};
         dig = 1; CAMKEEP.zm = false;
         if (face === 'environment' && zl === 0.5 && !ultra && caps.zoom && caps.zoom.min < 1) await tr.applyConstraints({ advanced: [{ zoom: caps.zoom.min }] });
         if (face === 'environment' && zl === 3 && !tele) { if (caps.zoom && caps.zoom.max >= 3) { await tr.applyConstraints({ advanced: [{ zoom: 3 }] }); CAMKEEP.zm = true; } else dig = 3; }
-        hasWide = !!ultra || !!(caps.zoom && caps.zoom.min < 1);
+        hasWide = hasWide || !!ultra || !!(caps.zoom && caps.zoom.min < 1);
       } catch (e) { /* optional */ }
       camBtn(); mount();
     } catch (e) { if (!closed) { close(); storyCompose(); } }
@@ -1343,7 +1351,7 @@ const css = `
 .sc-plus{min-height:0!important;min-width:0!important;flex:none;-webkit-appearance:none;appearance:none;box-sizing:border-box;line-height:0;position:absolute;right:-1px;bottom:-1px;width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#5b8cff,#8a5cff);color:#fff;border:2.5px solid #1b2590;display:flex;align-items:center;justify-content:center;padding:0;box-shadow:0 3px 10px rgba(20,30,120,.45);cursor:pointer;transition:transform .2s cubic-bezier(.3,1.4,.5,1)}.sc-plus:active{transform:scale(.85)}.sc-plus svg{fill:none;stroke:currentColor;stroke-width:3.4;stroke-linecap:round;display:block}
 .sc-plus.lg{width:26px!important;height:26px!important;min-height:26px!important;max-height:26px!important;min-width:26px!important;aspect-ratio:1;flex:none;-webkit-appearance:none;appearance:none;right:-3px;bottom:-3px}.sc-plus.lg svg{width:14px;height:14px}
 .sc-cam{position:fixed;inset:0;z-index:300;background:#000;color:#fff;overflow:hidden;touch-action:none}
-.sc-cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#111}
+.sc-cam video{position:absolute;inset:0;width:100%;height:100%;min-width:100%;min-height:100%;object-fit:cover;object-position:center;background:#111}
 .sc-cmt{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));left:14px;right:14px;display:flex;justify-content:space-between}
 .sc-cb,.sc-cg{width:44px;height:44px;border-radius:50%;border:0;background:rgba(0,0,0,.45);color:#fff;display:grid;place-items:center;cursor:pointer;padding:0;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 .sc-cst{position:absolute;left:10px;top:calc(70px + env(safe-area-inset-top,0px));bottom:200px;width:62px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;scrollbar-width:none}
