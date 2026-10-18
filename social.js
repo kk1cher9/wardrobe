@@ -14,7 +14,7 @@ ru: { foryou: 'Для вас', following: 'Подписки', trending: 'Тре�
   emptyFeedT: 'Здесь пока нет образов', emptyFeedD: 'Опубликуйте первый образ — он появится в ленте и в вашем профиле.', emptyFollowT: 'Вы пока ни на кого не подписаны', emptyFollowD: 'Найдите авторов во вкладке «Поиск» и подписывайтесь — их образы появятся здесь.', emptyTrendT: 'Пока нет популярных образов', emptyTrendD: 'Образы с лайками и комментариями появятся здесь.', emptySavedT: 'Сохранённых образов нет', emptySavedD: 'Нажмите на закладку у понравившегося образа, чтобы вернуться к нему позже.', emptyPostsT: 'Публикаций пока нет', emptyNotifT: 'Уведомлений пока нет', emptyNotifD: 'Здесь появятся лайки, комментарии и новые подписчики.', emptySearch: 'Ничего не найдено', typeToSearch: 'Ищите по нику, названию образа, стилю или вещи',
   errLoad: 'Не удалось загрузить', errNet: 'Нет интернета. Проверьте соединение и повторите.', errGeneric: 'Что-то пошло не так. Повторите позже.', errRate: 'Слишком часто. Попробуйте чуть позже.', errNick: 'Этот ник уже занят', errBadNick: 'Ник: 3–20 символов, латиница, цифры, _ и .', errImg: 'Не удалось обработать фото', errBig: 'Фото слишком большое', errAuth: 'Войдите, чтобы продолжить', errForbidden: 'Нет прав на это действие', gone: 'Публикация удалена или недоступна',
   gateTitle: 'Driply — образы людей', gateNoServer: 'Для соцсети нужен сервер: вход через Google и база данных. Подробности — в README (раздел «Driply»).', gateOffline: 'Нет связи с сервером. Соцсеть работает только онлайн.', gateSign: 'Войдите через Google, чтобы смотреть образы, публиковать свои, подписываться и сохранять.', gateWhy: 'Ваш гардероб и настройки остаются как были — вход нужен только для социальной части.',
-  setupT: 'Создайте профиль', setupD: 'Так вас увидят другие. Ник можно сменить позже.', nick: 'Ник', name: 'Имя', bio: 'О себе', story: 'История', settings: 'Настройки', yourStory: 'Ваша история', addStory: 'Добавить историю', newStory: 'Новая история', storyCap: 'Подпись (необязательно)', storyPost: 'Опубликовать историю', storyPosted: 'История опубликована', storyExp: 'Исчезнет через 24 часа', delStoryQ: 'Удалить историю?', viewers: 'Просмотры', noViewers: 'Пока никто не смотрел', storyGone: 'История недоступна', avChange: 'Сменить фото', avReset: 'Убрать фото', create: 'Создать профиль', nickHint: 'латиница, цифры, _ и .',
+  setupT: 'Создайте профиль', setupD: 'Так вас увидят другие. Ник можно сменить позже.', nick: 'Ник', name: 'Имя', bio: 'О себе', story: 'История', settings: 'Настройки', yourStory: 'Ваша история', addStory: 'Добавить историю', newStory: 'Новая история', camNext: 'Далее', camFlip: 'Сменить камеру', camShot: 'Снять', camGal: 'Добавить из галереи', camClose: 'Закрыть', camDel: 'Убрать фото', camFull: 'Все места заполнены', storyCap: 'Подпись (необязательно)', storyPost: 'Опубликовать историю', storyPosted: 'История опубликована', storyExp: 'Исчезнет через 24 часа', delStoryQ: 'Удалить историю?', viewers: 'Просмотры', noViewers: 'Пока никто не смотрел', storyGone: 'История недоступна', avChange: 'Сменить фото', avReset: 'Убрать фото', create: 'Создать профиль', nickHint: 'латиница, цифры, _ и .',
   newPost: 'Новая публикация', editPost: 'Редактировать публикацию', photo: 'Фото образа', pickPhoto: 'Выбрать фото', camera: 'Камера', fromToday: 'Образ на сегодня', fromSaved: 'Из сохранённых', fromWardrobe: 'Собрать из вещей', title: 'Название образа', caption: 'Подпись (необязательно)', pickStyle: 'Стиль', itemsT: 'Вещи', fromMyWardrobe: 'Из гардероба', addItem: 'Добавить', itemName: 'Название вещи', colors: 'Цвета', addColor: 'Добавить цвет', addWeather: 'Указать погоду', tmin: 'от, °C', tmax: 'до, °C', preview: 'Просмотр', draftSave: 'Черновик', draftSaved: 'Черновик сохранён', draftLoaded: 'Есть сохранённый черновик', draftUse: 'Открыть', draftDrop: 'Удалить', publishNow: 'Опубликовать', publishing: 'Публикую…', published: 'Опубликовано', edited: 'Изменения сохранены', needPhoto: 'Добавьте фото образа', noToday: 'Сегодняшний образ ещё не подобран или состоит из демо-вещей', noSaved: 'Сохранённых образов нет', pickItems: 'Выберите вещи', usePhoto: 'Использовать',
   del: 'Удалить', delPostQ: 'Удалить публикацию? Это нельзя отменить.', delCommentQ: 'Удалить комментарий?', deleted: 'Удалено', edit: 'Изменить', copyLink: 'Ссылка скопирована', shareText: 'Образ в Driply',
   writeComment: 'Добавить комментарий…', send: 'Отправить', noComments: 'Комментариев пока нет. Будьте первым!', commentsT: 'Комментарии',
@@ -30,7 +30,7 @@ uk: { foryou: 'Для вас', following: 'Підписки', trending: 'Тре�
   emptyFeedT: 'Тут поки немає образів', emptyFeedD: 'Опублікуйте перший образ — він з’явиться у стрічці та у вашому профілі.', emptyFollowT: 'Ви поки ні на кого не підписані', emptyFollowD: 'Знайдіть авторів у вкладці «Пошук» і підписуйтесь — їхні образи з’являться тут.', emptyTrendT: 'Поки немає популярних образів', emptyTrendD: 'Образи з лайками та коментарями з’являться тут.', emptySavedT: 'Збережених образів немає', emptySavedD: 'Натисніть на закладку біля образу, що сподобався, щоб повернутися до нього пізніше.', emptyPostsT: 'Публікацій поки немає', emptyNotifT: 'Сповіщень поки немає', emptyNotifD: 'Тут з’являться лайки, коментарі та нові підписники.', emptySearch: 'Нічого не знайдено', typeToSearch: 'Шукайте за ніком, назвою образу, стилем або річчю',
   errLoad: 'Не вдалося завантажити', errNet: 'Немає інтернету. Перевірте з’єднання та повторіть.', errGeneric: 'Щось пішло не так. Спробуйте пізніше.', errRate: 'Занадто часто. Спробуйте трохи пізніше.', errNick: 'Цей нік уже зайнятий', errBadNick: 'Нік: 3–20 символів, латиниця, цифри, _ та .', errImg: 'Не вдалося обробити фото', errBig: 'Фото завелике', errAuth: 'Увійдіть, щоб продовжити', errForbidden: 'Немає прав на цю дію', gone: 'Публікацію видалено або вона недоступна',
   gateTitle: 'Driply — образи людей', gateNoServer: 'Для соцмережі потрібен сервер: вхід через Google і база даних. Подробиці — у README (розділ «Driply»).', gateOffline: 'Немає зв’язку із сервером. Соцмережа працює лише онлайн.', gateSign: 'Увійдіть через Google, щоб дивитися образи, публікувати свої, підписуватися та зберігати.', gateWhy: 'Ваш гардероб і налаштування лишаються як були — вхід потрібен лише для соціальної частини.',
-  setupT: 'Створіть профіль', setupD: 'Так вас побачать інші. Нік можна змінити пізніше.', nick: 'Нік', name: 'Ім’я', bio: 'Про себе', story: 'Історія', settings: 'Налаштування', yourStory: 'Ваша історія', addStory: 'Додати історію', newStory: 'Нова історія', storyCap: 'Підпис (необов’язково)', storyPost: 'Опублікувати історію', storyPosted: 'Історію опубліковано', storyExp: 'Зникне через 24 години', delStoryQ: 'Видалити історію?', viewers: 'Перегляди', noViewers: 'Поки ніхто не дивився', storyGone: 'Історія недоступна', avChange: 'Змінити фото', avReset: 'Прибрати фото', create: 'Створити профіль', nickHint: 'латиниця, цифри, _ та .',
+  setupT: 'Створіть профіль', setupD: 'Так вас побачать інші. Нік можна змінити пізніше.', nick: 'Нік', name: 'Ім’я', bio: 'Про себе', story: 'Історія', settings: 'Налаштування', yourStory: 'Ваша історія', addStory: 'Додати історію', newStory: 'Нова історія', camNext: 'Далі', camFlip: 'Змінити камеру', camShot: 'Зняти', camGal: 'Додати з галереї', camClose: 'Закрити', camDel: 'Прибрати фото', camFull: 'Усі місця заповнені', storyCap: 'Підпис (необов’язково)', storyPost: 'Опублікувати історію', storyPosted: 'Історію опубліковано', storyExp: 'Зникне через 24 години', delStoryQ: 'Видалити історію?', viewers: 'Перегляди', noViewers: 'Поки ніхто не дивився', storyGone: 'Історія недоступна', avChange: 'Змінити фото', avReset: 'Прибрати фото', create: 'Створити профіль', nickHint: 'латиниця, цифри, _ та .',
   newPost: 'Нова публікація', editPost: 'Редагувати публікацію', photo: 'Фото образу', pickPhoto: 'Обрати фото', camera: 'Камера', fromToday: 'Образ на сьогодні', fromSaved: 'Зі збережених', fromWardrobe: 'Зібрати з речей', title: 'Назва образу', caption: 'Підпис (необов’язково)', pickStyle: 'Стиль', itemsT: 'Речі', fromMyWardrobe: 'З гардероба', addItem: 'Додати', itemName: 'Назва речі', colors: 'Кольори', addColor: 'Додати колір', addWeather: 'Вказати погоду', tmin: 'від, °C', tmax: 'до, °C', preview: 'Перегляд', draftSave: 'Чернетка', draftSaved: 'Чернетку збережено', draftLoaded: 'Є збережена чернетка', draftUse: 'Відкрити', draftDrop: 'Видалити', publishNow: 'Опублікувати', publishing: 'Публікую…', published: 'Опубліковано', edited: 'Зміни збережено', needPhoto: 'Додайте фото образу', noToday: 'Сьогоднішній образ ще не підібрано або він складається з демо-речей', noSaved: 'Збережених образів немає', pickItems: 'Оберіть речі', usePhoto: 'Використати',
   del: 'Видалити', delPostQ: 'Видалити публікацію? Це неможливо скасувати.', delCommentQ: 'Видалити коментар?', deleted: 'Видалено', edit: 'Змінити', copyLink: 'Посилання скопійовано', shareText: 'Образ у Driply',
   writeComment: 'Додати коментар…', send: 'Надіслати', noComments: 'Коментарів поки немає. Будьте першим!', commentsT: 'Коментарі',
@@ -46,7 +46,7 @@ en: { foryou: 'For You', following: 'Following', trending: 'Trending', publish: 
   emptyFeedT: 'No outfits here yet', emptyFeedD: 'Post your first outfit — it will show up in the feed and on your profile.', emptyFollowT: 'You are not following anyone yet', emptyFollowD: 'Find creators in Discover and follow them — their outfits will appear here.', emptyTrendT: 'No popular outfits yet', emptyTrendD: 'Outfits with likes and comments will show up here.', emptySavedT: 'No saved outfits', emptySavedD: 'Tap the bookmark on an outfit you like to find it again later.', emptyPostsT: 'No posts yet', emptyNotifT: 'No notifications yet', emptyNotifD: 'Likes, comments and new followers will show up here.', emptySearch: 'Nothing found', typeToSearch: 'Search by username, outfit name, style or item',
   errLoad: 'Could not load', errNet: 'No internet. Check your connection and retry.', errGeneric: 'Something went wrong. Please try again later.', errRate: 'Too many requests. Try again in a bit.', errNick: 'This username is taken', errBadNick: 'Username: 3–20 characters, latin letters, digits, _ and .', errImg: 'Could not process the photo', errBig: 'The photo is too large', errAuth: 'Sign in to continue', errForbidden: 'You are not allowed to do this', gone: 'This post was deleted or is unavailable',
   gateTitle: 'Driply — outfits by people', gateNoServer: 'The social tab needs a server: Google sign-in and a database. See the README (section “Driply”).', gateOffline: 'Cannot reach the server. The social tab works online only.', gateSign: 'Sign in with Google to browse outfits, post your own, follow people and save favourites.', gateWhy: 'Your wardrobe and settings stay as they are — sign-in is only needed for the social part.',
-  setupT: 'Create your profile', setupD: 'This is how others will see you. You can change the username later.', nick: 'Username', name: 'Name', bio: 'About you', story: 'Story', settings: 'Settings', yourStory: 'Your story', addStory: 'Add story', newStory: 'New story', storyCap: 'Caption (optional)', storyPost: 'Share story', storyPosted: 'Story shared', storyExp: 'Disappears in 24 hours', delStoryQ: 'Delete this story?', viewers: 'Views', noViewers: 'No views yet', storyGone: 'Story unavailable', avChange: 'Change photo', avReset: 'Remove photo', create: 'Create profile', nickHint: 'latin letters, digits, _ and .',
+  setupT: 'Create your profile', setupD: 'This is how others will see you. You can change the username later.', nick: 'Username', name: 'Name', bio: 'About you', story: 'Story', settings: 'Settings', yourStory: 'Your story', addStory: 'Add story', newStory: 'New story', camNext: 'Next', camFlip: 'Flip camera', camShot: 'Take photo', camGal: 'Add from gallery', camClose: 'Close', camDel: 'Remove photo', camFull: 'All slots are filled', storyCap: 'Caption (optional)', storyPost: 'Share story', storyPosted: 'Story shared', storyExp: 'Disappears in 24 hours', delStoryQ: 'Delete this story?', viewers: 'Views', noViewers: 'No views yet', storyGone: 'Story unavailable', avChange: 'Change photo', avReset: 'Remove photo', create: 'Create profile', nickHint: 'latin letters, digits, _ and .',
   newPost: 'New post', editPost: 'Edit post', photo: 'Outfit photo', pickPhoto: 'Choose photo', camera: 'Camera', fromToday: 'Today’s outfit', fromSaved: 'From saved', fromWardrobe: 'Build from items', title: 'Outfit title', caption: 'Caption (optional)', pickStyle: 'Style', itemsT: 'Items', fromMyWardrobe: 'From wardrobe', addItem: 'Add', itemName: 'Item name', colors: 'Colours', addColor: 'Add colour', addWeather: 'Add weather', tmin: 'from, °C', tmax: 'to, °C', preview: 'Preview', draftSave: 'Draft', draftSaved: 'Draft saved', draftLoaded: 'You have a saved draft', draftUse: 'Open', draftDrop: 'Delete', publishNow: 'Publish', publishing: 'Publishing…', published: 'Published', edited: 'Changes saved', needPhoto: 'Add a photo of the outfit', noToday: 'Today’s outfit is not picked yet or consists of demo items', noSaved: 'No saved outfits', pickItems: 'Pick items', usePhoto: 'Use',
   del: 'Delete', delPostQ: 'Delete this post? This cannot be undone.', delCommentQ: 'Delete this comment?', deleted: 'Deleted', edit: 'Edit', copyLink: 'Link copied', shareText: 'An outfit on Driply',
   writeComment: 'Add a comment…', send: 'Send', noComments: 'No comments yet. Be the first!', commentsT: 'Comments',
@@ -294,7 +294,7 @@ function profileView() {
 function profAv(p, isMe) {
   const gs = st.stories.groups || [], gi = gs.findIndex((g) => g.author.nick === p.nick), has = gi >= 0;
   if (!isMe && !has) return av(p, 78);
-  const click = has ? `SOC.storyOpen(${gi})` : (isMe ? 'SOC.storyCompose()' : '');
+  const click = has ? `SOC.storyOpen(${gi})` : (isMe ? 'SOC.storyCam()' : '');
   const seen = has && !isMe && gs[gi].allSeen;
   return `<span class="sc-pav${has ? ' ring' : ''}${seen ? ' seen' : ''}"><button type="button" class="sc-pavb" ${click ? `onclick="${click}"` : ''} aria-label="${E(t('story'))}">${av(p, 78)}</button>${isMe ? `<button type="button" class="sc-plus lg" onclick="SOC.storyCompose()" aria-label="${E(t('addStory'))}"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M12 5.5v13M5.5 12h13"/></svg></button>` : ''}</span>`;
 }
@@ -966,7 +966,7 @@ async function loadStories() {
 function tray() {
   const gs = st.stories.groups || [], mine = gs.find((g) => g.author.me), me = st.me && st.me.profile;
   const ring = (cls, inner, label, click) => `<button class="sc-st ${cls}" onclick="${click}"><span class="sc-ring">${inner}</span><small>${E(label)}</small></button>`;
-  const own = ring(mine ? '' : 'none', av(me, 62) + `<i class="sc-plus" onclick="event.stopPropagation();SOC.storyCompose()"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M12 5.5v13M5.5 12h13"/></svg></i>`, t('yourStory'), mine ? `SOC.storyOpen(${gs.indexOf(mine)})` : 'SOC.storyCompose()');
+  const own = ring(mine ? '' : 'none', av(me, 62) + `<i class="sc-plus" onclick="event.stopPropagation();SOC.storyCam()"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M12 5.5v13M5.5 12h13"/></svg></i>`, t('yourStory'), mine ? `SOC.storyOpen(${gs.indexOf(mine)})` : 'SOC.storyCam()');
   const rest = gs.map((g, i) => (g.author.me ? '' : ring(g.allSeen ? 'seen' : '', av(g.author, 62), g.author.name || g.author.nick, `SOC.storyOpen(${i})`))).join('');
   return `<div class="sc-tray" id="sc-tray">${own}${rest}</div>`;
 }
@@ -1098,8 +1098,81 @@ async function viewersPanel() {
     w.querySelector('.sc-vwl').innerHTML = j.users.length ? j.users.map((u) => `<div class="sc-ur"><span class="sc-who">${av(u, 38)}<span><b>${E(u.name || u.nick)}${vb(u)}</b><small>@${E(u.nick)}</small></span></span></div>`).join('') : `<p class="note" style="text-align:center">${E(t('noViewers'))}</p>`;
   } catch (e) { w.querySelector('.sc-vwl').innerHTML = stateBox('cloud', t('errLoad'), errText(e)); }
 }
-function storyCompose() {
-  let img = '', busy = false, base = '', edState = null, gifs = [], ov = [];
+/* camera-first story: live viewfinder, shot strip on the left, collage templates */
+const CAMTPL = { // cells as fractions of the 9:16 canvas [x, y, w, h]
+  '1': [[0, 0, 1, 1]],
+  '2v': [[0, 0, 1, .5], [0, .5, 1, .5]],
+  '2h': [[0, 0, .5, 1], [.5, 0, .5, 1]],
+  '3': [[0, 0, 1, .5], [0, .5, .5, .5], [.5, .5, .5, .5]],
+  '4': [[0, 0, .5, .5], [.5, 0, .5, .5], [0, .5, .5, .5], [.5, .5, .5, .5]],
+  '6': [[0, 0, .5, 1 / 3], [.5, 0, .5, 1 / 3], [0, 1 / 3, .5, 1 / 3], [.5, 1 / 3, .5, 1 / 3], [0, 2 / 3, .5, 1 / 3], [.5, 2 / 3, .5, 1 / 3]]
+};
+async function camCollage(tpl, imgs) {
+  const W = 1080, H = 1920, G = tpl === '1' ? 0 : 10, c = document.createElement('canvas'); c.width = W; c.height = H;
+  const x = c.getContext('2d'); x.fillStyle = '#000'; x.fillRect(0, 0, W, H);
+  const loaded = await Promise.all(imgs.map((u) => new Promise((res) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = u; })));
+  CAMTPL[tpl].forEach((r, k) => {
+    const im = loaded[k]; if (!im) return;
+    const cx = r[0] * W + G / 2, cy = r[1] * H + G / 2, cw = r[2] * W - G, ch = r[3] * H - G, s = Math.max(cw / im.width, ch / im.height), sw = cw / s, sh = ch / s;
+    x.save(); x.beginPath(); x.rect(cx, cy, cw, ch); x.clip(); x.drawImage(im, (im.width - sw) / 2, (im.height - sh) / 2, sw, sh, cx, cy, cw, ch); x.restore();
+  });
+  return c.toDataURL('image/jpeg', .9);
+}
+async function storyCam() {
+  const md = navigator.mediaDevices;
+  if (!md || !md.getUserMedia) return storyCompose();
+  let stream = null, face = 'environment', tpl = '1', shots = [], closed = false;
+  const w = document.createElement('div'); w.className = 'sc-cam';
+  w.innerHTML = `<video id="sc-cv" playsinline muted autoplay></video>
+  <div class="sc-cmt"><button type="button" class="sc-cb" id="sc-cx" aria-label="${E(t('camClose'))}">${ico('x', 20)}</button><button type="button" class="sc-cb" id="sc-cf" aria-label="${E(t('camFlip'))}">${ico('cam', 20)}</button></div>
+  <div class="sc-cst" id="sc-cs"></div>
+  <div class="sc-cbt"><div class="sc-ctp" id="sc-ct">${Object.keys(CAMTPL).map((k) => `<button type="button" class="sc-cth${k === tpl ? ' on' : ''}" data-tp="${k}"><svg viewBox="0 0 24 36" width="16" height="24">${CAMTPL[k].map((r) => `<rect x="${1 + r[0] * 22 + .6}" y="${1 + r[1] * 34 + .6}" width="${r[2] * 22 - 1.2}" height="${r[3] * 34 - 1.2}" rx="2" fill="currentColor"/>`).join('')}</svg></button>`).join('')}</div>
+  <div class="sc-crow"><button type="button" class="sc-cg" id="sc-cg" aria-label="${E(t('camGal'))}">${ico('img', 22)}</button><button type="button" class="sc-csh" id="sc-csh" aria-label="${E(t('camShot'))}"></button><button type="button" class="sc-cn" id="sc-cn" disabled>${E(t('camNext'))}</button></div></div>
+  <input type="file" id="sc-cfi" accept="image/*" multiple hidden>`;
+  document.body.appendChild(w);
+  const g = (q) => w.querySelector(q), vid = g('#sc-cv');
+  const stop = () => { if (stream) stream.getTracks().forEach((x) => x.stop()); stream = null; };
+  const close = () => { closed = true; stop(); w.remove(); };
+  const paint = () => {
+    const n = CAMTPL[tpl].length;
+    g('#sc-cs').innerHTML = shots.map((u, k) => `<div class="sc-cim${k >= n ? ' off' : ''}"><img src="${u}" alt=""><button type="button" data-rm="${k}" aria-label="${E(t('camDel'))}">×</button><i>${k + 1}</i></div>`).join('');
+    g('#sc-cn').disabled = !shots.length;
+    w.querySelectorAll('.sc-cth').forEach((b) => b.classList.toggle('on', b.dataset.tp === tpl));
+    g('#sc-cs').scrollTop = 1e6;
+  };
+  const start = async () => {
+    stop();
+    try {
+      stream = await md.getUserMedia({ video: { facingMode: { ideal: face }, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false });
+      if (closed) { stop(); return; } vid.srcObject = stream; vid.style.transform = face === 'user' ? 'scaleX(-1)' : ''; vid.play().catch(() => {});
+    } catch (e) { if (!closed) { close(); storyCompose(); } }
+  };
+  const add = (u) => { if (shots.length >= 12) return; shots.push(u); paint(); };
+  g('#sc-cx').onclick = close;
+  g('#sc-cf').onclick = () => { face = face === 'user' ? 'environment' : 'user'; start(); };
+  g('#sc-ct').onclick = (ev) => { const b = ev.target.closest('[data-tp]'); if (b) { tpl = b.dataset.tp; paint(); } };
+  g('#sc-cs').onclick = (ev) => { const b = ev.target.closest('[data-rm]'); if (b) { shots.splice(+b.dataset.rm, 1); paint(); } };
+  g('#sc-cg').onclick = () => g('#sc-cfi').click();
+  g('#sc-cfi').onchange = async (ev) => { const fl = Array.from(ev.target.files || []); ev.target.value = ''; for (const f of fl) { try { add(await encodeImg(await fileToUrl(f), 1600, .85, 900 * 1024)); } catch (e) { toast(t('errImg')); } } };
+  g('#sc-csh').onclick = () => {
+    if (!vid.videoWidth) return;
+    const c = document.createElement('canvas'); c.width = vid.videoWidth; c.height = vid.videoHeight; const x = c.getContext('2d');
+    if (face === 'user') { x.translate(c.width, 0); x.scale(-1, 1); } x.drawImage(vid, 0, 0);
+    add(c.toDataURL('image/jpeg', .9));
+    g('#sc-csh').classList.add('fl'); setTimeout(() => g('#sc-csh').classList.remove('fl'), 160);
+    if (tpl === '1') g('#sc-cn').click();
+  };
+  g('#sc-cn').onclick = async () => {
+    if (!shots.length) return;
+    const n = CAMTPL[tpl].length; let out;
+    try { out = await encodeImg(await camCollage(tpl, shots.slice(0, n)), 1280, .8, 400 * 1024); } catch (e) { toast(t('errImg')); return; }
+    close(); storyCompose(out);
+  };
+  paint(); start();
+}
+
+function storyCompose(pre) {
+  let img = pre || '', busy = false, base = pre || '', edState = null, gifs = [], ov = [];
   const m = sheet('', 'sc-comp');
   const paint = () => {
     const todayOk = (() => { try { const r = cur(); return !!(r && r.plan && r.plan.length && !r.demo && !r.sample); } catch (e) { return false; } })();
@@ -1140,7 +1213,6 @@ function storyCompose() {
     };
   };
   paint();
-  try { if (!img) m.querySelector('#sc-sf1').click(); } catch (e) {} // open the phone's photo library right away (same tap)
 }
 
 /* ------------------------------------------------------------------ styles (theme-aware: black cards by default, glass in the glass theme) */
@@ -1207,6 +1279,24 @@ const css = `
 .sc-pav{position:relative;display:inline-flex;flex:none;border-radius:50%;padding:0}.sc-pav.ring{padding:3px;background:linear-gradient(135deg,#4d8bff,#9b6bff 55%,#ff6bb5)}.sc-pav.ring.seen{background:rgba(255,255,255,.35)}.sc-pav.ring .sc-av{border:2px solid #0b0d3b;box-sizing:border-box}.sc-pavb{border:0;background:none;padding:0;border-radius:50%;display:flex;cursor:pointer}
 .sc-plus{min-height:0!important;min-width:0!important;flex:none;-webkit-appearance:none;appearance:none;box-sizing:border-box;line-height:0;position:absolute;right:-1px;bottom:-1px;width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#5b8cff,#8a5cff);color:#fff;border:2.5px solid #1b2590;display:flex;align-items:center;justify-content:center;padding:0;box-shadow:0 3px 10px rgba(20,30,120,.45);cursor:pointer;transition:transform .2s cubic-bezier(.3,1.4,.5,1)}.sc-plus:active{transform:scale(.85)}.sc-plus svg{fill:none;stroke:currentColor;stroke-width:3.4;stroke-linecap:round;display:block}
 .sc-plus.lg{width:26px!important;height:26px!important;min-height:26px!important;max-height:26px!important;min-width:26px!important;aspect-ratio:1;flex:none;-webkit-appearance:none;appearance:none;right:-3px;bottom:-3px}.sc-plus.lg svg{width:14px;height:14px}
+.sc-cam{position:fixed;inset:0;z-index:300;background:#000;color:#fff;overflow:hidden;touch-action:none}
+.sc-cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#111}
+.sc-cmt{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));left:14px;right:14px;display:flex;justify-content:space-between}
+.sc-cb,.sc-cg{width:44px;height:44px;border-radius:50%;border:0;background:rgba(0,0,0,.45);color:#fff;display:grid;place-items:center;cursor:pointer;padding:0;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.sc-cst{position:absolute;left:10px;top:calc(70px + env(safe-area-inset-top,0px));bottom:200px;width:62px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;scrollbar-width:none}
+.sc-cst::-webkit-scrollbar{display:none}
+.sc-cim{position:relative;flex:none;width:58px;height:82px;border-radius:12px;overflow:hidden;border:2px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.5)}
+.sc-cim.off{opacity:.45;border-color:rgba(255,255,255,.4)}.sc-cim img{width:100%;height:100%;object-fit:cover;display:block}
+.sc-cim button{position:absolute;top:2px;right:2px;width:22px;height:22px;min-width:22px;max-width:22px;aspect-ratio:1;box-sizing:border-box;display:grid;place-items:center;border:0;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:15px;line-height:1;padding:0;cursor:pointer}
+.sc-cim i{position:absolute;left:4px;bottom:3px;font:800 11px/1 system-ui;font-style:normal;text-shadow:0 1px 3px #000}
+.sc-cbt{position:absolute;left:0;right:0;bottom:0;padding:12px 18px calc(16px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,rgba(0,0,0,.65))}
+.sc-ctp{display:flex;gap:10px;justify-content:center;margin-bottom:14px}
+.sc-cth{width:40px;height:50px;border-radius:12px;border:1.5px solid rgba(255,255,255,.35);background:rgba(0,0,0,.35);color:rgba(255,255,255,.75);display:grid;place-items:center;padding:0;cursor:pointer}
+.sc-cth.on{border-color:#fff;color:#fff;background:rgba(255,255,255,.22)}
+.sc-crow{display:flex;align-items:center;justify-content:space-between}
+.sc-csh{width:76px;height:76px;border-radius:50%;border:5px solid #fff;background:rgba(255,255,255,.25);padding:0;cursor:pointer;transition:transform .15s,background .15s}
+.sc-csh.fl{transform:scale(.88);background:#fff}
+.sc-cn{min-width:88px;height:44px;border-radius:22px;border:0;background:#fff;color:#000;font:800 15px system-ui;padding:0 18px;cursor:pointer}.sc-cn:disabled{opacity:.35}
 .sc-sv::after{content:'';position:absolute;left:0;right:0;top:100%;height:260px;background:#000;pointer-events:none}.sc-sv{position:fixed;inset:0;z-index:200;background:#000;color:#fff;display:flex;flex-direction:column;touch-action:none;user-select:none;-webkit-user-select:none;animation:mf .2s ease}
 .sc-sbars{display:flex;gap:5px;padding:calc(10px + env(safe-area-inset-top,0px)) 10px 8px;position:relative;z-index:2}.sc-sbars::before{content:'';position:absolute;left:0;right:0;top:0;height:90px;background:linear-gradient(rgba(0,0,0,.55),transparent);z-index:-1;pointer-events:none}.sc-sbars i{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.4);box-shadow:0 0 3px rgba(0,0,0,.5);overflow:hidden}.sc-sbars b{display:block;height:100%;background:#fff}
 .sc-sh2{display:flex;align-items:center;gap:6px;padding:4px 10px;position:relative;z-index:2}.sc-sh2 .sc-who{flex:1;color:#fff}.sc-sh2 .sc-ic{color:#fff;width:auto;padding:0 10px;gap:4px;display:flex}
@@ -1287,7 +1377,7 @@ addEventListener('resize', () => { document.querySelectorAll('.sp-img > img').fo
   addEventListener('focusin', (e) => { if (isF(e.target)) y = window.scrollY; });
   addEventListener('focusout', () => { [120, 450].forEach((d) => setTimeout(() => { if (isF(document.activeElement)) return; const vv = window.visualViewport; if (vv && (vv.offsetTop > 0 || Math.abs(vv.height - innerHeight) > 2)) window.scrollTo(0, y); }, d)); });
 })();
-window.SOC = { view, after, reset, nav, back, tab, ptab, profile, open, like, save, follow, share, comments, menu, compose, similar, toggleItems, repost, rpMenu, play, ovp: (im) => placeOv(im, 'cover'),  q, more, reload, setup, editProfile, follows, closeSheet, loadMe, setup: () => openSetup(true), settings: openSettings, storyOpen, storyCompose, reloadMe: () => { st.meErr = null; st.me = undefined; refresh(); }, state: st, name: NAME };
+window.SOC = { storyCam, view, after, reset, nav, back, tab, ptab, profile, open, like, save, follow, share, comments, menu, compose, similar, toggleItems, repost, rpMenu, play, ovp: (im) => placeOv(im, 'cover'),  q, more, reload, setup, editProfile, follows, closeSheet, loadMe, setup: () => openSetup(true), settings: openSettings, storyOpen, storyCompose, reloadMe: () => { st.meErr = null; st.me = undefined; refresh(); }, state: st, name: NAME };
 try { const u = new URL(location.href), pid = u.searchParams.get('post'); if (pid && /^[a-z0-9]{6,32}$/.test(pid)) { st.deep = pid; u.searchParams.delete('post'); history.replaceState(null, '', u.pathname + (u.search || '') + u.hash); setTimeout(() => { if (S.tab !== 'social') go('social'); }, 600); } } catch (e) { /* ignore */ }
 loadCfg().then(() => { if (S.tab === 'social') render(); });
 })();
