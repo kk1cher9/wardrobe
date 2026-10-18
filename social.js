@@ -1132,7 +1132,7 @@ async function storyCam() {
   <div class="sc-crow"><button type="button" class="sc-cg" id="sc-cg" aria-label="${E(t('camGal'))}">${ico('img', 22)}</button><button type="button" class="sc-csh" id="sc-csh" aria-label="${E(t('camShot'))}"></button><button type="button" class="sc-cn" id="sc-cn" disabled>${E(t('camNext'))}</button></div></div>
   <input type="file" id="sc-cfi" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,video/mp4,video/quicktime" multiple hidden>`;
   document.body.appendChild(w);
-  const g = (q) => w.querySelector(q), vid = g('#sc-cv');
+  const g = (q) => w.querySelector(q); let vid = g('#sc-cv');
   const stop = () => { if (stream) stream.getTracks().forEach((x) => x.stop()); stream = null; if (CAMKEEP.s === stream) CAMKEEP.s = null; };
   // closing only switches the camera off (track disabled) and keeps the granted stream for a while, so iOS does not ask again on every open
   const close = () => { closed = true; if (rec && rec.mr.state !== 'inactive') { rec.mr.onstop = null; try { rec.mr.stop(); } catch (e) { /* ignore */ } rec = null; } clearTimeout(CAMKEEP.t); if (stream) { stream.getTracks().forEach((x) => { x.enabled = false; }); CAMKEEP.s = stream; CAMKEEP.f = face; CAMKEEP.w = zl; CAMKEEP.u = ultra; CAMKEEP.l = tele; CAMKEEP.t = setTimeout(() => { if (CAMKEEP.s) CAMKEEP.s.getTracks().forEach((x) => x.stop()); CAMKEEP.s = null; }, 10 * 60 * 1000); } stream = null; vid.srcObject = null; w.remove(); };
@@ -1149,10 +1149,15 @@ async function storyCam() {
   const freeze = () => { // keep the last frame (blurred) on screen while the other lens starts, like the iOS camera
     try { const z = g('#sc-cfz'); if (!vid.videoWidth) return; z.width = 270; z.height = Math.round(270 * vid.videoHeight / vid.videoWidth); z.getContext('2d').drawImage(vid, 0, 0, z.width, z.height); z.style.transform = vid.style.transform; z.hidden = false; z.style.opacity = '1'; } catch (e) { /* ignore */ }
   };
+  const mount = () => { // a fresh <video> for every stream: iOS keeps the old size/aspect of the element otherwise (shrunken picture after switching lenses)
+    const old = vid, nv = old.cloneNode(false); old.removeAttribute('id'); nv.muted = true; nv.srcObject = stream; vid = nv; vtf(); old.after(nv);
+    nv.addEventListener('playing', () => { old.srcObject = null; old.remove(); thaw(); }, { once: true }); nv.play().catch(() => {});
+    setTimeout(() => { if (old.parentNode) { old.srcObject = null; old.remove(); thaw(); } }, 2500);
+  };
   const thaw = () => { const z = g('#sc-cfz'); z.style.opacity = '0'; setTimeout(() => { z.hidden = true; }, 220); };
   const start = async (fresh) => {
     clearTimeout(CAMKEEP.t); if (fresh) freeze();
-    if (!fresh && CAMKEEP.s && CAMKEEP.s.getTracks().some((x) => x.readyState === 'live') && CAMKEEP.f === face && CAMKEEP.w === zl) { dig = zl === 3 && !tele && !CAMKEEP.zm ? 3 : 1; camBtn(); stream = CAMKEEP.s; CAMKEEP.s = null; stream.getTracks().forEach((x) => { x.enabled = true; }); vid.srcObject = stream; vtf(); vid.play().catch(() => {}); return; }
+    if (!fresh && CAMKEEP.s && CAMKEEP.s.getTracks().some((x) => x.readyState === 'live') && CAMKEEP.f === face && CAMKEEP.w === zl) { dig = zl === 3 && !tele && !CAMKEEP.zm ? 3 : 1; camBtn(); stream = CAMKEEP.s; CAMKEEP.s = null; stream.getTracks().forEach((x) => { x.enabled = true; }); mount(); return; }
     if (CAMKEEP.s) { CAMKEEP.s.getTracks().forEach((x) => x.stop()); CAMKEEP.s = null; }
     stop();
     try {
@@ -1167,7 +1172,7 @@ async function storyCam() {
         if (face === 'environment' && zl === 3 && !tele) { if (caps.zoom && caps.zoom.max >= 3) { await tr.applyConstraints({ advanced: [{ zoom: 3 }] }); CAMKEEP.zm = true; } else dig = 3; }
         hasWide = !!ultra || !!(caps.zoom && caps.zoom.min < 1);
       } catch (e) { /* optional */ }
-      camBtn(); vid.srcObject = stream; vtf(); vid.addEventListener('playing', thaw, { once: true }); vid.play().catch(() => {});
+      camBtn(); mount();
     } catch (e) { thaw(); if (!closed) { close(); storyCompose(); } }
   };
   const add = (u) => { if (shots.length >= 12) return; shots.push(u); paint(); };
