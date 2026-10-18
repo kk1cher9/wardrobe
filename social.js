@@ -1125,7 +1125,7 @@ async function storyCam() {
   if (!md || !md.getUserMedia) return storyCompose();
   let stream = null, face = 'environment', tpl = '1', shots = [], closed = false, zl = 1, dig = 1, ultra = CAMKEEP.u || '', tele = CAMKEEP.l || '', rec = null, lastTap = 0;
   const w = document.createElement('div'); w.className = 'sc-cam';
-  w.innerHTML = `<video id="sc-cv" playsinline muted autoplay></video><canvas class="sc-cfz" id="sc-cfz" hidden></canvas>
+  w.innerHTML = `<video id="sc-cv" playsinline muted autoplay></video>
   <div class="sc-cmt"><button type="button" class="sc-cb" id="sc-cx" aria-label="${E(t('camClose'))}">${ico('x', 20)}</button><span class="sc-cr"><button type="button" class="sc-cb sc-ctb" id="sc-ct" aria-label="${E(t('camTpl'))}"></button><button type="button" class="sc-cb" id="sc-cf" aria-label="${E(t('camFlip'))}">${ico('cam', 20)}</button></span></div>
   <div class="sc-cst" id="sc-cs"></div>
   <div class="sc-crec" id="sc-crec" hidden>● <b id="sc-crt">0:00</b></div><div class="sc-cbt"><div class="sc-zr" id="sc-zr" hidden><button type="button" data-z="0.5">0.5</button><button type="button" data-z="1" class="on">1×</button><button type="button" data-z="3">3×</button></div>
@@ -1146,15 +1146,13 @@ async function storyCam() {
   let hasWide = !!ultra;
   const vtf = () => { vid.style.transform = (face === 'user' ? 'scaleX(-1) ' : '') + (dig > 1 ? `scale(${dig})` : ''); };
   const camBtn = () => { const r = g('#sc-zr'); r.hidden = face !== 'environment'; r.querySelector('[data-z="0.5"]').hidden = !hasWide; r.querySelectorAll('button').forEach((b) => { b.classList.toggle('on', +b.dataset.z === zl); const x = +b.dataset.z; b.textContent = x === 0.5 ? '.5' : (x === zl ? x + '×' : String(x)); }); };
-  const freeze = () => { // keep the last frame (blurred) on screen while the other lens starts, like the iOS camera
-    try { const z = g('#sc-cfz'); if (!vid.videoWidth) return; z.width = 270; z.height = Math.round(270 * vid.videoHeight / vid.videoWidth); z.getContext('2d').drawImage(vid, 0, 0, z.width, z.height); z.style.transform = vid.style.transform; z.hidden = false; z.style.opacity = '1'; } catch (e) { /* ignore */ }
-  };
+  const freeze = () => { vid.classList.add('sw'); }; // dim while the other lens starts
+  const thaw = () => { vid.classList.remove('sw'); };
   const mount = () => { // a fresh <video> for every stream: iOS keeps the old size/aspect of the element otherwise (shrunken picture after switching lenses)
-    const old = vid, nv = old.cloneNode(false); old.removeAttribute('id'); nv.muted = true; nv.srcObject = stream; vid = nv; vtf(); old.after(nv);
-    nv.addEventListener('playing', () => { old.srcObject = null; old.remove(); thaw(); }, { once: true }); nv.play().catch(() => {});
-    setTimeout(() => { if (old.parentNode) { old.srcObject = null; old.remove(); thaw(); } }, 2500);
+    const old = vid, nv = old.cloneNode(false); old.removeAttribute('id'); nv.classList.remove('sw'); nv.muted = true; nv.srcObject = stream; vid = nv; vtf(); old.after(nv);
+    nv.addEventListener('playing', () => { old.srcObject = null; old.remove(); }, { once: true }); nv.play().catch(() => {});
+    setTimeout(() => { if (old.parentNode) { old.srcObject = null; old.remove(); } }, 2500);
   };
-  const thaw = () => { const z = g('#sc-cfz'); z.style.opacity = '0'; setTimeout(() => { z.hidden = true; }, 220); };
   const start = async (fresh) => {
     clearTimeout(CAMKEEP.t); if (fresh) freeze();
     if (!fresh && CAMKEEP.s && CAMKEEP.s.getTracks().some((x) => x.readyState === 'live') && CAMKEEP.f === face && CAMKEEP.w === zl) { dig = zl === 3 && !tele && !CAMKEEP.zm ? 3 : 1; camBtn(); stream = CAMKEEP.s; CAMKEEP.s = null; stream.getTracks().forEach((x) => { x.enabled = true; }); mount(); return; }
@@ -1173,7 +1171,7 @@ async function storyCam() {
         hasWide = !!ultra || !!(caps.zoom && caps.zoom.min < 1);
       } catch (e) { /* optional */ }
       camBtn(); mount();
-    } catch (e) { thaw(); if (!closed) { close(); storyCompose(); } }
+    } catch (e) { if (!closed) { close(); storyCompose(); } }
   };
   const add = (u) => { if (shots.length >= 12) return; shots.push(u); paint(); };
   g('#sc-cx').onclick = close;
@@ -1360,7 +1358,7 @@ const css = `
 .sc-cth.on{border-color:#fff;color:#fff;background:rgba(255,255,255,.22)}
 .sc-crow{position:relative;height:76px;display:flex;align-items:center;justify-content:space-between}.sc-crow .sc-csh{position:absolute;left:calc(50% - 38px);top:0;margin:0}
 .sc-csh{width:76px;height:76px;border-radius:50%;border:5px solid #fff;background:rgba(255,255,255,.25);padding:0;cursor:pointer;transition:transform .15s,background .15s}
-.sc-csh.rec{border-color:#ff3b30;background:#ff3b30;transform:scale(1.12)}.sc-crec{position:absolute;top:calc(22px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:rgba(255,59,48,.9);padding:5px 12px;border-radius:14px;font:700 14px system-ui}.sc-zr{display:flex;justify-content:center;gap:8px;margin-bottom:12px}.sc-zr button{width:42px;min-width:42px;max-width:42px;height:42px;min-height:42px;border-radius:50%;border:0;background:rgba(0,0,0,.5);color:#fff;font:700 13px system-ui;padding:0;display:grid;place-items:center;box-sizing:border-box;cursor:pointer;transition:transform .2s,background .2s;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}.sc-zr button.on{background:#fff;color:#000;font-weight:800;transform:scale(1.12)}.sc-cam video{transition:transform .25s ease}.sc-cfz{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(10px);transition:opacity .2s;pointer-events:none}.sc-cfz[hidden]{display:none}.sc-zr button[hidden],.sc-zr[hidden]{display:none}.sc-csh{-webkit-touch-callout:none;user-select:none;-webkit-user-select:none;touch-action:none}.sc-csh.fl{transform:scale(.88);background:#fff}
+.sc-csh.rec{border-color:#ff3b30;background:#ff3b30;transform:scale(1.12)}.sc-crec{position:absolute;top:calc(22px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:rgba(255,59,48,.9);padding:5px 12px;border-radius:14px;font:700 14px system-ui}.sc-zr{display:flex;justify-content:center;gap:8px;margin-bottom:12px}.sc-zr button{width:42px;min-width:42px;max-width:42px;height:42px;min-height:42px;border-radius:50%;border:0;background:rgba(0,0,0,.5);color:#fff;font:700 13px system-ui;padding:0;display:grid;place-items:center;box-sizing:border-box;cursor:pointer;transition:transform .2s,background .2s;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}.sc-zr button.on{background:#fff;color:#000;font-weight:800;transform:scale(1.12)}.sc-cam video{transition:transform .25s ease}.sc-cam video.sw{filter:blur(14px) brightness(.6)}.sc-cam video{transition:transform .25s ease,filter .2s}.sc-zr button[hidden],.sc-zr[hidden]{display:none}.sc-csh{-webkit-touch-callout:none;user-select:none;-webkit-user-select:none;touch-action:none}.sc-csh.fl{transform:scale(.88);background:#fff}
 .sc-cn{width:48px;min-width:48px;max-width:48px;height:48px;min-height:48px;border-radius:50%;border:0;background:#fff;color:#000;padding:0;display:grid;place-items:center;box-sizing:border-box;cursor:pointer}.sc-cn:disabled{opacity:.35}
 .sc-sv::after{content:'';position:absolute;left:0;right:0;top:100%;height:260px;background:#000;pointer-events:none}.sc-sv{position:fixed;inset:0;z-index:200;background:#000;color:#fff;display:flex;flex-direction:column;touch-action:none;user-select:none;-webkit-user-select:none;animation:mf .2s ease}
 .sc-sbars{display:flex;gap:5px;padding:calc(10px + env(safe-area-inset-top,0px)) 10px 8px;position:relative;z-index:2}.sc-sbars::before{content:'';position:absolute;left:0;right:0;top:0;height:90px;background:linear-gradient(rgba(0,0,0,.55),transparent);z-index:-1;pointer-events:none}.sc-sbars i{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.4);box-shadow:0 0 3px rgba(0,0,0,.5);overflow:hidden}.sc-sbars b{display:block;height:100%;background:#fff}

@@ -41,6 +41,7 @@ async def main():
                 ok('reopening reuses the granted camera (no new permission request)',await pg.evaluate("__gum")<=1)
                 await pg.evaluate("document.querySelectorAll('.sc-cam,.modal').forEach(e=>e.remove());SOC.storyCam()");await pg.wait_for_selector('.sc-cam');await pg.wait_for_function("document.getElementById('sc-cv').videoWidth>0")
                 await pg.mouse.click(200,300);await pg.mouse.click(200,300);await pg.wait_for_timeout(1500)
+                ok('after switching the picture still fills the whole screen (no black bars)',await pg.evaluate("(()=>{const r=document.getElementById('sc-cv').getBoundingClientRect();return Math.abs(r.width-innerWidth)<2&&Math.abs(r.height-innerHeight)<2&&getComputedStyle(document.getElementById('sc-cv')).objectFit==='cover'&&!document.querySelector('.sc-cam canvas')})()"))
                 ok('double tap on the picture flips the camera',await pg.evaluate("document.getElementById('sc-cv').style.transform")=='scaleX(-1)')
                 await pg.mouse.click(200,300);await pg.mouse.click(200,300);await pg.wait_for_timeout(1500)
                 sb=await pg.query_selector('#sc-csh');bb=await sb.bounding_box()
